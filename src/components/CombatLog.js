@@ -31,13 +31,16 @@ export default function CombatLog({ logs }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs.length]);
 
+  // Track whether we've seen the first turn_start
+  let seenFirstTurn = false;
+
   return (
     <div style={{
       backgroundColor: '#0d0d1a',
       border: '1px solid #333',
       borderRadius: 8,
       padding: 12,
-      height: 300,
+      height: 360,
       overflowY: 'auto',
       fontSize: 12,
       fontFamily: 'monospace',
@@ -45,11 +48,26 @@ export default function CombatLog({ logs }) {
       <div style={{ color: '#666', marginBottom: 8, fontWeight: 'bold', fontSize: 13 }}>
         COMBAT LOG
       </div>
-      {logs.map((log, i) => (
-        <div key={i} style={{ color: LOG_COLORS[log.type] || '#ccc', marginBottom: 3, lineHeight: 1.4 }}>
-          {formatLog(log)}
-        </div>
-      ))}
+      {logs.map((log, i) => {
+        const isTurnStart = log.type === 'turn_start';
+        const showSeparator = isTurnStart && seenFirstTurn;
+        if (isTurnStart) seenFirstTurn = true;
+
+        return (
+          <div key={i}>
+            {showSeparator && (
+              <hr style={{
+                border: 'none',
+                borderTop: '1px solid #2a2a3a',
+                margin: '6px 0',
+              }} />
+            )}
+            <div style={{ color: LOG_COLORS[log.type] || '#ccc', marginBottom: 3, lineHeight: 1.4 }}>
+              {formatLog(log)}
+            </div>
+          </div>
+        );
+      })}
       <div ref={bottomRef} />
     </div>
   );

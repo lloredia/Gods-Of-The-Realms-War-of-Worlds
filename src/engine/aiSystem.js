@@ -1,7 +1,7 @@
 // AI decision system for Gods Of The Realms — War of Worlds
 // Picks skill and target for enemy units. Framework-agnostic (Unity-portable).
 
-import { SkillType, SkillTarget } from '../constants/enums';
+import { SkillType, SkillTarget, DebuffType } from '../constants/enums';
 import { AI_HEAL_THRESHOLD, AI_BUFF_CHANCE, AI_KILL_ESTIMATE_FACTOR } from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
 
@@ -33,11 +33,15 @@ export function decideAction(unit, allies, enemies) {
   const killableTarget = findKillable(unit, aliveEnemies, available);
   if (killableTarget) return killableTarget;
 
-  // Priority 2: Support (heal/buff)
+  // Priority 2: Combo setup (debuff before nuke)
+  const comboAction = considerCombo(unit, aliveEnemies, available);
+  if (comboAction) return comboAction;
+
+  // Priority 3: Support (cleanse > strip > heal > buff)
   const buffAction = considerSupportSkill(unit, aliveAllies, aliveEnemies, available);
   if (buffAction) return buffAction;
 
-  // Priority 3: Highest multiplier damage/debuff skill
+  // Priority 4: Highest multiplier damage/debuff skill
   const bestDamageSkill = available
     .filter(s => s.type === SkillType.DAMAGE || s.type === SkillType.DEBUFF)
     .sort((a, b) => b.multiplier - a.multiplier)[0];
@@ -52,45 +56,81 @@ export function decideAction(unit, allies, enemies) {
     };
   }
 
-  // Fallback: basic attack lowest HP target
+  // Priority 5: Fallback basic attack lowest HP target
   return {
     skill: unit.skills[0],
     targets: [pickBestTarget(aliveEnemies, unit)],
   };
 }
 
-function pickBestTarget(enemies, attacker) {
+function pickBestTarget(enemies, attacker, skill) {
   return enemies.reduce((best, e) => {
-    const bestScore = scoreTarget(best, attacker);
-    const eScore = scoreTarget(e, attacker);
+    const bestScore = scoreTarget(best, attacker, skill);
+    const eScore = scoreTarget(e, attacker, skill);
     return eScore > bestScore ? e : best;
   });
 }
 
-function scoreTarget(target, attacker) {
-  // Lower HP% = higher priority (70% weight)
-  const hpScore = (1 - target.currentHP / target.maxHP) * 0.7;
+function scoreTarget(target, attacker, skill) {
+  let score = 0;
 
-  // Element advantage = bonus priority (30% weight)
-  let elementScore = 0;
+  // HP% priority (lower HP = higher score) — 40% weight
+  score += (1 - target.currentHP / target.maxHP) * 0.4;
+
+  // Element advantage — 20% weight
   if (attacker) {
     const { advantage } = getElementMultiplier(attacker.element, target.element);
-    if (advantage === 'advantage' || advantage === 'mutual') elementScore = 0.3;
-    else if (advantage === 'disadvantage') elementScore = -0.15;
+    if (advantage === 'advantage' || advantage === 'mutual') score += 0.2;
+    else if (advantage === 'disadvantage') score -= 0.1;
   }
 
-  return hpScore + elementScore;
+  // Debuffed targets are juicier (defense break = more damage) — 15% weight
+  if (target.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK)) score += 0.15;
+
+  // Dangerous targets (high attack) — 15% weight
+  const avgAttack = 800;
+  score += Math.min(0.15, (target.attack / avgAttack - 1) * 0.15);
+
+  // Support units are high priority — 10% weight
+  if (target.role === 'Support') score += 0.1;
+
+  return score;
 }
 
 function findKillable(unit, enemies, skills) {
   for (const enemy of enemies) {
     for (const skill of skills) {
       if (skill.target === SkillTarget.ALL_ENEMIES || skill.type === SkillType.HEAL || skill.type === SkillType.BUFF || skill.type === SkillType.CLEANSE || skill.type === SkillType.STRIP) continue;
-      const estDamage = unit.attack * skill.multiplier * AI_KILL_ESTIMATE_FACTOR;
+      let estDamage = unit.attack * skill.multiplier * AI_KILL_ESTIMATE_FACTOR;
+      // Account for defense break
+      if (enemy.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK)) {
+        estDamage *= 1.5;
+      }
+      // Account for multi-hit
+      if (skill.hits > 1) {
+        estDamage *= 1 + (skill.hits - 1) * 0.6;
+      }
       if (estDamage >= enemy.currentHP) {
         return { skill, targets: [enemy] };
       }
     }
+  }
+  return null;
+}
+
+function considerCombo(unit, enemies, available) {
+  // Check if we have a debuff skill (defense break) AND a nuke available
+  const debuffSkill = available.find(s =>
+    (s.type === SkillType.DEBUFF || (s.type === SkillType.DAMAGE && s.effectType === DebuffType.DEFENSE_BREAK))
+    && s.target !== SkillTarget.ALL_ENEMIES
+  );
+
+  if (!debuffSkill) return null;
+
+  // Find a target that doesn't already have defense break
+  const target = enemies.find(e => !e.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK));
+  if (target) {
+    return { skill: debuffSkill, targets: [target] };
   }
   return null;
 }

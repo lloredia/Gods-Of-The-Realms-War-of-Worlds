@@ -35,3 +35,9 @@ body {
 button:hover:not(:disabled) {
   filter: brightness(1.2);
 }
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}

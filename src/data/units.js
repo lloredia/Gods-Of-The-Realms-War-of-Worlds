@@ -33,6 +33,7 @@ const zeus = makeUnit({
   critRate: 0.25,
   critDamage: 1.7,
   skills: [skills.thunderStrike, skills.stormBreaker, skills.lightningChain],
+  relicSet: 'wrath',
 });
 
 const poseidon = makeUnit({
@@ -47,6 +48,7 @@ const poseidon = makeUnit({
   defense: 600,
   speed: 95,
   skills: [skills.tidalSlash, skills.healingWave, skills.abyssalCrush],
+  relicSet: 'vitality',
   passive: { id: 'tidalResilience', name: 'Tidal Resilience', trigger: 'on_turn_start', effect: 'self_heal', value: 0.05, description: 'Heals 5% max HP at the start of each turn.' },
 });
 
@@ -63,6 +65,7 @@ const morganLeFay = makeUnit({
   speed: 108,
   accuracy: 0.90,
   skills: [skills.mistBolt, skills.avalonRenewal, skills.enchantress],
+  relicSet: 'resolve',
 });
 
 const susanoo = makeUnit({
@@ -76,6 +79,7 @@ const susanoo = makeUnit({
   critRate: 0.22,
   critDamage: 1.65,
   skills: [skills.tidalBlade, skills.tempestSlash, skills.twinTempest],
+  relicSet: 'precision',
 });
 
 const thor = makeUnit({
@@ -89,6 +93,7 @@ const thor = makeUnit({
   critRate: 0.22,
   critDamage: 1.65,
   skills: [skills.thunderStrike, skills.stormBreaker, skills.lightningChain],
+  relicSet: 'fortress',
 });
 
 const anubis = makeUnit({
@@ -102,6 +107,7 @@ const anubis = makeUnit({
   speed: 100,
   accuracy: 0.90,
   skills: [skills.soulRend, skills.deathMark, skills.plagueSpreader],
+  relicSet: 'resolve',
 });
 
 const bastet = makeUnit({
@@ -115,6 +121,7 @@ const bastet = makeUnit({
   critRate: 0.28,
   critDamage: 1.7,
   skills: [skills.lunarClaw, skills.predatorStrike, skills.catReflexes],
+  relicSet: 'tempest',
   passive: { id: 'nineLives', name: 'Nine Lives', trigger: 'on_receive_fatal', effect: 'revive', value: 0.20, usesLeft: 1, description: 'Revives once at 20% HP when receiving a fatal blow.' },
 });
 
@@ -130,6 +137,7 @@ const amaterasu = makeUnit({
   defense: 520,
   speed: 105,
   skills: [skills.sacredFlame, skills.sunriseBlessing, skills.divineRenewal],
+  relicSet: 'vitality',
 });
 
 const hades = makeUnit({

@@ -14,12 +14,16 @@ import {
 } from '../constants/battleConstants';
 import { calculateDamage, calculateHeal } from './damageSystem';
 import { tryApplyEffect, applyBuff, tickEffects, isStunned, hasHealBlock, getEffectiveSpeed, formatEffect } from './effectSystem';
+import { applyTeamRelics } from './relicSystem';
 
 /**
  * Deep clone units from templates so originals stay clean.
+ * Applies relic bonuses after cloning.
  */
 export function initUnits(templates) {
-  return templates.map(t => JSON.parse(JSON.stringify(t)));
+  const units = templates.map(t => JSON.parse(JSON.stringify(t)));
+  applyTeamRelics(units);
+  return units;
 }
 
 /**

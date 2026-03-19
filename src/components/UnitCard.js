@@ -12,18 +12,28 @@ const ELEMENT_COLORS = {
   [Element.MOON]: '#9C27B0',
 };
 
+const ROLE_COLORS = {
+  Attacker: '#F44336',
+  Tank: '#2196F3',
+  Support: '#4CAF50',
+  Bruiser: '#FF9800',
+  Debuffer: '#9C27B0',
+};
+
 export default function UnitCard({ unit, isActive, onClick, elementHint }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';
   const faction = unit.faction ? Object.values(factions).find(f => f.name === unit.faction) : null;
   const factionColor = faction ? faction.color : '#666';
+  const roleColor = unit.role && ROLE_COLORS[unit.role] ? ROLE_COLORS[unit.role] : null;
 
   return (
     <div
       onClick={onClick}
       style={{
         border: isActive ? '2px solid #FFD700' : '2px solid #333',
+        borderLeft: roleColor ? `3px solid ${roleColor}` : (isActive ? '2px solid #FFD700' : '2px solid #333'),
         borderRadius: 8,
         padding: 12,
         marginBottom: 8,
@@ -34,12 +44,26 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
         boxShadow: isActive ? '0 0 12px rgba(255,215,0,0.4)' : 'none',
       }}
     >
-      {/* Name + Faction + Element */}
+      {/* Name + Faction + Role + Element */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
           {faction && (
             <span style={{ fontSize: 9, color: factionColor, opacity: 0.8 }}>{faction.name}</span>
+          )}
+          {unit.role && (
+            <span style={{
+              fontSize: 8,
+              color: roleColor || '#888',
+              backgroundColor: roleColor ? `${roleColor}22` : '#222',
+              borderRadius: 3,
+              padding: '1px 4px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+            }}>
+              {unit.role}
+            </span>
           )}
         </div>
         <span style={{
@@ -52,6 +76,23 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
           {unit.element}
         </span>
       </div>
+
+      {/* Relic set badge */}
+      {unit._relicInfo && (
+        <div style={{ marginBottom: 4 }}>
+          <span style={{
+            fontSize: 9,
+            color: unit._relicInfo.color || '#B0BEC5',
+            backgroundColor: unit._relicInfo.color ? `${unit._relicInfo.color}1A` : 'rgba(176,190,197,0.1)',
+            border: `1px solid ${unit._relicInfo.color || '#B0BEC5'}44`,
+            borderRadius: 3,
+            padding: '1px 5px',
+          }}>
+            {unit._relicInfo.name}
+          </span>
+        </div>
+      )}
+
       {/* Element advantage hint during targeting */}
       {elementHint && (
         <div style={{
@@ -147,7 +188,17 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
       </div>
 
       {!unit.alive && (
-        <div style={{ color: '#F44336', fontSize: 12, fontWeight: 'bold', marginTop: 4, textAlign: 'center' }}>
+        <div style={{
+          color: '#F44336',
+          fontSize: 12,
+          fontWeight: 'bold',
+          marginTop: 6,
+          textAlign: 'center',
+          backgroundColor: 'rgba(244, 67, 54, 0.15)',
+          borderRadius: 4,
+          padding: '3px 0',
+          border: '1px solid rgba(244, 67, 54, 0.3)',
+        }}>
           DEFEATED
         </div>
       )}
