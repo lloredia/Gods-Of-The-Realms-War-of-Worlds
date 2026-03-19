@@ -1,6 +1,7 @@
 // Buff / Debuff system for Gods Of The Realms — War of Worlds
 // Apply, tick, resist, and query effects. All multipliers from data/effects.js.
 
+import { random } from '../utils/random';
 import { BuffType, DebuffType } from '../constants/enums';
 import { MIN_RESIST_CHANCE } from '../constants/battleConstants';
 import { isBuffEffect, isDebuffEffect, getEffectMultiplier } from '../data/effects';
@@ -22,7 +23,7 @@ export function tryApplyEffect(skill, caster, target) {
   const resistChance = target.resistance;
   const finalChance = Math.max(MIN_RESIST_CHANCE, hitChance - resistChance);
 
-  if (Math.random() > finalChance) {
+  if (random() > finalChance) {
     return { applied: false, resisted: true, effectType: skill.effectType };
   }
 

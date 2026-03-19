@@ -2,6 +2,7 @@
 // Formula: ATK * multiplier * (BASE / (BASE + DEF * FACTOR)) * crit * variance
 // All constants imported — no magic numbers.
 
+import { random } from '../utils/random';
 import { BuffType, DebuffType } from '../constants/enums';
 import {
   DEF_SCALING_BASE,
@@ -34,13 +35,13 @@ export function calculateDamage(attacker, target, skill) {
   damage *= elementMod.multiplier;
 
   // Crit check
-  const isCrit = Math.random() < attacker.critRate;
+  const isCrit = random() < attacker.critRate;
   if (isCrit) {
     damage *= attacker.critDamage;
   }
 
   // Random variance
-  const variance = DAMAGE_VARIANCE_MIN + Math.random() * DAMAGE_VARIANCE_RANGE;
+  const variance = DAMAGE_VARIANCE_MIN + random() * DAMAGE_VARIANCE_RANGE;
   damage *= variance;
 
   // Floor
@@ -57,7 +58,7 @@ export function calculateHeal(caster, skill) {
   let heal = atk * skill.multiplier;
 
   // Variance
-  heal *= DAMAGE_VARIANCE_MIN + Math.random() * DAMAGE_VARIANCE_RANGE;
+  heal *= DAMAGE_VARIANCE_MIN + random() * DAMAGE_VARIANCE_RANGE;
   return Math.max(MIN_HEAL, Math.floor(heal));
 }
 

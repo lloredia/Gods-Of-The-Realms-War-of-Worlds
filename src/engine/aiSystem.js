@@ -1,6 +1,7 @@
 // AI decision system for Gods Of The Realms — War of Worlds
 // Picks skill and target for enemy units. Framework-agnostic (Unity-portable).
 
+import { random } from '../utils/random';
 import { SkillType, SkillTarget, DebuffType } from '../constants/enums';
 import { AI_HEAL_THRESHOLD, AI_BUFF_CHANCE, AI_KILL_ESTIMATE_FACTOR } from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
@@ -161,7 +162,7 @@ function considerSupportSkill(unit, allies, enemies, skills) {
   }
 
   // Chance to prioritize buff
-  if (Math.random() < AI_BUFF_CHANCE) {
+  if (random() < AI_BUFF_CHANCE) {
     const buffSkill = supportSkills.find(s => s.type === SkillType.BUFF);
     if (buffSkill) {
       return { skill: buffSkill, targets: allies };

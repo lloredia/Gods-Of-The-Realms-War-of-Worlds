@@ -8,6 +8,7 @@ import { teamATemplates, teamBTemplates } from '../data/units';
 import { BattlePhase, SkillTarget } from '../constants/enums';
 import { BATTLE_START_DELAY, TURN_TRANSITION_DELAY, AI_THINK_DELAY, TURN_ORDER_DISPLAY_COUNT } from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
+import { setSeed, clearSeed } from '../utils/random';
 import UnitCard from './UnitCard';
 import SkillButtons from './SkillButtons';
 import CombatLog from './CombatLog';
@@ -40,6 +41,10 @@ export default function BattleUI() {
 
   // --- Start Battle ---
   const startBattle = useCallback(() => {
+    // Set seed for deterministic battles (optional — use null for random)
+    const seed = Date.now();
+    setSeed(seed);
+
     const a = initUnits(teamATemplates);
     const b = initUnits(teamBTemplates);
     stateRef.current = { teamA: a, teamB: b };

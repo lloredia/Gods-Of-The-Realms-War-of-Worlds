@@ -48,6 +48,11 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
+          {unit._progressionInfo && (
+            <span style={{ fontSize: 9, color: '#FFD740' }}>
+              {'★'.repeat(unit._progressionInfo.stars)}{unit._progressionInfo.awakened ? ' ✧' : ''} Lv{unit._progressionInfo.level}
+            </span>
+          )}
           {faction && (
             <span style={{ fontSize: 9, color: factionColor, opacity: 0.8 }}>{faction.name}</span>
           )}
