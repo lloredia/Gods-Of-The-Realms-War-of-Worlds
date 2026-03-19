@@ -28,11 +28,11 @@ export const Element = Object.freeze({
 
 // --- Factions ---
 export const Faction = Object.freeze({
-  OLYMPUS: 'Olympus',
-  ASGARD: 'Asgard',
-  KEMET: 'Kemet',
-  AVALON: 'Avalon',
-  TENGOKU: 'Tengoku',
+  THE_PANTHEON: 'The Pantheon',
+  THE_ALLFATHERS_HALL: "The Allfather's Hall",
+  THE_ETERNAL_SANDS: 'The Eternal Sands',
+  THE_MIST_REALM: 'The Mist Realm',
+  THE_RISING_SUN: 'The Rising Sun',
 });
 
 // --- Roles ---

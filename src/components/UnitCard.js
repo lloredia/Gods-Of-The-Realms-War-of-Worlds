@@ -16,7 +16,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';
-  const faction = unit.faction ? factions[unit.faction.toLowerCase()] : null;
+  const faction = unit.faction ? Object.values(factions).find(f => f.name === unit.faction) : null;
   const factionColor = faction ? faction.color : '#666';
 
   return (

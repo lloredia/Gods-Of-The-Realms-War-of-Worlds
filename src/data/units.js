@@ -25,7 +25,7 @@ function makeUnit(overrides) {
 const zeus = makeUnit({
   id: 'zeus',
   name: 'Zeus',
-  faction: 'Olympus',
+  faction: 'The Pantheon',
   element: Element.STORM,
   role: 'Attacker',
   attack: 900,
@@ -38,7 +38,7 @@ const zeus = makeUnit({
 const poseidon = makeUnit({
   id: 'poseidon',
   name: 'Poseidon',
-  faction: 'Olympus',
+  faction: 'The Pantheon',
   element: Element.OCEAN,
   role: 'Tank',
   maxHP: 12000,
@@ -52,7 +52,7 @@ const poseidon = makeUnit({
 const morganLeFay = makeUnit({
   id: 'morganLeFay',
   name: 'Morgan Le Fay',
-  faction: 'Avalon',
+  faction: 'The Mist Realm',
   element: Element.MOON,
   role: 'Support',
   maxHP: 11000,
@@ -67,7 +67,7 @@ const morganLeFay = makeUnit({
 const susanoo = makeUnit({
   id: 'susanoo',
   name: 'Susanoo',
-  faction: 'Tengoku',
+  faction: 'The Rising Sun',
   element: Element.OCEAN,
   role: 'Attacker',
   attack: 860,
@@ -80,7 +80,7 @@ const susanoo = makeUnit({
 const thor = makeUnit({
   id: 'thor',
   name: 'Thor',
-  faction: 'Asgard',
+  faction: "The Allfather's Hall",
   element: Element.STORM,
   role: 'Bruiser',
   attack: 870,
@@ -93,7 +93,7 @@ const thor = makeUnit({
 const anubis = makeUnit({
   id: 'anubis',
   name: 'Anubis',
-  faction: 'Kemet',
+  faction: 'The Eternal Sands',
   element: Element.UNDERWORLD,
   role: 'Debuffer',
   attack: 830,
@@ -106,7 +106,7 @@ const anubis = makeUnit({
 const bastet = makeUnit({
   id: 'bastet',
   name: 'Bastet',
-  faction: 'Kemet',
+  faction: 'The Eternal Sands',
   element: Element.MOON,
   role: 'Attacker',
   attack: 850,
@@ -119,7 +119,7 @@ const bastet = makeUnit({
 const amaterasu = makeUnit({
   id: 'amaterasu',
   name: 'Amaterasu',
-  faction: 'Tengoku',
+  faction: 'The Rising Sun',
   element: Element.SUN,
   role: 'Support',
   maxHP: 11000,
@@ -133,7 +133,7 @@ const amaterasu = makeUnit({
 const hades = makeUnit({
   id: 'hades',
   name: 'Hades',
-  faction: 'Olympus',
+  faction: 'The Pantheon',
   element: Element.UNDERWORLD,
   role: 'Debuffer',
   attack: 850,
@@ -147,7 +147,7 @@ const hades = makeUnit({
 const apollo = makeUnit({
   id: 'apollo',
   name: 'Apollo',
-  faction: 'Olympus',
+  faction: 'The Pantheon',
   element: Element.SUN,
   role: 'Attacker',
   attack: 880,
@@ -160,7 +160,7 @@ const apollo = makeUnit({
 const ra = makeUnit({
   id: 'ra',
   name: 'Ra',
-  faction: 'Kemet',
+  faction: 'The Eternal Sands',
   element: Element.SUN,
   role: 'Support',
   maxHP: 11000,
@@ -174,7 +174,7 @@ const ra = makeUnit({
 const freya = makeUnit({
   id: 'freya',
   name: 'Freya',
-  faction: 'Asgard',
+  faction: "The Allfather's Hall",
   element: Element.MOON,
   role: 'Support',
   maxHP: 11500,
@@ -188,7 +188,7 @@ const freya = makeUnit({
 const loki = makeUnit({
   id: 'loki',
   name: 'Loki',
-  faction: 'Asgard',
+  faction: "The Allfather's Hall",
   element: Element.UNDERWORLD,
   role: 'Debuffer',
   attack: 840,
@@ -202,7 +202,7 @@ const loki = makeUnit({
 const cuChulainn = makeUnit({
   id: 'cuChulainn',
   name: 'Cú Chulainn',
-  faction: 'Avalon',
+  faction: 'The Mist Realm',
   element: Element.STORM,
   role: 'Attacker',
   attack: 890,
