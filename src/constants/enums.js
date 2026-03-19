@@ -26,6 +26,24 @@ export const Element = Object.freeze({
   MOON: 'Moon',
 });
 
+// --- Factions ---
+export const Faction = Object.freeze({
+  OLYMPUS: 'Olympus',
+  ASGARD: 'Asgard',
+  KEMET: 'Kemet',
+  AVALON: 'Avalon',
+  TENGOKU: 'Tengoku',
+});
+
+// --- Roles ---
+export const Role = Object.freeze({
+  ATTACKER: 'Attacker',
+  TANK: 'Tank',
+  SUPPORT: 'Support',
+  BRUISER: 'Bruiser',
+  DEBUFFER: 'Debuffer',
+});
+
 // --- Buff types ---
 export const BuffType = Object.freeze({
   ATTACK_UP: 'attack_up',

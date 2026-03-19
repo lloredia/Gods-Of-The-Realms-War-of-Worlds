@@ -12,10 +12,11 @@ import {
   MIN_HEAL,
 } from '../constants/battleConstants';
 import { getEffectMultiplier } from '../data/effects';
+import { calculateElementModifier } from './elementSystem';
 
 /**
  * Calculate damage dealt by an attacker to a target using a skill.
- * Returns { damage, isCrit }
+ * Returns { damage, isCrit, elementAdvantage }
  */
 export function calculateDamage(attacker, target, skill) {
   const atk = getEffectiveAttack(attacker);
@@ -27,6 +28,10 @@ export function calculateDamage(attacker, target, skill) {
   // Defense reduction
   const defFactor = DEF_SCALING_BASE / (DEF_SCALING_BASE + def * DEF_SCALING_FACTOR);
   damage *= defFactor;
+
+  // Element advantage/disadvantage
+  const elementMod = calculateElementModifier(attacker, target);
+  damage *= elementMod.multiplier;
 
   // Crit check
   const isCrit = Math.random() < attacker.critRate;
@@ -41,7 +46,7 @@ export function calculateDamage(attacker, target, skill) {
   // Floor
   damage = Math.max(MIN_DAMAGE, Math.floor(damage));
 
-  return { damage, isCrit };
+  return { damage, isCrit, elementAdvantage: elementMod.advantage };
 }
 
 /**

@@ -1,6 +1,7 @@
 'use client';
 
 import { Element } from '../constants/enums';
+import factions from '../data/factions';
 import { formatEffect } from '../engine/effectSystem';
 
 const ELEMENT_COLORS = {
@@ -11,10 +12,12 @@ const ELEMENT_COLORS = {
   [Element.MOON]: '#9C27B0',
 };
 
-export default function UnitCard({ unit, isActive, onClick }) {
+export default function UnitCard({ unit, isActive, onClick, elementHint }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';
+  const faction = unit.faction ? factions[unit.faction.toLowerCase()] : null;
+  const factionColor = faction ? faction.color : '#666';
 
   return (
     <div
@@ -31,9 +34,14 @@ export default function UnitCard({ unit, isActive, onClick }) {
         boxShadow: isActive ? '0 0 12px rgba(255,215,0,0.4)' : 'none',
       }}
     >
-      {/* Name + Element */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
+      {/* Name + Faction + Element */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
+          {faction && (
+            <span style={{ fontSize: 9, color: factionColor, opacity: 0.8 }}>{faction.name}</span>
+          )}
+        </div>
         <span style={{
           fontSize: 11,
           color: elementColor,
@@ -44,6 +52,18 @@ export default function UnitCard({ unit, isActive, onClick }) {
           {unit.element}
         </span>
       </div>
+      {/* Element advantage hint during targeting */}
+      {elementHint && (
+        <div style={{
+          fontSize: 10,
+          color: elementHint === 'advantage' || elementHint === 'mutual' ? '#4CAF50' : '#F44336',
+          textAlign: 'center',
+          marginBottom: 2,
+          fontWeight: 'bold',
+        }}>
+          {elementHint === 'advantage' ? '▲ Element Advantage' : elementHint === 'mutual' ? '⚡ Elemental Clash' : '▼ Element Disadvantage'}
+        </div>
+      )}
 
       {/* HP Bar */}
       <div style={{ backgroundColor: '#333', borderRadius: 4, height: 16, marginBottom: 4, position: 'relative', overflow: 'hidden' }}>

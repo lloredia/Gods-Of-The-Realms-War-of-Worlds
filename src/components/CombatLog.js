@@ -54,8 +54,10 @@ function formatLog(log) {
   switch (log.type) {
     case 'turn_start':
       return `▶ ${log.unit}'s turn`;
-    case 'damage':
-      return `⚔ ${log.attacker} → ${log.target} [${log.skill}] ${log.isCrit ? 'CRIT! ' : ''}${log.damage} dmg (${log.remainingHP} HP left)`;
+    case 'damage': {
+      const elemTag = log.elementAdvantage === 'advantage' ? ' ▲ELM' : log.elementAdvantage === 'disadvantage' ? ' ▼ELM' : log.elementAdvantage === 'mutual' ? ' ⚡ELM' : '';
+      return `⚔ ${log.attacker} → ${log.target} [${log.skill}] ${log.isCrit ? 'CRIT! ' : ''}${log.damage} dmg${elemTag} (${log.remainingHP} HP left)`;
+    }
     case 'heal':
       return `✚ ${log.caster} heals ${log.target} [${log.skill}] +${log.amount} HP (${log.remainingHP} HP)`;
     case 'death':

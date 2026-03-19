@@ -7,6 +7,7 @@ import { decideAction } from '../engine/aiSystem';
 import { teamATemplates, teamBTemplates } from '../data/units';
 import { BattlePhase, SkillTarget } from '../constants/enums';
 import { BATTLE_START_DELAY, TURN_TRANSITION_DELAY, AI_THINK_DELAY, TURN_ORDER_DISPLAY_COUNT } from '../constants/battleConstants';
+import { getElementMultiplier } from '../constants/elementTable';
 import UnitCard from './UnitCard';
 import SkillButtons from './SkillButtons';
 import CombatLog from './CombatLog';
@@ -316,18 +317,26 @@ export default function BattleUI() {
               <h3 style={{ color: '#F44336', fontSize: 14, marginBottom: 8, textAlign: 'center' }}>
                 TEAM B (Enemy)
               </h3>
-              {teamB.map(unit => (
-                <UnitCard
-                  key={unit.id}
-                  unit={unit}
-                  isActive={activeUnit?.id === unit.id}
-                  onClick={
-                    phase === PHASE.PLAYER_TARGET && unit.alive
-                      ? () => handleTargetSelect(unit)
-                      : undefined
-                  }
-                />
-              ))}
+              {teamB.map(unit => {
+                let elementHint = null;
+                if (phase === PHASE.PLAYER_TARGET && activeUnit && unit.alive) {
+                  const { advantage } = getElementMultiplier(activeUnit.element, unit.element);
+                  if (advantage !== 'neutral') elementHint = advantage;
+                }
+                return (
+                  <UnitCard
+                    key={unit.id}
+                    unit={unit}
+                    isActive={activeUnit?.id === unit.id}
+                    elementHint={elementHint}
+                    onClick={
+                      phase === PHASE.PLAYER_TARGET && unit.alive
+                        ? () => handleTargetSelect(unit)
+                        : undefined
+                    }
+                  />
+                );
+              })}
             </div>
           </div>
         </>

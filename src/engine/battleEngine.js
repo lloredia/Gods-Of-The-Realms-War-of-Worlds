@@ -115,7 +115,7 @@ function executeDamageSkill(attacker, skill, targets) {
   const aliveTargets = (targets || []).filter(t => t.alive);
 
   for (const target of aliveTargets) {
-    const { damage, isCrit } = calculateDamage(attacker, target, skill);
+    const { damage, isCrit, elementAdvantage } = calculateDamage(attacker, target, skill);
     target.currentHP = Math.max(0, target.currentHP - damage);
 
     logs.push({
@@ -125,6 +125,7 @@ function executeDamageSkill(attacker, skill, targets) {
       skill: skill.name,
       damage,
       isCrit,
+      elementAdvantage,
       remainingHP: target.currentHP,
     });
 
@@ -221,7 +222,7 @@ function executeDebuffSkill(attacker, skill, targets) {
 
   for (const target of aliveTargets) {
     if (skill.multiplier > 0) {
-      const { damage, isCrit } = calculateDamage(attacker, target, skill);
+      const { damage, isCrit, elementAdvantage } = calculateDamage(attacker, target, skill);
       target.currentHP = Math.max(0, target.currentHP - damage);
       logs.push({
         type: LogType.DAMAGE,
@@ -230,6 +231,7 @@ function executeDebuffSkill(attacker, skill, targets) {
         skill: skill.name,
         damage,
         isCrit,
+        elementAdvantage,
         remainingHP: target.currentHP,
       });
 

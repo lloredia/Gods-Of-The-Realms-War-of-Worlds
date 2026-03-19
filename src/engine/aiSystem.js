@@ -3,6 +3,7 @@
 
 import { SkillType, SkillTarget } from '../constants/enums';
 import { AI_HEAL_THRESHOLD, AI_BUFF_CHANCE, AI_KILL_ESTIMATE_FACTOR } from '../constants/battleConstants';
+import { getElementMultiplier } from '../constants/elementTable';
 
 /**
  * Decide an action for an AI-controlled unit.
@@ -24,7 +25,7 @@ export function decideAction(unit, allies, enemies) {
   if (available.length === 0) {
     return {
       skill: unit.skills[0],
-      targets: [pickBestTarget(aliveEnemies)],
+      targets: [pickBestTarget(aliveEnemies, unit)],
     };
   }
 
@@ -47,23 +48,38 @@ export function decideAction(unit, allies, enemies) {
     }
     return {
       skill: bestDamageSkill,
-      targets: [pickBestTarget(aliveEnemies)],
+      targets: [pickBestTarget(aliveEnemies, unit)],
     };
   }
 
   // Fallback: basic attack lowest HP target
   return {
     skill: unit.skills[0],
-    targets: [pickBestTarget(aliveEnemies)],
+    targets: [pickBestTarget(aliveEnemies, unit)],
   };
 }
 
-function pickBestTarget(enemies) {
+function pickBestTarget(enemies, attacker) {
   return enemies.reduce((best, e) => {
-    const bestRatio = best.currentHP / best.maxHP;
-    const eRatio = e.currentHP / e.maxHP;
-    return eRatio < bestRatio ? e : best;
+    const bestScore = scoreTarget(best, attacker);
+    const eScore = scoreTarget(e, attacker);
+    return eScore > bestScore ? e : best;
   });
+}
+
+function scoreTarget(target, attacker) {
+  // Lower HP% = higher priority (70% weight)
+  const hpScore = (1 - target.currentHP / target.maxHP) * 0.7;
+
+  // Element advantage = bonus priority (30% weight)
+  let elementScore = 0;
+  if (attacker) {
+    const { advantage } = getElementMultiplier(attacker.element, target.element);
+    if (advantage === 'advantage' || advantage === 'mutual') elementScore = 0.3;
+    else if (advantage === 'disadvantage') elementScore = -0.15;
+  }
+
+  return hpScore + elementScore;
 }
 
 function findKillable(unit, enemies, skills) {
