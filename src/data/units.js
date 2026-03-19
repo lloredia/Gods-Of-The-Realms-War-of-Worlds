@@ -47,6 +47,7 @@ const poseidon = makeUnit({
   defense: 600,
   speed: 95,
   skills: [skills.tidalSlash, skills.healingWave, skills.abyssalCrush],
+  passive: { id: 'tidalResilience', name: 'Tidal Resilience', trigger: 'on_turn_start', effect: 'self_heal', value: 0.05, description: 'Heals 5% max HP at the start of each turn.' },
 });
 
 const morganLeFay = makeUnit({
@@ -74,7 +75,7 @@ const susanoo = makeUnit({
   speed: 112,
   critRate: 0.22,
   critDamage: 1.65,
-  skills: [skills.tidalBlade, skills.tempestSlash, skills.stormGod],
+  skills: [skills.tidalBlade, skills.tempestSlash, skills.twinTempest],
 });
 
 const thor = makeUnit({
@@ -114,6 +115,7 @@ const bastet = makeUnit({
   critRate: 0.28,
   critDamage: 1.7,
   skills: [skills.lunarClaw, skills.predatorStrike, skills.catReflexes],
+  passive: { id: 'nineLives', name: 'Nine Lives', trigger: 'on_receive_fatal', effect: 'revive', value: 0.20, usesLeft: 1, description: 'Revives once at 20% HP when receiving a fatal blow.' },
 });
 
 const amaterasu = makeUnit({
@@ -127,7 +129,7 @@ const amaterasu = makeUnit({
   attack: 780,
   defense: 520,
   speed: 105,
-  skills: [skills.sacredFlame, skills.sunriseBlessing, skills.heavenlyRadiance],
+  skills: [skills.sacredFlame, skills.sunriseBlessing, skills.divineRenewal],
 });
 
 const hades = makeUnit({
@@ -142,6 +144,7 @@ const hades = makeUnit({
   critRate: 0.20,
   accuracy: 0.95,
   skills: [skills.soulRend, skills.deathMark, skills.plagueSpreader],
+  passive: { id: 'deathsEmbrace', name: "Death's Embrace", trigger: 'on_receive_fatal', effect: 'revive', value: 0.25, usesLeft: 1, description: 'Revives once at 25% HP when receiving a fatal blow.' },
 });
 
 const apollo = makeUnit({
@@ -182,7 +185,8 @@ const freya = makeUnit({
   attack: 730,
   defense: 560,
   speed: 106,
-  skills: [skills.frostTouch, skills.valkyrieBlessing, skills.bifrostShatter],
+  skills: [skills.frostTouch, skills.valkyrieBlessing, skills.purifyingLight],
+  passive: { id: 'valkyriGrace', name: "Valkyrie's Grace", trigger: 'on_turn_start', effect: 'cleanse_one', description: 'Cleanses 1 debuff at the start of each turn.' },
 });
 
 const loki = makeUnit({
@@ -196,7 +200,7 @@ const loki = makeUnit({
   speed: 114,
   critRate: 0.20,
   accuracy: 0.92,
-  skills: [skills.shadowDagger, skills.trickstersCurse, skills.chaosUnleashed],
+  skills: [skills.shadowDagger, skills.trickstersCurse, skills.veilOfDeceit],
 });
 
 const cuChulainn = makeUnit({
@@ -209,7 +213,8 @@ const cuChulainn = makeUnit({
   speed: 109,
   critRate: 0.26,
   critDamage: 1.75,
-  skills: [skills.gaeBolg, skills.warpSpasm, skills.riastrad],
+  skills: [skills.gaeBolg, skills.warpSpasm, skills.finalReckoning],
+  passive: { id: 'warpFrenzy', name: 'Warp Frenzy', trigger: 'on_turn_start', effect: 'self_heal', value: 0.03, description: 'Battle rage heals 3% max HP each turn.' },
 });
 
 // --- TEAM A (Player) ---

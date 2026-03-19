@@ -15,6 +15,8 @@ export const SkillType = Object.freeze({
   HEAL: 'heal',
   BUFF: 'buff',
   DEBUFF: 'debuff',
+  CLEANSE: 'cleanse',
+  STRIP: 'strip',
 });
 
 // --- Elements ---
@@ -75,6 +77,19 @@ export const BattlePhase = Object.freeze({
   BATTLE_OVER: 'battle_over',
 });
 
+// --- Passive triggers ---
+export const PassiveTrigger = Object.freeze({
+  ON_TURN_START: 'on_turn_start',
+  ON_DEAL_DAMAGE: 'on_deal_damage',
+  ON_RECEIVE_FATAL: 'on_receive_fatal',
+});
+
+// --- Conditional types for skills ---
+export const ConditionType = Object.freeze({
+  TARGET_BELOW_HP: 'target_below_hp',
+  SELF_BELOW_HP: 'self_below_hp',
+});
+
 // --- Log entry types ---
 export const LogType = Object.freeze({
   DAMAGE: 'damage',
@@ -90,4 +105,9 @@ export const LogType = Object.freeze({
   TURN_START: 'turn_start',
   BATTLE_END: 'battle_end',
   INFO: 'info',
+  PASSIVE: 'passive',
+  REVIVE: 'revive',
+  CLEANSE: 'cleanse',
+  STRIP: 'strip',
+  MULTI_HIT: 'multi_hit',
 });

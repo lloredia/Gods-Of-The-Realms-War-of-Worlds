@@ -34,7 +34,7 @@ export function decideAction(unit, allies, enemies) {
   if (killableTarget) return killableTarget;
 
   // Priority 2: Support (heal/buff)
-  const buffAction = considerSupportSkill(unit, aliveAllies, available);
+  const buffAction = considerSupportSkill(unit, aliveAllies, aliveEnemies, available);
   if (buffAction) return buffAction;
 
   // Priority 3: Highest multiplier damage/debuff skill
@@ -85,7 +85,7 @@ function scoreTarget(target, attacker) {
 function findKillable(unit, enemies, skills) {
   for (const enemy of enemies) {
     for (const skill of skills) {
-      if (skill.target === SkillTarget.ALL_ENEMIES || skill.type === SkillType.HEAL || skill.type === SkillType.BUFF) continue;
+      if (skill.target === SkillTarget.ALL_ENEMIES || skill.type === SkillType.HEAL || skill.type === SkillType.BUFF || skill.type === SkillType.CLEANSE || skill.type === SkillType.STRIP) continue;
       const estDamage = unit.attack * skill.multiplier * AI_KILL_ESTIMATE_FACTOR;
       if (estDamage >= enemy.currentHP) {
         return { skill, targets: [enemy] };
@@ -95,9 +95,23 @@ function findKillable(unit, enemies, skills) {
   return null;
 }
 
-function considerSupportSkill(unit, allies, skills) {
-  const supportSkills = skills.filter(s => s.type === SkillType.BUFF || s.type === SkillType.HEAL);
+function considerSupportSkill(unit, allies, enemies, skills) {
+  const supportSkills = skills.filter(s => s.type === SkillType.BUFF || s.type === SkillType.HEAL || s.type === SkillType.CLEANSE || s.type === SkillType.STRIP);
   if (supportSkills.length === 0) return null;
+
+  // Use cleanse if any ally has debuffs
+  const cleanseSkill = supportSkills.find(s => s.type === SkillType.CLEANSE);
+  const anyDebuffed = allies.some(a => a.debuffs.length > 0);
+  if (cleanseSkill && anyDebuffed) {
+    return { skill: cleanseSkill, targets: allies };
+  }
+
+  // Use strip if any enemy has buffs
+  const stripSkill = supportSkills.find(s => s.type === SkillType.STRIP);
+  const anyBuffed = enemies.some(e => e.buffs.length > 0);
+  if (stripSkill && anyBuffed) {
+    return { skill: stripSkill, targets: enemies };
+  }
 
   // Use heal if any ally is below threshold
   const healSkill = supportSkills.find(s => s.type === SkillType.HEAL);

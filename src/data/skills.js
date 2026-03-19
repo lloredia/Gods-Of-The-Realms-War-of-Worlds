@@ -489,6 +489,84 @@ const skills = {
     effectDuration: 2,
     description: 'Summons a divine storm across all enemies.',
   },
+
+  // === PHASE 3: CLEANSE / STRIP / MULTI-HIT / CONDITIONAL SKILLS ===
+
+  // Freya - cleanse skill (replaces nothing, this is a new option)
+  purifyingLight: {
+    id: 'purifyingLight',
+    name: 'Purifying Light',
+    type: SkillType.CLEANSE,
+    target: SkillTarget.ALL_ALLIES,
+    multiplier: 0,
+    cooldown: 4,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    cleanseCount: 2,
+    description: 'Purifies all allies, removing up to 2 debuffs each.',
+  },
+
+  // Loki - strip skill
+  veilOfDeceit: {
+    id: 'veilOfDeceit',
+    name: 'Veil of Deceit',
+    type: SkillType.STRIP,
+    target: SkillTarget.ALL_ENEMIES,
+    multiplier: 0,
+    cooldown: 4,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    stripCount: 1,
+    description: 'Strips 1 buff from all enemies through trickery.',
+  },
+
+  // Susanoo - multi-hit skill (replace stormGod with this)
+  // Actually let's add a new one
+  twinTempest: {
+    id: 'twinTempest',
+    name: 'Twin Tempest',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 4.0,
+    cooldown: 3,
+    hits: 2,
+    effectChance: 0.5,
+    effectType: DebuffType.DEFENSE_BREAK,
+    effectDuration: 2,
+    description: 'Two rapid strikes that can shatter defense. Second hit deals 60% damage.',
+  },
+
+  // Cu Chulainn - execute skill (conditional)
+  finalReckoning: {
+    id: 'finalReckoning',
+    name: 'Final Reckoning',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 5.0,
+    cooldown: 4,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    condition: { type: 'target_below_hp', threshold: 0.30, bonusMultiplier: 1.5 },
+    description: 'A finishing blow. Deals 50% more damage if target is below 30% HP.',
+  },
+
+  // Amaterasu - team cleanse + heal
+  divineRenewal: {
+    id: 'divineRenewal',
+    name: 'Divine Renewal',
+    type: SkillType.CLEANSE,
+    target: SkillTarget.ALL_ALLIES,
+    multiplier: 0,
+    cooldown: 5,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    cleanseCount: 3,
+    description: 'Divine light cleanses up to 3 debuffs from all allies.',
+  },
 };
 
 export default skills;

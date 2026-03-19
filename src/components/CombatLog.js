@@ -17,6 +17,11 @@ const LOG_COLORS = {
   [LogType.TURN_START]: '#00BCD4',
   [LogType.BATTLE_END]: '#FFD700',
   [LogType.INFO]: '#9E9E9E',
+  [LogType.PASSIVE]: '#80CBC4',
+  [LogType.REVIVE]: '#FFD740',
+  [LogType.CLEANSE]: '#4DD0E1',
+  [LogType.STRIP]: '#FF80AB',
+  [LogType.MULTI_HIT]: '#FF7043',
 };
 
 export default function CombatLog({ logs }) {
@@ -56,7 +61,8 @@ function formatLog(log) {
       return `▶ ${log.unit}'s turn`;
     case 'damage': {
       const elemTag = log.elementAdvantage === 'advantage' ? ' ▲ELM' : log.elementAdvantage === 'disadvantage' ? ' ▼ELM' : log.elementAdvantage === 'mutual' ? ' ⚡ELM' : '';
-      return `⚔ ${log.attacker} → ${log.target} [${log.skill}] ${log.isCrit ? 'CRIT! ' : ''}${log.damage} dmg${elemTag} (${log.remainingHP} HP left)`;
+      const hitsTag = log.hits > 1 ? ` (${log.hits} hits)` : '';
+      return `⚔ ${log.attacker} → ${log.target} [${log.skill}] ${log.isCrit ? 'CRIT! ' : ''}${log.damage} dmg${elemTag}${hitsTag} (${log.remainingHP} HP left)`;
     }
     case 'heal':
       return `✚ ${log.caster} heals ${log.target} [${log.skill}] +${log.amount} HP (${log.remainingHP} HP)`;
@@ -78,6 +84,14 @@ function formatLog(log) {
       return `✘ ${log.message}`;
     case 'battle_end':
       return `★ ${log.message}`;
+    case 'passive':
+      return `✦ ${log.message}`;
+    case 'revive':
+      return `✟ ${log.message}`;
+    case 'cleanse':
+      return `◇ ${log.message}`;
+    case 'strip':
+      return `◆ ${log.message}`;
     case 'info':
       return `  ${log.message}`;
     default:

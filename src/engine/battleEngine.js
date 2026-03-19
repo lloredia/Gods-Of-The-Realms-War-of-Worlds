@@ -1,11 +1,16 @@
 // Core battle engine for Gods Of The Realms — War of Worlds
 // Turn meter, turn execution, game loop. Framework-agnostic (Unity-portable).
 
-import { SkillType, LogType } from '../constants/enums';
+import { SkillType, LogType, PassiveTrigger, ConditionType } from '../constants/enums';
 import {
   TURN_METER_THRESHOLD,
   TURN_METER_TICK_RATE,
   TURN_METER_MAX_ITERATIONS,
+  REVIVE_HP_PERCENT,
+  PASSIVE_HEAL_PERCENT,
+  EXECUTE_THRESHOLD,
+  EXECUTE_BONUS_MULTIPLIER,
+  MULTI_HIT_DECAY,
 } from '../constants/battleConstants';
 import { calculateDamage, calculateHeal } from './damageSystem';
 import { tryApplyEffect, applyBuff, tickEffects, isStunned, hasHealBlock, getEffectiveSpeed, formatEffect } from './effectSystem';
@@ -56,6 +61,36 @@ export function advanceTurnMeters(allUnits) {
 }
 
 /**
+ * Process passive abilities based on trigger type.
+ */
+function processPassives(unit, trigger, context) {
+  const logs = [];
+  if (!unit.passive || !unit.alive) return logs;
+  if (unit.passive.trigger !== trigger) return logs;
+  if (unit.passive.usesLeft !== undefined && unit.passive.usesLeft <= 0) return logs;
+
+  const p = unit.passive;
+
+  if (trigger === PassiveTrigger.ON_TURN_START) {
+    if (p.effect === 'self_heal') {
+      const healAmount = Math.floor(unit.maxHP * (p.value || PASSIVE_HEAL_PERCENT));
+      if (unit.currentHP < unit.maxHP) {
+        unit.currentHP = Math.min(unit.maxHP, unit.currentHP + healAmount);
+        logs.push({ type: LogType.PASSIVE, unit: unit.name, passive: p.name, message: `${unit.name}'s ${p.name}: healed ${healAmount} HP` });
+      }
+    }
+    if (p.effect === 'cleanse_one') {
+      if (unit.debuffs.length > 0) {
+        const removed = unit.debuffs.shift();
+        logs.push({ type: LogType.PASSIVE, unit: unit.name, passive: p.name, message: `${unit.name}'s ${p.name}: cleansed ${formatEffect(removed.type)}` });
+      }
+    }
+  }
+
+  return logs;
+}
+
+/**
  * Execute a turn for a unit with a chosen skill and targets.
  * Returns an array of log entries.
  */
@@ -77,6 +112,10 @@ export function executeTurn(unit, skill, targets, allAllies, allEnemies) {
       unit.cooldowns[skillDef.id]--;
     }
   }
+
+  // Process turn-start passives
+  const passiveLogs = processPassives(unit, PassiveTrigger.ON_TURN_START, {});
+  logs.push(...passiveLogs);
 
   // Check stun
   if (isStunned(unit)) {
@@ -103,6 +142,12 @@ export function executeTurn(unit, skill, targets, allAllies, allEnemies) {
     case SkillType.DEBUFF:
       logs.push(...executeDebuffSkill(unit, skill, targets));
       break;
+    case SkillType.CLEANSE:
+      logs.push(...executeCleanseSkill(unit, skill, allAllies));
+      break;
+    case SkillType.STRIP:
+      logs.push(...executeStripSkill(unit, skill, targets));
+      break;
     default:
       logs.push(...executeDamageSkill(unit, skill, targets));
   }
@@ -115,24 +160,55 @@ function executeDamageSkill(attacker, skill, targets) {
   const aliveTargets = (targets || []).filter(t => t.alive);
 
   for (const target of aliveTargets) {
-    const { damage, isCrit, elementAdvantage } = calculateDamage(attacker, target, skill);
-    target.currentHP = Math.max(0, target.currentHP - damage);
+    const hits = skill.hits || 1;
+    let totalDamage = 0;
+    let lastCrit = false;
+    let lastElementAdv = 'neutral';
 
-    logs.push({
+    for (let h = 0; h < hits; h++) {
+      const { damage, isCrit, elementAdvantage } = calculateDamage(attacker, target, skill);
+      const hitDamage = h === 0 ? damage : Math.floor(damage * MULTI_HIT_DECAY);
+      totalDamage += hitDamage;
+      lastCrit = lastCrit || isCrit;
+      lastElementAdv = elementAdvantage;
+    }
+
+    // Apply conditional bonus (execute mechanic)
+    if (skill.condition && skill.condition.type === ConditionType.TARGET_BELOW_HP) {
+      if (target.currentHP / target.maxHP < (skill.condition.threshold || EXECUTE_THRESHOLD)) {
+        totalDamage = Math.floor(totalDamage * (skill.condition.bonusMultiplier || EXECUTE_BONUS_MULTIPLIER));
+      }
+    }
+
+    target.currentHP = Math.max(0, target.currentHP - totalDamage);
+
+    const damageLog = {
       type: LogType.DAMAGE,
       attacker: attacker.name,
       target: target.name,
       skill: skill.name,
-      damage,
-      isCrit,
-      elementAdvantage,
+      damage: totalDamage,
+      isCrit: lastCrit,
+      elementAdvantage: lastElementAdv,
       remainingHP: target.currentHP,
-    });
+    };
+    if (hits > 1) {
+      damageLog.hits = hits;
+    }
+    logs.push(damageLog);
 
     if (target.currentHP <= 0) {
       target.alive = false;
       target.currentHP = 0;
       logs.push({ type: LogType.DEATH, unit: target.name, message: `${target.name} has been defeated!` });
+
+      // Check for revive passive
+      if (target.passive && target.passive.trigger === PassiveTrigger.ON_RECEIVE_FATAL && (target.passive.usesLeft === undefined || target.passive.usesLeft > 0)) {
+        target.alive = true;
+        target.currentHP = Math.floor(target.maxHP * REVIVE_HP_PERCENT);
+        if (target.passive.usesLeft !== undefined) target.passive.usesLeft--;
+        logs.push({ type: LogType.REVIVE, unit: target.name, passive: target.passive.name, message: `${target.name}'s ${target.passive.name} triggers! Revived at ${target.currentHP} HP!` });
+      }
     }
 
     if (target.alive && skill.effectType) {
@@ -266,6 +342,38 @@ function executeDebuffSkill(attacker, skill, targets) {
     }
   }
 
+  return logs;
+}
+
+function executeCleanseSkill(caster, skill, allies) {
+  const logs = [];
+  const aliveAllies = (allies || []).filter(a => a.alive);
+  const count = skill.cleanseCount || 1;
+
+  for (const ally of aliveAllies) {
+    let removed = 0;
+    while (removed < count && ally.debuffs.length > 0) {
+      const d = ally.debuffs.shift();
+      logs.push({ type: LogType.CLEANSE, caster: caster.name, target: ally.name, effect: formatEffect(d.type), message: `${caster.name} cleanses ${formatEffect(d.type)} from ${ally.name}!` });
+      removed++;
+    }
+  }
+  return logs;
+}
+
+function executeStripSkill(caster, skill, targets) {
+  const logs = [];
+  const aliveTargets = (targets || []).filter(t => t.alive);
+  const count = skill.stripCount || 1;
+
+  for (const target of aliveTargets) {
+    let removed = 0;
+    while (removed < count && target.buffs.length > 0) {
+      const b = target.buffs.shift();
+      logs.push({ type: LogType.STRIP, caster: caster.name, target: target.name, effect: formatEffect(b.type), message: `${caster.name} strips ${formatEffect(b.type)} from ${target.name}!` });
+      removed++;
+    }
+  }
   return logs;
 }
 

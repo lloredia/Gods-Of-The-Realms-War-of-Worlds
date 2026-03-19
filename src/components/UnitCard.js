@@ -106,6 +106,20 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
         <span>SPD {unit.speed}</span>
       </div>
 
+      {/* Passive */}
+      {unit.passive && (
+        <div style={{
+          fontSize: 9,
+          color: unit.passive.usesLeft === 0 ? '#555' : '#80CBC4',
+          marginBottom: 4,
+          fontStyle: 'italic',
+        }}
+        title={unit.passive.description}
+        >
+          ✦ {unit.passive.name}{unit.passive.usesLeft === 0 ? ' (used)' : ''}
+        </div>
+      )}
+
       {/* Buffs & Debuffs */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         {unit.buffs.map((b, i) => (

@@ -43,3 +43,10 @@ export const AI_THINK_DELAY = 800;
 
 // --- Turn Order Display ---
 export const TURN_ORDER_DISPLAY_COUNT = 8;
+
+// --- Passive System ---
+export const REVIVE_HP_PERCENT = 0.25;         // Revive at 25% max HP
+export const PASSIVE_HEAL_PERCENT = 0.05;      // Turn start heal = 5% max HP
+export const EXECUTE_THRESHOLD = 0.30;         // Bonus damage when target below 30% HP
+export const EXECUTE_BONUS_MULTIPLIER = 1.5;   // 50% bonus damage on execute
+export const MULTI_HIT_DECAY = 0.6;            // Second hit deals 60% of first hit
