@@ -16,15 +16,17 @@ import { calculateDamage, calculateHeal } from './damageSystem';
 import { tryApplyEffect, applyBuff, tickEffects, isStunned, hasHealBlock, getEffectiveSpeed, formatEffect } from './effectSystem';
 import { applyTeamRelics } from './relicSystem';
 import { applyTeamProgression } from './progressionSystem';
+import { applyFactionBonuses } from './factionBonusSystem';
 
 /**
  * Deep clone units from templates so originals stay clean.
- * Applies progression scaling then relic bonuses after cloning.
+ * Applies progression → faction bonuses → relic bonuses after cloning.
  */
 export function initUnits(templates) {
   const units = templates.map(t => JSON.parse(JSON.stringify(t)));
-  applyTeamProgression(units);  // Level/star scaling first
-  applyTeamRelics(units);       // Then relic bonuses on top
+  applyTeamProgression(units);
+  applyFactionBonuses(units);
+  applyTeamRelics(units);
   return units;
 }
 

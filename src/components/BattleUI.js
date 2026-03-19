@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { initUnits, advanceTurnMeters, executeTurn, isTeamDefeated, getTurnOrder } from '../engine/battleEngine';
 import { isStunned } from '../engine/effectSystem';
 import { decideAction } from '../engine/aiSystem';
-import { teamATemplates, teamBTemplates } from '../data/units';
+import { teamATemplates, teamBTemplates, heroRoster } from '../data/units';
 import { BattlePhase, SkillTarget } from '../constants/enums';
 import { BATTLE_START_DELAY, TURN_TRANSITION_DELAY, AI_THINK_DELAY, TURN_ORDER_DISPLAY_COUNT } from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
@@ -15,7 +15,7 @@ import CombatLog from './CombatLog';
 
 const PHASE = BattlePhase;
 
-export default function BattleUI() {
+export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [phase, setPhase] = useState(PHASE.READY);
@@ -45,8 +45,23 @@ export default function BattleUI() {
     const seed = Date.now();
     setSeed(seed);
 
-    const a = initUnits(teamATemplates);
-    const b = initUnits(teamBTemplates);
+    const templates = playerTeam || teamATemplates;
+    const a = initUnits(templates);
+
+    // AI team: use provided enemyTeam, or random from roster, or default
+    let enemyTemplates;
+    if (enemyTeam) {
+      enemyTemplates = enemyTeam;
+    } else if (playerTeam) {
+      const playerIds = new Set(playerTeam.map(u => u.id));
+      const available = Object.values(heroRoster).filter(u => !playerIds.has(u.id));
+      const shuffled = [...available].sort(() => 0.5 - Math.random());
+      enemyTemplates = shuffled.slice(0, 4);
+    } else {
+      enemyTemplates = teamBTemplates;
+    }
+    const b = initUnits(enemyTemplates);
+
     stateRef.current = { teamA: a, teamB: b };
     setTeamA(a);
     setTeamB(b);
@@ -57,7 +72,7 @@ export default function BattleUI() {
 
     // Start first turn
     setTimeout(() => nextTurn(a, b), BATTLE_START_DELAY);
-  }, []);
+  }, [playerTeam, enemyTeam]);
 
   // --- Next Turn ---
   const nextTurn = useCallback((tA, tB) => {
@@ -184,8 +199,22 @@ export default function BattleUI() {
           GODS OF THE REALMS
         </h1>
         <div style={{ color: '#999', fontSize: 14, marginTop: 4, letterSpacing: 4, textTransform: 'uppercase' }}>
-          War of Worlds
+          {stageInfo ? stageInfo.name : 'War of Worlds'}
         </div>
+        {onExit && ((phase === PHASE.READY && teamA.length === 0) || phase === PHASE.BATTLE_OVER) && (
+          <button onClick={() => onExit(winner === 'Team A')} style={{
+            marginTop: 8,
+            padding: '6px 20px',
+            fontSize: 12,
+            backgroundColor: '#333',
+            color: '#ccc',
+            border: '1px solid #555',
+            borderRadius: 4,
+            cursor: 'pointer',
+          }}>
+            ← Back to Team Select
+          </button>
+        )}
         {phase === PHASE.READY && teamA.length === 0 && (
           <button
             onClick={startBattle}
