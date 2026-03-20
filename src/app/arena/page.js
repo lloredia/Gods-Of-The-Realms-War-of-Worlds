@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
 
@@ -102,10 +102,15 @@ const DIFFICULTY_COLORS = {
 export default function ArenaPage() {
   const [arenaPoints, setArenaPoints] = useState(500);
   const [phase, setPhase] = useState('browse'); // 'browse' | 'select' | 'battle'
-  const [opponents, setOpponents] = useState(() => generateOpponents());
+  const [opponents, setOpponents] = useState([]);
   const [chosenOpponent, setChosenOpponent] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
   const [lastResult, setLastResult] = useState(null);
+
+  // Generate opponents client-side only to avoid hydration mismatch
+  useEffect(() => {
+    setOpponents(generateOpponents());
+  }, []);
 
   const tier = getTier(arenaPoints);
   const tierColor = TIER_COLORS[tier];
