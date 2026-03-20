@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { simulateSummon } from '../../data/summonPool';
 import { heroRoster } from '../../data/units';
+import { SFX, resumeAudio } from '../../utils/soundSystem';
 
 const STAR_COLORS = { 3: '#9E9E9E', 4: '#FFD700', 5: '#FF4444' };
 const ELEMENT_COLORS = { Storm: '#6B5CE7', Ocean: '#2196F3', Underworld: '#8B0000', Sun: '#FF9800', Moon: '#9C27B0' };
@@ -13,7 +14,9 @@ export default function SummonPage() {
   const [animating, setAnimating] = useState(false);
 
   const doSummon = (count) => {
+    resumeAudio();
     setAnimating(true);
+    SFX.summon();
     const pulls = [];
     for (let i = 0; i < count; i++) {
       const result = simulateSummon();
@@ -27,6 +30,12 @@ export default function SummonPage() {
       setLatest(pulls);
       setResults(prev => [...pulls, ...prev].slice(0, 50));
       setAnimating(false);
+      const hasFiveStar = pulls.some(p => p.stars >= 5);
+      if (hasFiveStar) {
+        SFX.crit();
+      } else {
+        SFX.click();
+      }
     }, 800);
   };
 

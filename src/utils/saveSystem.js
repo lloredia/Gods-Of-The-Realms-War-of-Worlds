@@ -4,7 +4,7 @@
 const SAVE_KEY = 'gotr_save_data';
 
 const DEFAULT_SAVE = {
-  ownedHeroes: ['zeus', 'poseidon', 'morganLeFay', 'susanoo', 'hades', 'apollo', 'ra', 'freya', 'loki', 'cuChulainn', 'thor', 'anubis', 'bastet', 'amaterasu'],
+  ownedHeroes: ['zeus', 'poseidon', 'morganLeFay', 'susanoo', 'hades', 'apollo', 'ra', 'freya', 'loki', 'cuChulainn', 'thor', 'anubis', 'bastet', 'amaterasu', 'athena', 'ares', 'odin', 'fenrir', 'isis', 'set', 'merlin', 'nimue', 'tsukuyomi', 'raijin', 'izanami', 'benzaiten'],
   selectedTeam: ['zeus', 'poseidon', 'morganLeFay', 'susanoo'],
   heroData: {}, // overrides per hero: { zeus: { level: 35, stars: 5, awakened: true, relicSet: 'wrath' } }
   resources: { gold: 50000, essences: 100, awakenStones: 20 },

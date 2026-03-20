@@ -21,9 +21,11 @@ export const SUMMON_POOL = {
   ],
   4: [
     'zeus', 'poseidon', 'thor', 'freya', 'anubis', 'ra', 'morganLeFay', 'cuChulainn',
+    'athena', 'isis', 'nimue', 'raijin', 'benzaiten',
   ],
   5: [
     'hades', 'apollo', 'loki', 'bastet', 'susanoo', 'amaterasu',
+    'ares', 'odin', 'fenrir', 'set', 'merlin', 'tsukuyomi', 'izanami',
   ],
 };
 

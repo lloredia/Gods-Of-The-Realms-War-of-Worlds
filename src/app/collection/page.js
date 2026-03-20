@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { heroRoster } from '../../data/units';
 import factions from '../../data/factions';
 import { formatEffect } from '../../engine/effectSystem';
+import relics from '../../data/relics';
+import { SFX, resumeAudio } from '../../utils/soundSystem';
 
 const ELEMENT_COLORS = {
   Storm: '#6B5CE7', Ocean: '#2196F3', Underworld: '#8B0000', Sun: '#FF9800', Moon: '#9C27B0',
@@ -14,6 +16,8 @@ const ROLE_COLORS = {
 
 export default function CollectionPage() {
   const [filter, setFilter] = useState('All');
+  const [relicPickerFor, setRelicPickerFor] = useState(null);
+  const [heroRelics, setHeroRelics] = useState({});
   const allHeroes = Object.values(heroRoster);
   const factionNames = ['All', ...Object.values(factions).map(f => f.name)];
 
@@ -49,6 +53,8 @@ export default function CollectionPage() {
         {filtered.map(hero => {
           const elemColor = ELEMENT_COLORS[hero.element] || '#666';
           const roleColor = ROLE_COLORS[hero.role] || '#888';
+          const currentRelicId = heroRelics[hero.id] || hero.relicSet || null;
+          const currentRelicName = currentRelicId && relics[currentRelicId] ? relics[currentRelicId].name : 'None';
           return (
             <div key={hero.id} style={{
               padding: 14, borderRadius: 8, backgroundColor: '#1a1a2e',
@@ -76,9 +82,27 @@ export default function CollectionPage() {
               {hero.passive && (
                 <div style={{ fontSize: 9, color: '#80CBC4', fontStyle: 'italic' }}>✦ {hero.passive.name}</div>
               )}
-              {hero.relicSet && (
-                <div style={{ fontSize: 9, color: '#CE93D8', marginTop: 2 }}>◈ {hero.relicSet.charAt(0).toUpperCase() + hero.relicSet.slice(1)} Set</div>
-              )}
+              {/* Relic equip */}
+              <div style={{ marginTop: 6, borderTop: '1px solid #222', paddingTop: 6 }}>
+                <button onClick={(e) => { e.stopPropagation(); resumeAudio(); setRelicPickerFor(relicPickerFor === hero.id ? null : hero.id); }}
+                  style={{ fontSize: 10, backgroundColor: '#222', color: '#aaa', border: '1px solid #333', borderRadius: 4, padding: '3px 8px', cursor: 'pointer', width: '100%' }}>
+                  ◈ {currentRelicName} Set — Change
+                </button>
+                {relicPickerFor === hero.id && (
+                  <div style={{ marginTop: 4, backgroundColor: '#111', borderRadius: 4, padding: 6, border: '1px solid #333' }}>
+                    {Object.values(relics).map(relic => (
+                      <div key={relic.id} onClick={() => { SFX.click(); setHeroRelics(prev => ({...prev, [hero.id]: relic.id})); setRelicPickerFor(null); }}
+                        style={{ padding: '4px 6px', cursor: 'pointer', borderRadius: 3, marginBottom: 2, fontSize: 10,
+                          backgroundColor: (heroRelics[hero.id] || hero.relicSet) === relic.id ? '#2a2a4a' : 'transparent',
+                          color: relic.color, borderLeft: `2px solid ${relic.color}` }}>
+                        <div style={{ fontWeight: 'bold' }}>{relic.name}</div>
+                        <div style={{ color: '#777', fontSize: 9 }}>2pc: {relic.twoPiece.stat} +{Math.round(relic.twoPiece.value * 100)}%</div>
+                        <div style={{ color: '#777', fontSize: 9 }}>4pc: {relic.fourPiece.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
