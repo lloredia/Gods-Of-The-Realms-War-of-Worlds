@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: '/collection', label: 'COLLECTION' },
   { href: '/summon', label: 'SUMMON' },
   { href: '/campaign', label: 'CAMPAIGN' },
+  { href: '/arena', label: 'ARENA' },
 ];
 
 export default function NavBar() {
