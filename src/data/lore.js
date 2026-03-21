@@ -198,6 +198,83 @@ const lore = {
     lore: 'Inari is the enigmatic god of rice, prosperity, and foxes, served by legions of kitsune messengers who walk unseen among mortals. Shrines to Inari outnumber those of any other kami, for abundance and cunning are always in demand. In the War of Worlds, a thousand fox-fires light the path to victory.',
     quote: '"Pray at my gate and I will answer — but foxes always name their price."',
   },
+
+  // ── Creatures ─────────────────────────────────────────────────────
+  goblin: {
+    title: 'Cave Skulker',
+    lore: 'Goblins infest the forgotten tunnels beneath every realm, scavenging weapons from fallen warriors and ambushing anything smaller than themselves. They are cowardly alone but dangerous in swarms. The War of Worlds has driven them to the surface in desperate, hungry packs.',
+    quote: '"Shiny things! Pointy things! Ours now!"',
+  },
+  skeleton: {
+    title: 'Restless Bones',
+    lore: 'Skeletons rise where death magic seeps into ancient battlefields, hollow echoes of warriors who forgot how to stop fighting. They feel no pain, know no fear, and obey whatever dark will animates their bones. In the War of Worlds, the dead outnumber the living.',
+    quote: '"..."',
+  },
+  slime: {
+    title: 'Primordial Ooze',
+    lore: 'Slimes are the simplest and most ancient creatures, born from the raw magical residue that pools in forgotten dungeons and cursed swamps. They dissolve everything they touch and split when struck hard enough. The War of Worlds has supercharged the ambient magic, and slimes are thriving.',
+    quote: '"*glorp*"',
+  },
+  imp: {
+    title: 'Infernal Pest',
+    lore: 'Imps are the lowest rank of the demonic hierarchy, too weak to command respect but too cunning to ignore. They delight in sabotage, stolen trinkets, and setting things on fire when no one is looking. The War of Worlds is the most entertainment they have had in centuries.',
+    quote: '"Hehehe... was that important? Too bad!"',
+  },
+  bat: {
+    title: 'Shadow Wing',
+    lore: 'Giant bats haunt the borderlands between the living world and the Underworld, feeding on the spiritual energy that bleeds between realms. Their shrieks disorient prey and their fangs drain vitality. The War of Worlds has torn open enough rifts to make them bold.',
+    quote: '"*screeeech*"',
+  },
+  wolf: {
+    title: 'Storm Howler',
+    lore: 'Storm wolves are descendants of Fenrir, lesser beasts touched by divine fury that hunt in packs across frozen tundras and lightning-scarred plains. Their howls summon gales and their bite carries the chill of Niflheim. The War of Worlds has made them bolder and hungrier.',
+    quote: '"The pack hunts. The pack feeds. The pack endures."',
+  },
+  serpent: {
+    title: 'Abyssal Coil',
+    lore: 'Sea serpents dwell in the lightless trenches of the deep ocean, ancient creatures that predate the gods themselves. Their venom corrodes divine armor and their coils can crush warships. The War of Worlds has disturbed their slumber, and they are not pleased.',
+    quote: '"The deep remembers a time before your gods. We were here first."',
+  },
+  wraith: {
+    title: 'Faded Spirit',
+    lore: 'Wraiths are souls that refused to pass on, clinging to the mortal world through rage, regret, or unfinished vengeance. They drift through walls, drain warmth from the living, and whisper secrets that drive mortals mad. The War of Worlds has given them purpose again.',
+    quote: '"I was someone once. Now I am the cold that finds you in the dark."',
+  },
+  harpy: {
+    title: 'Stormborne Screecher',
+    lore: 'Harpies nest on the highest cliffs where thunder meets the sky, winged terrors with razor talons and voices that shatter stone. Zeus once sent them as punishment; now they serve no master. The War of Worlds is simply more prey on the wind.',
+    quote: '"The sky belongs to those with wings. You are trespassing."',
+  },
+  golem: {
+    title: 'Earthbound Sentinel',
+    lore: 'Golems are crafted from stone, clay, or metal by sorcerers who needed tireless guardians. They obey their last command until they crumble, feeling nothing, fearing nothing, stopping for nothing. The War of Worlds has activated golems whose creators died millennia ago.',
+    quote: '"PROTECT. DESTROY. OBEY."',
+  },
+  minotaur: {
+    title: 'Labyrinth Beast',
+    lore: 'Minotaurs are the cursed offspring of divine punishment, half-bull titans of rage who dwell in endless mazes of their own making. Their charge can shatter fortress walls and their fury knows no exhaustion. The War of Worlds has collapsed the walls of their prisons.',
+    quote: '"There is no maze I cannot break. There is no wall I cannot gore."',
+  },
+  chimera: {
+    title: 'Three-Headed Horror',
+    lore: 'The chimera is an abomination of lion, goat, and serpent fused by ancient sorcery into a single engine of destruction. Each head thinks independently, creating an unpredictable predator that can attack from three angles simultaneously. The War of Worlds breeds monsters, and none more fearsome.',
+    quote: '"We are three. We are one. We are hungry."',
+  },
+  hydra: {
+    title: 'The Deathless Serpent',
+    lore: 'For every head severed, the hydra grows two more — a lesson Heracles learned in the swamps of Lerna. These regenerating horrors guard cursed waterways and poisoned springs, growing stronger with every wound. The War of Worlds has spawned hydras of unprecedented size.',
+    quote: '"Cut me down. I dare you. I will return doubled."',
+  },
+  phoenix_chick: {
+    title: 'Ember Hatchling',
+    lore: 'Phoenix chicks are newly reborn from the ashes of their predecessors, still learning to command the sacred flames that will one day make them immortal. They are fragile but fiercely loyal, and their warmth can mend wounds. The War of Worlds has hatched an entire generation prematurely.',
+    quote: '"I have died before. It was not so bad. Watch me rise."',
+  },
+  shadow_sprite: {
+    title: 'Twilight Trickster',
+    lore: 'Shadow sprites are mischievous fae born at the exact moment between sunset and darkness, creatures of half-light who exist in the spaces between things. They steal memories, swap faces, and lead travelers in circles. The War of Worlds has made the shadows deeper and the sprites bolder.',
+    quote: '"Was that your thought, or mine? Hard to tell in the dark."',
+  },
 };
 
 export default lore;
