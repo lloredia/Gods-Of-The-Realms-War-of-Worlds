@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
 import { loadSave, updateSave } from '../../utils/saveSystem';
+import { getTeamWithSave } from '../../utils/heroUtils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -234,7 +235,7 @@ export default function EndlessPage() {
   // =========================================================================
 
   if (phase === 'battle') {
-    const playerTeam = selectedIds.map(id => heroRoster[id]);
+    const playerTeam = getTeamWithSave(selectedIds);
     const glowColor = getWaveGlowColor(wave);
 
     return (

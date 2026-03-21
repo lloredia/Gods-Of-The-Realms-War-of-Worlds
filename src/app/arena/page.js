@@ -6,6 +6,7 @@ import BattleUI from '../../components/BattleUI';
 import { loadSave, updateSave } from '../../utils/saveSystem';
 import { checkArenaAchievements, checkBattleAchievements } from '../../utils/achievementTracker';
 import AchievementToast from '../../components/AchievementToast';
+import { getTeamWithSave } from '../../utils/heroUtils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -214,7 +215,7 @@ export default function ArenaPage() {
   // =========================================================================
 
   if (phase === 'battle') {
-    const playerTeam = selectedIds.map(id => heroRoster[id]);
+    const playerTeam = getTeamWithSave(selectedIds);
     const enemyTeam = chosenOpponent.team;
     return <BattleUI playerTeam={playerTeam} enemyTeam={enemyTeam} onExit={handleBattleExit} />;
   }

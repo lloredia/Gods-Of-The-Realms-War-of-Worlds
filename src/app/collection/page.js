@@ -25,7 +25,16 @@ export default function CollectionPage() {
   const allHeroes = Object.values(heroRoster);
 
   useEffect(() => {
-    setSave(loadSave());
+    const s = loadSave();
+    setSave(s);
+    // Load persisted relic assignments from heroData
+    const relicMap = {};
+    if (s.heroData) {
+      for (const [heroId, data] of Object.entries(s.heroData)) {
+        if (data.relicSet) relicMap[heroId] = data.relicSet;
+      }
+    }
+    setHeroRelics(relicMap);
   }, []);
 
   // Merge save heroData overrides into hero object
@@ -152,7 +161,7 @@ export default function CollectionPage() {
                 {relicPickerFor === hero.id && (
                   <div style={{ marginTop: 4, backgroundColor: '#111', borderRadius: 4, padding: 6, border: '1px solid #333' }}>
                     {Object.values(relics).map(relic => (
-                      <div key={relic.id} onClick={() => { SFX.click(); setHeroRelics(prev => ({...prev, [hero.id]: relic.id})); setRelicPickerFor(null); }}
+                      <div key={relic.id} onClick={() => { SFX.click(); const newRelics = { ...heroRelics, [hero.id]: relic.id }; setHeroRelics(newRelics); setRelicPickerFor(null); const sv = loadSave(); const heroData = sv.heroData || {}; heroData[hero.id] = { ...(heroData[hero.id] || {}), relicSet: relic.id }; updateSave({ heroData }); }}
                         style={{ padding: '4px 6px', cursor: 'pointer', borderRadius: 3, marginBottom: 2, fontSize: 10,
                           backgroundColor: (heroRelics[hero.id] || hero.relicSet) === relic.id ? '#2a2a4a' : 'transparent',
                           color: relic.color, borderLeft: `2px solid ${relic.color}` }}>

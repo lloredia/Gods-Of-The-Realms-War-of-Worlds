@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
 import TeamPresets from '../../components/TeamPresets';
+import { getTeamWithSave } from '../../utils/heroUtils';
 
 const ELEMENT_COLORS = {
   Storm: '#6B5CE7',
@@ -35,7 +36,7 @@ export default function BattlePage() {
   };
 
   if (inBattle) {
-    const selectedTemplates = selectedIds.map(id => heroRoster[id]);
+    const selectedTemplates = getTeamWithSave(selectedIds);
     return <BattleUI playerTeam={selectedTemplates} onExit={() => setInBattle(false)} />;
   }
 

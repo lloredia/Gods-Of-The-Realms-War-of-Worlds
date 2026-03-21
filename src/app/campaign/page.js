@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
 import { loadSave, updateSave } from '../../utils/saveSystem';
+import { getTeamWithSave, getAllHeroesWithSave } from '../../utils/heroUtils';
 
 const STAGES = [
   { id: 1, name: 'Gates of Olympus', enemies: ['zeus', 'poseidon'], difficulty: 'Easy', desc: 'Face the lesser guardians.' },
@@ -26,8 +27,26 @@ const DIFFICULTY_COLORS = {
   'Legendary': '#FFD700',
 };
 
+const ELEMENT_COLORS = {
+  Storm: '#6B5CE7',
+  Ocean: '#2196F3',
+  Underworld: '#8B0000',
+  Sun: '#FF9800',
+  Moon: '#9C27B0',
+};
+
+const ROLE_COLORS = {
+  Attacker: '#F44336',
+  Tank: '#2196F3',
+  Support: '#4CAF50',
+  Bruiser: '#FF9800',
+  Debuffer: '#9C27B0',
+};
+
 export default function CampaignPage() {
   const [selectedStage, setSelectedStage] = useState(null);
+  const [selectingTeam, setSelectingTeam] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [highestCleared, setHighestCleared] = useState(0);
 
   // Persist campaign progress
@@ -36,9 +55,13 @@ export default function CampaignPage() {
     if (save.campaignStage !== undefined) setHighestCleared(save.campaignStage);
   }, []);
 
-  if (selectedStage) {
+  // =========================================================================
+  // RENDER — Battle Phase
+  // =========================================================================
+
+  if (selectedStage && !selectingTeam) {
     const stage = STAGES.find(s => s.id === selectedStage);
-    const enemyTemplates = stage.enemies.map(id => heroRoster[id]).filter(Boolean);
+    const enemyTemplates = getTeamWithSave(stage.enemies);
 
     const finalEnemies = stage.boss
       ? enemyTemplates.map(e => ({
@@ -50,9 +73,11 @@ export default function CampaignPage() {
         }))
       : enemyTemplates;
 
+    const playerTeam = getTeamWithSave(selectedIds);
+
     return (
       <BattleUI
-        playerTeam={null}
+        playerTeam={playerTeam}
         enemyTeam={finalEnemies}
         onExit={(won) => {
           if (won && selectedStage > highestCleared) {
@@ -60,9 +85,179 @@ export default function CampaignPage() {
             updateSave({ campaignStage: selectedStage });
           }
           setSelectedStage(null);
+          setSelectingTeam(false);
+          setSelectedIds([]);
         }}
         stageInfo={stage}
       />
+    );
+  }
+
+  // =========================================================================
+  // RENDER — Team Select Phase
+  // =========================================================================
+
+  if (selectingTeam && selectedStage) {
+    const stage = STAGES.find(s => s.id === selectedStage);
+    const diffColor = DIFFICULTY_COLORS[stage.difficulty] || '#888';
+    const allHeroes = getAllHeroesWithSave();
+
+    const toggleHero = (heroId) => {
+      setSelectedIds(prev => {
+        if (prev.includes(heroId)) return prev.filter(id => id !== heroId);
+        if (prev.length >= 4) return prev;
+        return [...prev, heroId];
+      });
+    };
+
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#0a0a1a', color: '#eee', padding: 20 }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <h1 style={{ fontSize: 24, color: '#FFD700', margin: 0 }}>CAMPAIGN — SELECT YOUR TEAM</h1>
+          <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>
+            Choose 4 heroes for <span style={{ color: diffColor, fontWeight: 'bold' }}>{stage.name}</span> ({selectedIds.length}/4)
+          </p>
+          <button
+            onClick={() => { setSelectingTeam(false); setSelectedStage(null); setSelectedIds([]); }}
+            style={{
+              marginTop: 8,
+              padding: '6px 20px',
+              fontSize: 12,
+              backgroundColor: '#333',
+              color: '#ccc',
+              border: '1px solid #555',
+              borderRadius: 4,
+              cursor: 'pointer',
+            }}
+          >
+            Back to Stages
+          </button>
+        </div>
+
+        {/* Stage Info */}
+        <div style={{
+          maxWidth: 900,
+          margin: '0 auto 16px',
+          padding: 12,
+          backgroundColor: '#111',
+          borderRadius: 8,
+          border: '1px solid #333',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <span style={{ fontSize: 14, fontWeight: 'bold', color: '#eee' }}>
+              Stage {stage.id}: {stage.name}
+            </span>
+            <span style={{
+              fontSize: 10, fontWeight: 'bold', color: diffColor,
+              border: `1px solid ${diffColor}`, borderRadius: 4, padding: '2px 8px',
+            }}>
+              {stage.difficulty}
+            </span>
+          </div>
+          <div style={{ fontSize: 11, color: '#777', marginBottom: 6 }}>{stage.desc}</div>
+          <div style={{ fontSize: 12, color: '#888', marginBottom: 4 }}>ENEMIES:</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {stage.enemies.map(id => {
+              const h = heroRoster[id];
+              if (!h) return null;
+              return (
+                <span key={id} style={{
+                  fontSize: 11,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  backgroundColor: '#1a1a2e',
+                  color: ELEMENT_COLORS[h.element] || '#aaa',
+                  border: `1px solid ${ELEMENT_COLORS[h.element] || '#333'}`,
+                }}>
+                  {h.name} ({h.role})
+                </span>
+              );
+            })}
+            {stage.boss && (
+              <span style={{ fontSize: 10, color: '#F44336', border: '1px solid #F44336', borderRadius: 3, padding: '2px 6px', marginLeft: 'auto', alignSelf: 'center' }}>BOSS</span>
+            )}
+          </div>
+        </div>
+
+        {/* Hero Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gap: 10,
+          maxWidth: 900,
+          margin: '0 auto 20px',
+        }}>
+          {allHeroes.map(hero => {
+            const isSelected = selectedIds.includes(hero.id);
+            const elementColor = ELEMENT_COLORS[hero.element] || '#666';
+            const roleColor = ROLE_COLORS[hero.role] || '#888';
+
+            return (
+              <div
+                key={hero.id}
+                onClick={() => toggleHero(hero.id)}
+                style={{
+                  padding: 12,
+                  borderRadius: 8,
+                  borderTop: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderRight: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderBottom: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderLeft: `3px solid ${roleColor}`,
+                  backgroundColor: isSelected ? '#1a1a3e' : '#1a1a2e',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  boxShadow: isSelected ? '0 0 10px rgba(255,215,0,0.3)' : 'none',
+                  opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>{hero.name}</span>
+                  <span style={{ fontSize: 10, color: elementColor, border: `1px solid ${elementColor}`, borderRadius: 3, padding: '1px 4px' }}>
+                    {hero.element}
+                  </span>
+                </div>
+                <div style={{ fontSize: 9, color: '#FFD740', marginBottom: 3 }}>
+                  {'★'.repeat(hero.stars || 4)} Lv{hero.level || 1}
+                </div>
+                <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}>
+                  <span>{hero.faction}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#777' }}>
+                  <span style={{ color: roleColor }}>{hero.role}</span>
+                  <span>ATK {hero.attack}</span>
+                  <span>SPD {hero.speed}</span>
+                </div>
+                {isSelected && (
+                  <div style={{ fontSize: 10, color: '#FFD700', marginTop: 4, textAlign: 'center', fontWeight: 'bold' }}>
+                    SELECTED
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Start Battle Button */}
+        <div style={{ textAlign: 'center' }}>
+          <button
+            onClick={() => { if (selectedIds.length === 4) setSelectingTeam(false); }}
+            disabled={selectedIds.length !== 4}
+            style={{
+              padding: '12px 40px',
+              fontSize: 16,
+              fontWeight: 'bold',
+              backgroundColor: selectedIds.length === 4 ? '#FFD700' : '#333',
+              color: selectedIds.length === 4 ? '#000' : '#666',
+              border: 'none',
+              borderRadius: 8,
+              cursor: selectedIds.length === 4 ? 'pointer' : 'not-allowed',
+            }}
+          >
+            START BATTLE
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -84,7 +279,7 @@ export default function CampaignPage() {
           return (
             <div
               key={stage.id}
-              onClick={() => isUnlocked && setSelectedStage(stage.id)}
+              onClick={() => { if (isUnlocked) { setSelectedStage(stage.id); setSelectingTeam(true); setSelectedIds([]); } }}
               style={{
                 padding: 14,
                 marginBottom: 8,

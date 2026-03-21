@@ -41,6 +41,30 @@ const MENU_ITEMS = [
     border: '#1e3a8a',
     icon: '\uD83D\uDDFA\uFE0F',
   },
+  {
+    href: '/arena',
+    title: 'ARENA',
+    desc: 'Challenge rival summoners in ranked PvP combat.',
+    gradient: 'linear-gradient(135deg, #1a0a1a 0%, #2e0c3d 100%)',
+    border: '#9C27B0',
+    icon: '🏆',
+  },
+  {
+    href: '/endless',
+    title: 'ENDLESS',
+    desc: 'Survive endless waves of enemies. How far can you go?',
+    gradient: 'linear-gradient(135deg, #1a0a0a 0%, #3d1a0c 100%)',
+    border: '#FF5722',
+    icon: '♾️',
+  },
+  {
+    href: '/faction-wars',
+    title: 'FACTION WARS',
+    desc: 'Champion your faction in the weekly war for supremacy.',
+    gradient: 'linear-gradient(135deg, #0a1a1a 0%, #0c2e3d 100%)',
+    border: '#00BCD4',
+    icon: '⚔️',
+  },
 ];
 
 export default function Home() {
@@ -116,7 +140,7 @@ export default function Home() {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
         gap: 20,
-        maxWidth: 640,
+        maxWidth: 960,
         width: '100%',
       }}>
         {MENU_ITEMS.map(item => (

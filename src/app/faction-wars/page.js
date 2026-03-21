@@ -130,8 +130,8 @@ export default function FactionWarsPage() {
     return getHeroesByFaction(factions[state.chosenFaction].name);
   }, [state?.chosenFaction]);
 
-  // All heroes not in chosen faction (for wildcard)
-  const wildcardHeroes = useMemo(() => {
+  // All heroes not in chosen faction (for filling remaining slots)
+  const otherHeroes = useMemo(() => {
     if (!state?.chosenFaction) return [];
     const fName = factions[state.chosenFaction].name;
     return Object.values(heroRoster).filter(u => u.faction !== fName);
@@ -154,27 +154,43 @@ export default function FactionWarsPage() {
     setRivalTeams(generateRivalTeams(factionKey));
   }, [state]);
 
+  // Total selected count across faction + other heroes
+  const totalSelected = selectedHeroes.length + (wildcardHero ? 1 : 0);
+  const factionCount = selectedHeroes.length;
+
   const handleHeroToggle = useCallback((hero) => {
     setSelectedHeroes(prev => {
       const exists = prev.some(h => h.id === hero.id);
       if (exists) return prev.filter(h => h.id !== hero.id);
-      if (prev.length >= 3) return prev; // Max 3 faction heroes (+ 1 wildcard = 4)
+      // Allow up to 4 faction heroes, but total team (faction + wildcard) capped at 4
+      const currentTotal = prev.length + (wildcardHero ? 1 : 0);
+      if (currentTotal >= 4) return prev;
       return [...prev, hero];
     });
-  }, []);
+  }, [wildcardHero]);
 
   const handleWildcardSelect = useCallback((hero) => {
-    setWildcardHero(prev => prev?.id === hero.id ? null : hero);
-  }, []);
+    setWildcardHero(prev => {
+      if (prev?.id === hero.id) return null; // deselect
+      // Check if adding would exceed 4 total
+      const currentTotal = selectedHeroes.length + (prev ? 1 : 0);
+      if (!prev && selectedHeroes.length >= 4) return prev; // already full with faction heroes
+      return hero;
+    });
+  }, [selectedHeroes.length]);
 
   const handleStartBattle = useCallback((rival) => {
     const team = [...selectedHeroes];
     if (wildcardHero) team.push(wildcardHero);
-    if (team.length === 0) return;
+    if (team.length !== 4) return;
+    // Validate at least 2 faction heroes
+    const fName = factions[state.chosenFaction].name;
+    const factionHeroCount = team.filter(h => h.faction === fName).length;
+    if (factionHeroCount < 2) return;
     setPlayerTeam(team);
     setSelectedRival(rival);
     setPhase('battle');
-  }, [selectedHeroes, wildcardHero]);
+  }, [selectedHeroes, wildcardHero, state?.chosenFaction]);
 
   const handleBattleExit = useCallback((playerWon) => {
     if (!state) return;
@@ -344,12 +360,12 @@ export default function FactionWarsPage() {
           </div>
 
           {/* Select heroes */}
-          <h2 style={styles.sectionTitle}>Select Your Team (3 faction + 1 wildcard)</h2>
+          <h2 style={styles.sectionTitle}>Select 4 heroes (at least 2 from your faction)</h2>
 
           {/* Faction heroes */}
           <div style={{ marginBottom: 20 }}>
             <h3 style={{ color: chosenFaction.color, fontSize: 13, marginBottom: 8, letterSpacing: 1 }}>
-              {chosenFaction.name} HEROES ({selectedHeroes.length}/3)
+              {chosenFaction.name} HEROES ({selectedHeroes.length} selected)
             </h3>
             <div style={styles.heroGrid}>
               {factionHeroes.map(hero => {
@@ -387,10 +403,10 @@ export default function FactionWarsPage() {
           {/* Wildcard */}
           <div style={{ marginBottom: 24 }}>
             <h3 style={{ color: '#FFD700', fontSize: 13, marginBottom: 8, letterSpacing: 1 }}>
-              WILDCARD ({wildcardHero ? '1' : '0'}/1)
+              OTHER FACTIONS ({wildcardHero ? '1' : '0'} selected)
             </h3>
             <div style={styles.heroGrid}>
-              {wildcardHeroes.map(hero => {
+              {otherHeroes.map(hero => {
                 const selected = wildcardHero?.id === hero.id;
                 const heroFactionKey = FACTION_NAME_TO_KEY[hero.faction];
                 const heroFaction = heroFactionKey ? factions[heroFactionKey] : null;
@@ -455,14 +471,18 @@ export default function FactionWarsPage() {
                 </div>
                 <button
                   onClick={() => handleStartBattle(rival)}
-                  disabled={selectedHeroes.length === 0}
+                  disabled={totalSelected !== 4 || factionCount < 2}
                   style={{
                     ...styles.battleButton,
-                    opacity: selectedHeroes.length === 0 ? 0.4 : 1,
-                    cursor: selectedHeroes.length === 0 ? 'not-allowed' : 'pointer',
+                    opacity: (totalSelected !== 4 || factionCount < 2) ? 0.4 : 1,
+                    cursor: (totalSelected !== 4 || factionCount < 2) ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  BATTLE
+                  {totalSelected !== 4
+                    ? `BATTLE (${totalSelected}/4 selected)`
+                    : factionCount < 2
+                      ? `BATTLE (need ${2 - factionCount} more faction hero${2 - factionCount > 1 ? 'es' : ''})`
+                      : 'BATTLE'}
                 </button>
               </div>
             ))}

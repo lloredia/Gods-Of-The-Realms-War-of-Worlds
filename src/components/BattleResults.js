@@ -1,7 +1,9 @@
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import HeroPortrait from './HeroPortrait';
+import { loadSave, updateSave } from '../utils/saveSystem';
+import { checkBattleAchievements } from '../utils/achievementTracker';
 
 // Inject keyframes once
 let resultsStylesInjected = false;
@@ -79,12 +81,29 @@ function computeRewards(turnCount, isVictory) {
 
 export default function BattleResults({ winner, teamA, teamB, logs, turnCount, onClose }) {
   const [visible, setVisible] = useState(false);
+  const savedRef = useRef(false);
 
   useEffect(() => {
     injectResultsStyles();
     // Trigger entrance after mount
     const t = setTimeout(() => setVisible(true), 50);
     return () => clearTimeout(t);
+  }, []);
+
+  // Persist rewards and battle stats to save data exactly once
+  useEffect(() => {
+    if (savedRef.current) return;
+    savedRef.current = true;
+    const save = loadSave();
+    if (winner === 'Team A') {
+      const rewards = computeRewards(turnCount, true);
+      save.resources.gold = (save.resources.gold || 0) + rewards.gold;
+      save.stats.battlesWon = (save.stats.battlesWon || 0) + 1;
+    } else {
+      save.stats.battlesLost = (save.stats.battlesLost || 0) + 1;
+    }
+    updateSave(save);
+    checkBattleAchievements(winner === 'Team A', save.stats);
   }, []);
 
   const isVictory = winner === 'Team A';
