@@ -29,6 +29,20 @@ export function getSeed() {
 }
 
 /**
+ * Get the current internal RNG state for replay snapshots.
+ */
+export function getState() {
+  return _state;
+}
+
+/**
+ * Restore a previously captured RNG state (for replay).
+ */
+export function setState(state) {
+  _state = state;
+}
+
+/**
  * Generate a random float in [0, 1). Uses seeded RNG if seed is set, otherwise Math.random().
  * Drop-in replacement for Math.random().
  */

@@ -23,8 +23,9 @@ export function tryApplyEffect(skill, caster, target) {
   const resistChance = target.resistance;
   const finalChance = Math.max(MIN_RESIST_CHANCE, hitChance - resistChance);
 
-  if (random() > finalChance) {
-    return { applied: false, resisted: true, effectType: skill.effectType };
+  const roll = random();
+  if (roll > finalChance) {
+    return { applied: false, resisted: true, effectType: skill.effectType, roll, threshold: finalChance };
   }
 
   // Check immunity — only blocks debuffs
@@ -55,7 +56,7 @@ export function tryApplyEffect(skill, caster, target) {
     }
   }
 
-  return { applied: true, effectType: skill.effectType };
+  return { applied: true, effectType: skill.effectType, roll, threshold: finalChance };
 }
 
 /**

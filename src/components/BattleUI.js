@@ -15,6 +15,7 @@ import SkillButtons from './SkillButtons';
 import CombatLog from './CombatLog';
 import BattleResults from './BattleResults';
 import SkillEffect from './SkillEffect';
+import HeroPortrait from './HeroPortrait';
 
 const PHASE = BattlePhase;
 
@@ -32,6 +33,9 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
   const [battleSpeed, setBattleSpeed] = useState(1);
   const [animations, setAnimations] = useState({});
   const [skillEffect, setSkillEffect] = useState(null);
+  const [screenShake, setScreenShake] = useState(false);
+  const [impactFlash, setImpactFlash] = useState(false);
+  const [damageNumbers, setDamageNumbers] = useState({});
 
   // Ref for mutable state in callbacks
   const stateRef = useRef({ teamA: [], teamB: [] });
@@ -80,6 +84,16 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
       if (log.type === 'damage' || log.type === 'multi_hit') {
         if (attackerId) triggerAnimation(attackerId, log.isCrit ? 'anim-crit' : 'anim-attack', 400);
         if (log.targetId) triggerAnimation(log.targetId, 'anim-damage', 500);
+        if (log.isCrit) {
+          setScreenShake(true);
+          setImpactFlash(true);
+          setTimeout(() => setScreenShake(false), 300);
+          setTimeout(() => setImpactFlash(false), 100);
+        }
+        if (log.targetId && log.damage) {
+          setDamageNumbers(prev => ({ ...prev, [log.targetId]: log.damage }));
+          setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
+        }
         if (!effectTriggered) {
           const attackerInA = stateRef.current.teamA.some(u => u.id === attackerId);
           const attacker = [...stateRef.current.teamA, ...stateRef.current.teamB].find(u => u.id === attackerId);
@@ -90,6 +104,10 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         }
       } else if (log.type === 'heal') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-heal', 600);
+        if (log.targetId && log.amount) {
+          setDamageNumbers(prev => ({ ...prev, [log.targetId]: -log.amount }));
+          setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
+        }
         if (!effectTriggered) {
           const casterInA = stateRef.current.teamA.some(u => u.id === attackerId);
           setSkillEffect({ skillType: 'heal', element: null, position: casterInA ? 'left' : 'right' });
@@ -298,13 +316,14 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
   const isPlayerTurn = phase === PHASE.PLAYER_TURN || phase === PHASE.PLAYER_TARGET;
 
   return (
-    <div style={{
+    <div className={screenShake ? 'screen-shake' : ''} style={{
       minHeight: '100vh',
       backgroundColor: '#0a0a1a',
       color: '#eee',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
       padding: 20,
     }}>
+      {impactFlash && <div className="impact-flash" />}
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <h1 style={{ fontSize: 28, margin: 0, color: '#FFD700', letterSpacing: 2 }}>
@@ -402,16 +421,16 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
           }}>
             <span style={{ color: '#666', fontSize: 11, alignSelf: 'center', marginRight: 4 }}>NEXT →</span>
             {turnOrder.slice(0, TURN_ORDER_DISPLAY_COUNT).map((u, i) => (
-              <span key={u.id} style={{
-                fontSize: 11,
+              <div key={u.id} className={i === 0 ? 'turn-pulse' : ''} style={{
+                display: 'flex', alignItems: 'center', gap: 4,
                 padding: '3px 8px',
                 borderRadius: 4,
                 backgroundColor: i === 0 ? '#2a2a4a' : '#111',
-                color: i === 0 ? '#FFD700' : '#888',
                 border: `1px solid ${i === 0 ? '#FFD700' : '#333'}`,
               }}>
-                {u.name} ({u.turnMeter}%)
-              </span>
+                <HeroPortrait unitId={u.id} element={u.element} size={18} isActive={i === 0} />
+                <span style={{ fontSize: 10, color: i === 0 ? '#FFD700' : '#888' }}>{u.name}</span>
+              </div>
             ))}
           </div>
 
@@ -428,6 +447,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                   unit={unit}
                   isActive={activeUnit?.id === unit.id}
                   animClass={activeUnit?.id === unit.id ? (animations[unit.id] || 'anim-active') : animations[unit.id]}
+                  damageNumber={damageNumbers[unit.id]}
                 />
               ))}
             </div>
@@ -496,6 +516,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                     unit={unit}
                     isActive={activeUnit?.id === unit.id}
                     animClass={activeUnit?.id === unit.id ? (animations[unit.id] || 'anim-active') : animations[unit.id]}
+                    damageNumber={damageNumbers[unit.id]}
                     elementHint={elementHint}
                     onClick={
                       phase === PHASE.PLAYER_TARGET && unit.alive

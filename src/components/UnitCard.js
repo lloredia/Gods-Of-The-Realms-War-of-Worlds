@@ -45,7 +45,7 @@ if (typeof document !== 'undefined' && !document.getElementById(SHIMMER_STYLE_ID
   document.head.appendChild(style);
 }
 
-export default function UnitCard({ unit, isActive, onClick, elementHint, animClass }) {
+export default function UnitCard({ unit, isActive, onClick, elementHint, animClass, damageNumber }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';
@@ -80,6 +80,18 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
         overflow: 'hidden',
       }}
     >
+      {/* Floating damage number */}
+      {damageNumber && (
+        <div className="damage-number" style={{
+          top: '30%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: damageNumber > 0 ? '#F44336' : '#4CAF50',
+        }}>
+          {damageNumber > 0 ? `-${damageNumber}` : `+${Math.abs(damageNumber)}`}
+        </div>
+      )}
+
       {/* Active shimmer overlay */}
       {isActive && (
         <div style={{
