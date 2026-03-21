@@ -31,6 +31,17 @@ const ROLE_COLORS = {
   Debuffer: '#9C27B0',
 };
 
+const EFFECT_ICONS = {
+  attack_up: { icon: '⚔', color: '#F44336', label: 'ATK Up' },
+  defense_up: { icon: '🛡', color: '#2196F3', label: 'DEF Up' },
+  immunity: { icon: '✦', color: '#FFD700', label: 'Immune' },
+  speed_up: { icon: '💨', color: '#00BCD4', label: 'SPD Up' },
+  stun: { icon: '💫', color: '#FF9800', label: 'Stun' },
+  defense_break: { icon: '🔥', color: '#F44336', label: 'DEF Break' },
+  slow: { icon: '🐌', color: '#9C27B0', label: 'Slow' },
+  heal_block: { icon: '🚫', color: '#E91E63', label: 'No Heal' },
+};
+
 /* Inject keyframes for the active-card gold shimmer once */
 const SHIMMER_STYLE_ID = 'unit-card-shimmer-keyframes';
 if (typeof document !== 'undefined' && !document.getElementById(SHIMMER_STYLE_ID)) {
@@ -319,30 +330,48 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
 
       {/* Buffs & Debuffs */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', position: 'relative', zIndex: 3 }}>
-        {unit.buffs.map((b, i) => (
-          <span key={`buff-${i}`} style={{
-            fontSize: 10,
-            backgroundColor: '#1B5E20',
-            color: '#A5D6A7',
-            borderRadius: 3,
-            padding: '1px 5px',
-            boxShadow: '0 0 4px rgba(76,175,80,0.4)',
-          }}>
-            {formatEffect(b.type)} ({b.duration})
-          </span>
-        ))}
-        {unit.debuffs.map((d, i) => (
-          <span key={`debuff-${i}`} style={{
-            fontSize: 10,
-            backgroundColor: '#B71C1C',
-            color: '#EF9A9A',
-            borderRadius: 3,
-            padding: '1px 5px',
-            boxShadow: '0 0 4px rgba(244,67,54,0.4)',
-          }}>
-            {formatEffect(d.type)} ({d.duration})
-          </span>
-        ))}
+        {unit.buffs.map((b, i) => {
+          const info = EFFECT_ICONS[b.type] || { icon: '?', color: '#888', label: formatEffect(b.type) };
+          return (
+            <span key={`buff-${i}`} title={info.label} style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+              width: 22,
+              height: 18,
+              fontSize: 13,
+              backgroundColor: `color-mix(in srgb, ${info.color} 25%, #1B5E20)`,
+              color: '#fff',
+              borderRadius: 9,
+              boxShadow: `0 0 6px ${info.color}66`,
+            }}>
+              {info.icon}
+              <span style={{ fontSize: 8, fontWeight: 'bold' }}>{b.duration}</span>
+            </span>
+          );
+        })}
+        {unit.debuffs.map((d, i) => {
+          const info = EFFECT_ICONS[d.type] || { icon: '?', color: '#888', label: formatEffect(d.type) };
+          return (
+            <span key={`debuff-${i}`} title={info.label} style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+              width: 22,
+              height: 18,
+              fontSize: 13,
+              backgroundColor: `color-mix(in srgb, ${info.color} 25%, #B71C1C)`,
+              color: '#fff',
+              borderRadius: 9,
+              boxShadow: `0 0 6px ${info.color}66`,
+            }}>
+              {info.icon}
+              <span style={{ fontSize: 8, fontWeight: 'bold' }}>{d.duration}</span>
+            </span>
+          );
+        })}
       </div>
 
       {!unit.alive && (

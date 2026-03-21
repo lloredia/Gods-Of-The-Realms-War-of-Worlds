@@ -85,14 +85,19 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         if (attackerId) triggerAnimation(attackerId, log.isCrit ? 'anim-crit' : 'anim-attack', 400);
         if (log.targetId) triggerAnimation(log.targetId, 'anim-damage', 500);
         if (log.isCrit) {
+          SFX.crit();
           setScreenShake(true);
           setImpactFlash(true);
           setTimeout(() => setScreenShake(false), 300);
           setTimeout(() => setImpactFlash(false), 100);
+        } else {
+          SFX.attack();
         }
         if (log.targetId && log.damage) {
-          setDamageNumbers(prev => ({ ...prev, [log.targetId]: log.damage }));
-          setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
+          setTimeout(() => {
+            setDamageNumbers(prev => ({ ...prev, [log.targetId]: log.damage }));
+            setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
+          }, 100);
         }
         if (!effectTriggered) {
           const attackerInA = stateRef.current.teamA.some(u => u.id === attackerId);
@@ -104,6 +109,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         }
       } else if (log.type === 'heal') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-heal', 600);
+        SFX.heal();
         if (log.targetId && log.amount) {
           setDamageNumbers(prev => ({ ...prev, [log.targetId]: -log.amount }));
           setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
@@ -117,14 +123,19 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         }
       } else if (log.type === 'buff_applied') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-buff', 500);
+        SFX.buff();
       } else if (log.type === 'debuff_applied') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-debuff', 500);
+        SFX.debuff();
       } else if (log.type === 'death') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-death', 600);
+        SFX.death();
       } else if (log.type === 'revive') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-revive', 700);
+        SFX.revive();
       } else if (log.type === 'stunned') {
         if (attackerId) triggerAnimation(attackerId, 'anim-stun', 600);
+        SFX.stun();
       }
     }
   }, [triggerAnimation]);
