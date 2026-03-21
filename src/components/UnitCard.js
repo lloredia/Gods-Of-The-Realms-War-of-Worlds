@@ -31,6 +31,20 @@ const ROLE_COLORS = {
   Debuffer: '#9C27B0',
 };
 
+/* Inject keyframes for the active-card gold shimmer once */
+const SHIMMER_STYLE_ID = 'unit-card-shimmer-keyframes';
+if (typeof document !== 'undefined' && !document.getElementById(SHIMMER_STYLE_ID)) {
+  const style = document.createElement('style');
+  style.id = SHIMMER_STYLE_ID;
+  style.textContent = `
+    @keyframes unitCardGoldShimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 export default function UnitCard({ unit, isActive, onClick, elementHint, animClass }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
@@ -46,6 +60,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
       onClick={onClick}
       onDoubleClick={(e) => { e.stopPropagation(); setShowDetail(true); }}
       style={{
+        position: 'relative',
         borderTop: isActive ? '2px solid #FFD700' : '2px solid #333',
         borderRight: isActive ? '2px solid #FFD700' : '2px solid #333',
         borderBottom: isActive ? '2px solid #FFD700' : '2px solid #333',
@@ -53,23 +68,88 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
         borderRadius: 8,
         padding: 12,
         marginBottom: 8,
-        backgroundColor: unit.alive ? '#1a1a2e' : '#0a0a15',
-        opacity: unit.alive ? 1 : 0.4,
+        background: unit.alive
+          ? `linear-gradient(145deg, ${elementColor}11 0%, #1a1a2e 30%, #12122a 100%)`
+          : '#0a0a15',
+        opacity: unit.alive ? 1 : 0.3,
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all 0.2s',
-        boxShadow: isActive ? '0 0 12px rgba(255,215,0,0.4)' : 'none',
+        boxShadow: isActive
+          ? '0 0 14px rgba(255,215,0,0.5), inset 0 0 20px rgba(255,215,0,0.06)'
+          : 'none',
+        overflow: 'hidden',
       }}
     >
+      {/* Active shimmer overlay */}
+      {isActive && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: 8,
+          pointerEvents: 'none',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.07) 40%, rgba(255,215,0,0.13) 50%, rgba(255,215,0,0.07) 60%, transparent 100%)',
+          backgroundSize: '200% 100%',
+          animation: 'unitCardGoldShimmer 2.5s ease-in-out infinite',
+          zIndex: 1,
+        }} />
+      )}
+
+      {/* Defeated overlay — dramatic shatter */}
+      {!unit.alive && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: 8,
+          pointerEvents: 'none',
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'radial-gradient(circle, rgba(244,67,54,0.15) 0%, rgba(10,10,21,0.6) 70%)',
+          borderTop: '1px solid rgba(244,67,54,0.25)',
+          borderBottom: '1px solid rgba(244,67,54,0.25)',
+        }}>
+          {/* Crack lines */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderLeft: '1px solid rgba(244,67,54,0.2)',
+            borderRight: '1px solid rgba(244,67,54,0.15)',
+            clipPath: 'polygon(45% 0%, 50% 35%, 55% 0%, 52% 40%, 65% 20%, 53% 45%, 75% 50%, 53% 55%, 65% 80%, 52% 60%, 55% 100%, 50% 65%, 45% 100%, 48% 60%, 35% 80%, 47% 55%, 25% 50%, 47% 45%, 35% 20%, 48% 40%)',
+            backgroundColor: 'rgba(244,67,54,0.12)',
+          }} />
+          {/* Large skull / X overlay */}
+          <span style={{
+            fontSize: 40,
+            color: 'rgba(244,67,54,0.35)',
+            textShadow: '0 0 12px rgba(244,67,54,0.3)',
+            fontWeight: 'bold',
+            userSelect: 'none',
+          }}>
+            ☠
+          </span>
+        </div>
+      )}
+
       {/* Name + Portrait + Faction + Role + Element */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, position: 'relative', zIndex: 3 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <HeroPortrait
-            unitId={unit.id}
-            element={unit.element}
-            faction={FACTION_KEY_MAP[unit.faction]}
-            size={36}
-            isActive={isActive}
-          />
+          {/* Portrait with backdrop glow */}
+          <div style={{
+            position: 'relative',
+            borderRadius: '50%',
+            boxShadow: isActive
+              ? `0 0 10px ${elementColor}88, 0 0 20px ${elementColor}44`
+              : `0 0 6px ${elementColor}33`,
+          }}>
+            <HeroPortrait
+              unitId={unit.id}
+              element={unit.element}
+              faction={FACTION_KEY_MAP[unit.faction]}
+              size={36}
+              isActive={isActive}
+            />
+          </div>
           <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
           {unit._progressionInfo && (
             <span style={{ fontSize: 9, color: '#FFD740' }}>
@@ -107,7 +187,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
 
       {/* Relic set badge */}
       {unit._relicInfo && (
-        <div style={{ marginBottom: 4 }}>
+        <div style={{ marginBottom: 4, position: 'relative', zIndex: 3 }}>
           <span style={{
             fontSize: 9,
             color: unit._relicInfo.color || '#B0BEC5',
@@ -129,20 +209,42 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
           textAlign: 'center',
           marginBottom: 2,
           fontWeight: 'bold',
+          position: 'relative',
+          zIndex: 3,
         }}>
           {elementHint === 'advantage' ? '▲ Element Advantage' : elementHint === 'mutual' ? '⚡ Elemental Clash' : '▼ Element Disadvantage'}
         </div>
       )}
 
       {/* HP Bar */}
-      <div style={{ backgroundColor: '#333', borderRadius: 4, height: 16, marginBottom: 4, position: 'relative', overflow: 'hidden' }}>
+      <div style={{
+        backgroundColor: '#222',
+        borderRadius: 5,
+        height: 18,
+        marginBottom: 4,
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)',
+        zIndex: 3,
+      }}>
+        {/* HP fill */}
         <div style={{
           width: `${hpPercent}%`,
           height: '100%',
           backgroundColor: hpColor,
-          borderRadius: 4,
+          borderRadius: 5,
           transition: 'width 0.3s',
-        }} />
+          position: 'relative',
+        }}>
+          {/* Shine overlay */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 5,
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, transparent 50%, rgba(0,0,0,0.1) 100%)',
+            pointerEvents: 'none',
+          }} />
+        </div>
         <span style={{
           position: 'absolute',
           top: 0,
@@ -150,29 +252,41 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
           transform: 'translateX(-50%)',
           fontSize: 11,
           color: '#fff',
-          lineHeight: '16px',
-          textShadow: '0 0 3px #000',
+          lineHeight: '18px',
+          textShadow: '0 1px 3px #000, 0 0 6px rgba(0,0,0,0.8)',
+          fontWeight: 600,
+          fontVariantNumeric: 'tabular-nums',
         }}>
-          {unit.currentHP} / {unit.maxHP}
+          {Math.round(unit.currentHP)} / {unit.maxHP}
         </span>
       </div>
 
       {/* Turn Meter */}
-      <div style={{ backgroundColor: '#222', borderRadius: 3, height: 6, marginBottom: 6, overflow: 'hidden' }}>
+      <div style={{
+        backgroundColor: '#181828',
+        borderRadius: 3,
+        height: 6,
+        marginBottom: 6,
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: 3,
+        boxShadow: unit.turnMeter > 80 ? '0 0 6px #00BCD4' : 'none',
+        transition: 'box-shadow 0.3s',
+      }}>
         <div style={{
           width: `${Math.min(100, unit.turnMeter)}%`,
           height: '100%',
-          backgroundColor: '#00BCD4',
+          background: 'linear-gradient(90deg, #004D54 0%, #00BCD4 100%)',
           borderRadius: 3,
           transition: 'width 0.2s',
         }} />
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'flex', gap: 8, fontSize: 10, color: '#999', marginBottom: 4 }}>
-        <span>ATK {unit.attack}</span>
-        <span>DEF {unit.defense}</span>
-        <span>SPD {unit.speed}</span>
+      <div style={{ display: 'flex', gap: 8, fontSize: 10, color: '#999', marginBottom: 4, position: 'relative', zIndex: 3 }}>
+        <span title="Attack">⚔ {unit.attack}</span>
+        <span title="Defense">🛡 {unit.defense}</span>
+        <span title="Speed">💨 {unit.speed}</span>
       </div>
 
       {/* Passive */}
@@ -182,6 +296,8 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
           color: unit.passive.usesLeft === 0 ? '#555' : '#80CBC4',
           marginBottom: 4,
           fontStyle: 'italic',
+          position: 'relative',
+          zIndex: 3,
         }}
         title={unit.passive.description}
         >
@@ -190,7 +306,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
       )}
 
       {/* Buffs & Debuffs */}
-      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', position: 'relative', zIndex: 3 }}>
         {unit.buffs.map((b, i) => (
           <span key={`buff-${i}`} style={{
             fontSize: 10,
@@ -198,6 +314,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
             color: '#A5D6A7',
             borderRadius: 3,
             padding: '1px 5px',
+            boxShadow: '0 0 4px rgba(76,175,80,0.4)',
           }}>
             {formatEffect(b.type)} ({b.duration})
           </span>
@@ -209,6 +326,7 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
             color: '#EF9A9A',
             borderRadius: 3,
             padding: '1px 5px',
+            boxShadow: '0 0 4px rgba(244,67,54,0.4)',
           }}>
             {formatEffect(d.type)} ({d.duration})
           </span>
@@ -226,6 +344,8 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
           borderRadius: 4,
           padding: '3px 0',
           border: '1px solid rgba(244, 67, 54, 0.3)',
+          position: 'relative',
+          zIndex: 3,
         }}>
           DEFEATED
         </div>
