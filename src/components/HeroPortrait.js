@@ -54,6 +54,23 @@ const HERO_DATA = {
   tsukuyomi:   { symbol: '\uD83C\uDF11', element: 'Moon',    faction: 'Japanese' },
   izanami:     { symbol: '\uD83D\uDC7B', element: 'Underworld', faction: 'Japanese' },
   benzaiten:   { symbol: '\uD83C\uDFB5', element: 'Ocean',   faction: 'Japanese' },
+
+  // Creatures (no faction)
+  goblin:        { symbol: '👺', element: 'Storm',      faction: null },
+  skeleton:      { symbol: '💀', element: 'Underworld', faction: null },
+  slime:         { symbol: '🟢', element: 'Ocean',      faction: null },
+  imp:           { symbol: '👿', element: 'Moon',       faction: null },
+  bat:           { symbol: '🦇', element: 'Underworld', faction: null },
+  wolf:          { symbol: '🐺', element: 'Storm',      faction: null },
+  serpent:       { symbol: '🐍', element: 'Ocean',      faction: null },
+  wraith:        { symbol: '👻', element: 'Underworld', faction: null },
+  harpy:         { symbol: '🦅', element: 'Storm',      faction: null },
+  golem:         { symbol: '🪨', element: 'Sun',        faction: null },
+  minotaur:      { symbol: '🐂', element: 'Storm',      faction: null },
+  chimera:       { symbol: '🐉', element: 'Sun',        faction: null },
+  hydra:         { symbol: '🐲', element: 'Ocean',      faction: null },
+  phoenix_chick: { symbol: '🐣', element: 'Sun',        faction: null },
+  shadow_sprite: { symbol: '🌑', element: 'Moon',       faction: null },
 };
 
 const PULSE_KEYFRAMES = `

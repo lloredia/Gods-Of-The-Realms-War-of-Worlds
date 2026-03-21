@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
+import { loadSave, updateSave } from '../../utils/saveSystem';
 
 const STAGES = [
   { id: 1, name: 'Gates of Olympus', enemies: ['zeus', 'poseidon'], difficulty: 'Easy', desc: 'Face the lesser guardians.' },
@@ -29,6 +30,12 @@ export default function CampaignPage() {
   const [selectedStage, setSelectedStage] = useState(null);
   const [highestCleared, setHighestCleared] = useState(0);
 
+  // Persist campaign progress
+  useEffect(() => {
+    const save = loadSave();
+    if (save.campaignStage !== undefined) setHighestCleared(save.campaignStage);
+  }, []);
+
   if (selectedStage) {
     const stage = STAGES.find(s => s.id === selectedStage);
     const enemyTemplates = stage.enemies.map(id => heroRoster[id]).filter(Boolean);
@@ -50,6 +57,7 @@ export default function CampaignPage() {
         onExit={(won) => {
           if (won && selectedStage > highestCleared) {
             setHighestCleared(selectedStage);
+            updateSave({ campaignStage: selectedStage });
           }
           setSelectedStage(null);
         }}

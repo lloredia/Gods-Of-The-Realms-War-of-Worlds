@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import achievements from '../data/achievements';
+import { SFX, resumeAudio } from '../utils/soundSystem';
 
 export default function AchievementToast({ achievementId, onDone }) {
   const [visible, setVisible] = useState(false);
   const achievement = achievements.find(a => a.id === achievementId);
 
   useEffect(() => {
+    resumeAudio();
+    SFX.achievement();
     setVisible(true);
     const timer = setTimeout(() => {
       setVisible(false);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { SFX, resumeAudio } from '../utils/soundSystem';
 
 const STORAGE_KEY = 'gotr_daily_login';
 
@@ -78,6 +79,8 @@ export default function DailyRewards({ onClaim, onClose }) {
 
   function handleClaim() {
     if (!loginData || claimed) return;
+    resumeAudio();
+    SFX.dailyClaim();
 
     const today = getToday();
     const newStreak = (loginData.streak % 7) ; // current index in 7-day cycle

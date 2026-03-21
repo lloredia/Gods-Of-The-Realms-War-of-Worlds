@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { SFX, resumeAudio } from '../utils/soundSystem';
 
 // Leveling constants
 const MAX_LEVEL = 40;
@@ -200,7 +201,7 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
         <button
           style={actionBtnStyle(canLevelUp)}
           disabled={!canLevelUp}
-          onClick={() => canLevelUp && onLevelUp?.(hero.id)}
+          onClick={() => { if (canLevelUp) { resumeAudio(); SFX.levelUp(); onLevelUp?.(hero.id); } }}
         >
           Level Up<br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
@@ -211,7 +212,7 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
         <button
           style={actionBtnStyle(canStarUp)}
           disabled={!canStarUp}
-          onClick={() => canStarUp && onStarUp?.(hero.id)}
+          onClick={() => { if (canStarUp) { resumeAudio(); SFX.starUp(); onStarUp?.(hero.id); } }}
         >
           Star Up<br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
@@ -222,7 +223,7 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
         <button
           style={awakenBtnStyle(canAwaken)}
           disabled={!canAwaken}
-          onClick={() => canAwaken && onAwaken?.(hero.id)}
+          onClick={() => { if (canAwaken) { resumeAudio(); SFX.awaken(); onAwaken?.(hero.id); } }}
         >
           Awaken<br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>

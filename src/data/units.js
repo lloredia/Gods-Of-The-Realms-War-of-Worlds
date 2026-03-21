@@ -662,6 +662,100 @@ const inari = makeUnit({
   skills: [skills.foxFire, skills.riceBlessing],
 });
 
+// ---------------------------------------------------------------------------
+// Creatures — 1-2 star fodder units
+// ---------------------------------------------------------------------------
+
+const goblin = makeUnit({
+  id: 'goblin', name: 'Goblin', faction: null, element: Element.STORM, role: 'Attacker',
+  level: 1, stars: 1, awakened: false, maxHP: 3000, currentHP: 3000,
+  attack: 300, defense: 150, speed: 80, skills: [skills.creatureBite],
+});
+
+const skeleton = makeUnit({
+  id: 'skeleton', name: 'Skeleton', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
+  level: 1, stars: 1, awakened: false, maxHP: 2500, currentHP: 2500,
+  attack: 350, defense: 100, speed: 75, skills: [skills.creatureScratch],
+});
+
+const slime = makeUnit({
+  id: 'slime', name: 'Slime', faction: null, element: Element.OCEAN, role: 'Tank',
+  level: 1, stars: 1, awakened: false, maxHP: 4000, currentHP: 4000,
+  attack: 200, defense: 200, speed: 60, skills: [skills.creatureSlam],
+});
+
+const imp = makeUnit({
+  id: 'imp', name: 'Imp', faction: null, element: Element.MOON, role: 'Debuffer',
+  level: 1, stars: 1, awakened: false, maxHP: 2000, currentHP: 2000,
+  attack: 280, defense: 120, speed: 95, skills: [skills.creatureSpit],
+});
+
+const bat = makeUnit({
+  id: 'bat', name: 'Bat', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
+  level: 1, stars: 1, awakened: false, maxHP: 1800, currentHP: 1800,
+  attack: 320, defense: 80, speed: 100, skills: [skills.creatureBite],
+});
+
+const wolf = makeUnit({
+  id: 'wolf', name: 'Wolf', faction: null, element: Element.STORM, role: 'Attacker',
+  level: 1, stars: 2, awakened: false, maxHP: 4000, currentHP: 4000,
+  attack: 450, defense: 200, speed: 90, skills: [skills.creatureBite, skills.creatureHowl],
+});
+
+const serpent = makeUnit({
+  id: 'serpent', name: 'Serpent', faction: null, element: Element.OCEAN, role: 'Debuffer',
+  level: 1, stars: 2, awakened: false, maxHP: 3500, currentHP: 3500,
+  attack: 400, defense: 180, speed: 85, skills: [skills.creatureSpit],
+});
+
+const wraith = makeUnit({
+  id: 'wraith', name: 'Wraith', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
+  level: 1, stars: 2, awakened: false, maxHP: 3000, currentHP: 3000,
+  attack: 500, defense: 150, speed: 95, skills: [skills.creatureScratch],
+});
+
+const harpy = makeUnit({
+  id: 'harpy', name: 'Harpy', faction: null, element: Element.STORM, role: 'Attacker',
+  level: 1, stars: 2, awakened: false, maxHP: 3200, currentHP: 3200,
+  attack: 480, defense: 160, speed: 105, skills: [skills.creatureScratch],
+});
+
+const golem = makeUnit({
+  id: 'golem', name: 'Golem', faction: null, element: Element.SUN, role: 'Tank',
+  level: 1, stars: 2, awakened: false, maxHP: 6000, currentHP: 6000,
+  attack: 300, defense: 400, speed: 50, skills: [skills.creatureSlam],
+});
+
+const minotaur = makeUnit({
+  id: 'minotaur', name: 'Minotaur', faction: null, element: Element.STORM, role: 'Bruiser',
+  level: 1, stars: 2, awakened: false, maxHP: 5000, currentHP: 5000,
+  attack: 500, defense: 300, speed: 70, skills: [skills.creatureSlam, skills.creatureHowl],
+});
+
+const chimera = makeUnit({
+  id: 'chimera', name: 'Chimera', faction: null, element: Element.SUN, role: 'Attacker',
+  level: 1, stars: 2, awakened: false, maxHP: 4500, currentHP: 4500,
+  attack: 520, defense: 220, speed: 85, skills: [skills.creatureBite, skills.creatureSpit],
+});
+
+const hydra = makeUnit({
+  id: 'hydra', name: 'Hydra', faction: null, element: Element.OCEAN, role: 'Tank',
+  level: 1, stars: 2, awakened: false, maxHP: 5500, currentHP: 5500,
+  attack: 400, defense: 350, speed: 65, skills: [skills.creatureSpit],
+});
+
+const phoenix_chick = makeUnit({
+  id: 'phoenix_chick', name: 'Phoenix Chick', faction: null, element: Element.SUN, role: 'Support',
+  level: 1, stars: 2, awakened: false, maxHP: 3500, currentHP: 3500,
+  attack: 350, defense: 200, speed: 90, skills: [skills.creatureScratch],
+});
+
+const shadow_sprite = makeUnit({
+  id: 'shadow_sprite', name: 'Shadow Sprite', faction: null, element: Element.MOON, role: 'Debuffer',
+  level: 1, stars: 2, awakened: false, maxHP: 2800, currentHP: 2800,
+  attack: 420, defense: 150, speed: 110, skills: [skills.creatureSpit],
+});
+
 // --- TEAM A (Player) ---
 export const teamATemplates = [zeus, poseidon, morganLeFay, susanoo];
 
@@ -706,4 +800,21 @@ export const heroRoster = {
   dianCecht,
   fujin,
   inari,
+  goblin,
+  skeleton,
+  slime,
+  imp,
+  bat,
+  wolf,
+  serpent,
+  wraith,
+  harpy,
+  golem,
+  minotaur,
+  chimera,
+  hydra,
+  phoenix_chick,
+  shadow_sprite,
 };
+
+export const creatureRoster = { goblin, skeleton, slime, imp, bat, wolf, serpent, wraith, harpy, golem, minotaur, chimera, hydra, phoenix_chick, shadow_sprite };

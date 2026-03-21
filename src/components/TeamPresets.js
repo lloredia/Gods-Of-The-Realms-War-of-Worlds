@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { heroRoster } from '../data/units';
+import { SFX, resumeAudio } from '../utils/soundSystem';
 
 const STORAGE_KEY = 'gotr_team_presets';
 const MAX_PRESETS = 5;
@@ -38,6 +39,8 @@ export default function TeamPresets({ selectedIds, onLoadPreset }) {
   const handleSave = () => {
     if (selectedIds.length !== 4) return;
     if (presets.length >= MAX_PRESETS) return;
+    resumeAudio();
+    SFX.presetSave();
     const updated = [...presets, { name: nextAutoName(presets), ids: [...selectedIds] }];
     setPresets(updated);
     savePresets(updated);
@@ -110,7 +113,7 @@ export default function TeamPresets({ selectedIds, onLoadPreset }) {
               </div>
               <div style={{ display: 'flex', gap: 4 }}>
                 <button
-                  onClick={() => onLoadPreset(preset.ids)}
+                  onClick={() => { resumeAudio(); SFX.presetLoad(); onLoadPreset(preset.ids); }}
                   style={{
                     flex: 1,
                     padding: '3px 0',

@@ -163,19 +163,29 @@ export default function ArenaPage() {
   // --- Battle exit ---
 
   const handleBattleExit = useCallback((playerWon) => {
+    const reward = chosenOpponent?.reward || 20;
+    const loss = 10;
+    let newPoints;
+
     if (playerWon) {
-      const reward = chosenOpponent?.reward || 20;
-      setArenaPoints(prev => prev + reward);
+      setArenaPoints(prev => {
+        newPoints = prev + reward;
+        return newPoints;
+      });
       setLastResult({ won: true, points: reward });
     } else {
-      const loss = 10;
-      setArenaPoints(prev => Math.max(0, prev - loss));
+      setArenaPoints(prev => {
+        newPoints = Math.max(0, prev - loss);
+        return newPoints;
+      });
       setLastResult({ won: false, points: loss });
     }
 
-    // Persist
-    const newPoints = playerWon ? arenaPoints + (chosenOpponent?.reward || 20) : Math.max(0, arenaPoints - 10);
-    updateSave({ arenaPoints: newPoints });
+    // Persist — compute from current save to avoid stale closure
+    const currentSave = loadSave();
+    const currentPoints = currentSave.arenaPoints ?? arenaPoints;
+    const persistedPoints = playerWon ? currentPoints + reward : Math.max(0, currentPoints - loss);
+    updateSave({ arenaPoints: persistedPoints });
 
     // Track battle stats
     const save = loadSave();

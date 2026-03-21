@@ -115,7 +115,10 @@ export default function CollectionPage() {
           return (
             <div key={hero.id} onClick={() => setSelectedHeroId(isSelected ? null : hero.id)} style={{
               padding: 14, borderRadius: 8, backgroundColor: '#1a1a2e',
-              border: isSelected ? '1px solid #FFD700' : '1px solid #333', borderLeft: `3px solid ${elemColor}`,
+              borderTop: isSelected ? '1px solid #FFD700' : '1px solid #333',
+              borderRight: isSelected ? '1px solid #FFD700' : '1px solid #333',
+              borderBottom: isSelected ? '1px solid #FFD700' : '1px solid #333',
+              borderLeft: `3px solid ${elemColor}`,
               cursor: 'pointer',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>

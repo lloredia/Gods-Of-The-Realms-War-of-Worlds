@@ -1294,6 +1294,13 @@ const skills = {
     effectDuration: 0,
     description: 'Inari blesses the team with abundant vitality.',
   },
+
+  // === CREATURE SKILLS ===
+  creatureBite: { id: 'creatureBite', name: 'Bite', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.0, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'A feral bite.' },
+  creatureScratch: { id: 'creatureScratch', name: 'Scratch', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.2, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'Sharp claws lash out.' },
+  creatureSlam: { id: 'creatureSlam', name: 'Slam', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.5, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'A heavy slam.' },
+  creatureSpit: { id: 'creatureSpit', name: 'Venom Spit', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.0, cooldown: 0, effectChance: 0.2, effectType: DebuffType.SLOW, effectDuration: 1, description: 'Spits venom that may slow.' },
+  creatureHowl: { id: 'creatureHowl', name: 'Howl', type: SkillType.BUFF, target: SkillTarget.ALL_ALLIES, multiplier: 0, cooldown: 4, effectChance: 1.0, effectType: BuffType.ATTACK_UP, effectDuration: 1, description: 'A rallying howl.' },
 };
 
 export default skills;

@@ -6,9 +6,11 @@
  * Rates must sum to 1.0.
  */
 export const SUMMON_RATES = Object.freeze({
-  3: 0.65,   // 65% chance — 3-star (common)
-  4: 0.28,   // 28% chance — 4-star (rare)
-  5: 0.07,   // 7% chance  — 5-star (legendary)
+  1: 0.30,   // 30% — 1-star creature
+  2: 0.25,   // 25% — 2-star creature
+  3: 0.25,   // 25% — 3-star hero
+  4: 0.15,   // 15% — 4-star hero
+  5: 0.05,   // 5% — 5-star legendary
 });
 
 /**
@@ -16,6 +18,8 @@ export const SUMMON_RATES = Object.freeze({
  * Heroes summon at their natural star rating and can be evolved up to 6.
  */
 export const SUMMON_POOL = {
+  1: ['goblin', 'skeleton', 'slime', 'imp', 'bat'],
+  2: ['wolf', 'serpent', 'wraith', 'harpy', 'golem', 'minotaur', 'chimera', 'hydra', 'phoenix_chick', 'shadow_sprite'],
   3: [
     'hermes', 'hephaestus', 'tyr', 'heimdall', 'sobek',
     'thoth', 'brigid', 'dianCecht', 'fujin', 'inari',
