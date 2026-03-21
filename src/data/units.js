@@ -107,7 +107,7 @@ const thor = makeUnit({
   speed: 108,
   critRate: 0.22,
   critDamage: 1.65,
-  skills: [skills.thunderStrike, skills.stormBreaker, skills.lightningChain],
+  skills: [skills.mjolnirSmash, skills.thunderGuard, skills.ragnarokStrike],
   relicSet: 'fortress',
 });
 
@@ -178,7 +178,7 @@ const hades = makeUnit({
   speed: 105,
   critRate: 0.20,
   accuracy: 0.95,
-  skills: [skills.soulRend, skills.deathMark, skills.plagueSpreader],
+  skills: [skills.helmshadow, skills.riverStyx, skills.kingOfDead],
   passive: { id: 'deathsEmbrace', name: "Death's Embrace", trigger: 'on_receive_fatal', effect: 'revive', value: 0.25, usesLeft: 1, description: 'Revives once at 25% HP when receiving a fatal blow.' },
 });
 
@@ -192,9 +192,9 @@ const apollo = makeUnit({
   stars: 5,
   awakened: true,
   attack: 880,
-  speed: 115,
-  critRate: 0.30,
-  critDamage: 1.8,
+  speed: 110,
+  critRate: 0.22,
+  critDamage: 1.65,
   skills: [skills.solarFlare, skills.radiantBlessing, skills.divineSmite],
 });
 
@@ -336,7 +336,7 @@ const fenrir = makeUnit({
   level: 35,
   stars: 5,
   awakened: false,
-  attack: 920,
+  attack: 880,
   speed: 115,
   critRate: 0.26,
   critDamage: 1.75,
@@ -501,12 +501,12 @@ const hermes = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 700,
-  defense: 420,
-  speed: 100,
-  skills: [skills.quickStrike, skills.windDash],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 750,
+  defense: 450,
+  speed: 105,
+  skills: [skills.quickStrike, skills.windDash, skills.hermesTrick],
 });
 
 const hephaestus = makeUnit({
@@ -518,12 +518,12 @@ const hephaestus = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 650,
-  defense: 500,
-  speed: 90,
-  skills: [skills.forgeSlam, skills.ironWall],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 700,
+  defense: 530,
+  speed: 95,
+  skills: [skills.forgeSlam, skills.ironWall, skills.forgeArmor],
 });
 
 const tyr = makeUnit({
@@ -535,12 +535,12 @@ const tyr = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 670,
-  defense: 490,
-  speed: 92,
-  skills: [skills.justiceStrike, skills.braveryShield],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 720,
+  defense: 520,
+  speed: 97,
+  skills: [skills.justiceStrike, skills.braveryShield, skills.justiceShield],
 });
 
 const heimdall = makeUnit({
@@ -552,12 +552,12 @@ const heimdall = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 680,
-  defense: 450,
-  speed: 96,
-  skills: [skills.gjallarBlast, skills.watchmanAura],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 730,
+  defense: 480,
+  speed: 101,
+  skills: [skills.gjallarBlast, skills.watchmanAura, skills.bifrostHorn],
 });
 
 const sobek = makeUnit({
@@ -569,12 +569,12 @@ const sobek = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 750,
-  defense: 460,
-  speed: 93,
-  skills: [skills.jawCrush, skills.tidalSnap],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 800,
+  defense: 490,
+  speed: 98,
+  skills: [skills.jawCrush, skills.tidalSnap, skills.deathRoll],
 });
 
 const thoth = makeUnit({
@@ -586,12 +586,12 @@ const thoth = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 660,
-  defense: 440,
-  speed: 95,
-  skills: [skills.wisdomBolt, skills.scrollOfHealing],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 710,
+  defense: 470,
+  speed: 100,
+  skills: [skills.wisdomBolt, skills.scrollOfHealing, skills.scrollOfWisdom],
 });
 
 const brigid = makeUnit({
@@ -603,12 +603,12 @@ const brigid = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 660,
-  defense: 430,
-  speed: 94,
-  skills: [skills.holyFlame, skills.springWaters],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 710,
+  defense: 460,
+  speed: 99,
+  skills: [skills.holyFlame, skills.springWaters, skills.sacredSpring],
 });
 
 const dianCecht = makeUnit({
@@ -620,12 +620,12 @@ const dianCecht = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 650,
-  defense: 440,
-  speed: 93,
-  skills: [skills.wellOfLife, skills.herbRemedy],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 700,
+  defense: 470,
+  speed: 98,
+  skills: [skills.wellOfLife, skills.herbRemedy, skills.wellOfSlaine],
 });
 
 const fujin = makeUnit({
@@ -637,12 +637,12 @@ const fujin = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 720,
-  defense: 410,
-  speed: 98,
-  skills: [skills.galeForce, skills.windBlade],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 770,
+  defense: 440,
+  speed: 103,
+  skills: [skills.galeForce, skills.windBlade, skills.windBarrier],
 });
 
 const inari = makeUnit({
@@ -654,12 +654,12 @@ const inari = makeUnit({
   level: 1,
   stars: 3,
   awakened: false,
-  maxHP: 8000,
-  currentHP: 8000,
-  attack: 660,
-  defense: 430,
-  speed: 94,
-  skills: [skills.foxFire, skills.riceBlessing],
+  maxHP: 8500,
+  currentHP: 8500,
+  attack: 710,
+  defense: 460,
+  speed: 99,
+  skills: [skills.foxFire, skills.riceBlessing, skills.foxBlessing],
 });
 
 // ---------------------------------------------------------------------------
@@ -668,32 +668,32 @@ const inari = makeUnit({
 
 const goblin = makeUnit({
   id: 'goblin', name: 'Goblin', faction: null, element: Element.STORM, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 3000, currentHP: 3000,
-  attack: 300, defense: 150, speed: 80, skills: [skills.creatureBite],
+  level: 1, stars: 1, awakened: false, maxHP: 3500, currentHP: 3500,
+  attack: 350, defense: 150, speed: 80, skills: [skills.creatureBite],
 });
 
 const skeleton = makeUnit({
   id: 'skeleton', name: 'Skeleton', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 2500, currentHP: 2500,
-  attack: 350, defense: 100, speed: 75, skills: [skills.creatureScratch],
+  level: 1, stars: 1, awakened: false, maxHP: 3000, currentHP: 3000,
+  attack: 400, defense: 100, speed: 75, skills: [skills.creatureScratch],
 });
 
 const slime = makeUnit({
   id: 'slime', name: 'Slime', faction: null, element: Element.OCEAN, role: 'Tank',
-  level: 1, stars: 1, awakened: false, maxHP: 4000, currentHP: 4000,
-  attack: 200, defense: 200, speed: 60, skills: [skills.creatureSlam],
+  level: 1, stars: 1, awakened: false, maxHP: 4500, currentHP: 4500,
+  attack: 250, defense: 200, speed: 60, skills: [skills.creatureSlam],
 });
 
 const imp = makeUnit({
   id: 'imp', name: 'Imp', faction: null, element: Element.MOON, role: 'Debuffer',
-  level: 1, stars: 1, awakened: false, maxHP: 2000, currentHP: 2000,
-  attack: 280, defense: 120, speed: 95, skills: [skills.creatureSpit],
+  level: 1, stars: 1, awakened: false, maxHP: 2500, currentHP: 2500,
+  attack: 330, defense: 120, speed: 95, skills: [skills.creatureSpit],
 });
 
 const bat = makeUnit({
   id: 'bat', name: 'Bat', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 1800, currentHP: 1800,
-  attack: 320, defense: 80, speed: 100, skills: [skills.creatureBite],
+  level: 1, stars: 1, awakened: false, maxHP: 2300, currentHP: 2300,
+  attack: 370, defense: 80, speed: 100, skills: [skills.creatureBite],
 });
 
 const wolf = makeUnit({
