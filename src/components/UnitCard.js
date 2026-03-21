@@ -46,7 +46,9 @@ export default function UnitCard({ unit, isActive, onClick, elementHint, animCla
       onClick={onClick}
       onDoubleClick={(e) => { e.stopPropagation(); setShowDetail(true); }}
       style={{
-        border: isActive ? '2px solid #FFD700' : '2px solid #333',
+        borderTop: isActive ? '2px solid #FFD700' : '2px solid #333',
+        borderRight: isActive ? '2px solid #FFD700' : '2px solid #333',
+        borderBottom: isActive ? '2px solid #FFD700' : '2px solid #333',
         borderLeft: roleColor ? `3px solid ${roleColor}` : (isActive ? '2px solid #FFD700' : '2px solid #333'),
         borderRadius: 8,
         padding: 12,

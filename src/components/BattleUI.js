@@ -145,7 +145,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
 
     // Start first turn
     turnTimerRef.current = setTimeout(() => { if (mountedRef.current) nextTurn(a, b); }, BATTLE_START_DELAY / speedRef.current);
-  }, [playerTeam, enemyTeam, nextTurn]);
+  }, [playerTeam, enemyTeam]);
 
   // --- Next Turn ---
   const nextTurn = useCallback((tA, tB) => {
