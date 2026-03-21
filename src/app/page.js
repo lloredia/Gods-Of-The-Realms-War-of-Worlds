@@ -1,6 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import DailyRewards, { hasClaimedToday } from '@/components/DailyRewards';
+import AchievementPanel from '@/components/AchievementPanel';
+import Tutorial from '@/components/Tutorial';
+import { loadSave, updateSave } from '@/utils/saveSystem';
+import { getUnlockedCount } from '@/utils/achievementTracker';
 
 const MENU_ITEMS = [
   {
@@ -38,6 +44,29 @@ const MENU_ITEMS = [
 ];
 
 export default function Home() {
+  const [showDaily, setShowDaily] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [achCount, setAchCount] = useState(0);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('gotr_tutorial_done')) {
+      setShowTutorial(true);
+    } else if (!hasClaimedToday()) {
+      setShowDaily(true);
+    }
+    setAchCount(getUnlockedCount());
+  }, []);
+
+  function handleClaimReward(reward) {
+    const save = loadSave();
+    const resources = { ...save.resources };
+    for (const [key, amount] of Object.entries(reward)) {
+      resources[key] = (resources[key] || 0) + amount;
+    }
+    updateSave({ resources });
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -139,9 +168,53 @@ export default function Home() {
         ))}
       </div>
 
+      {/* Daily Rewards Button */}
+      <button
+        onClick={() => setShowDaily(true)}
+        style={{
+          marginTop: 30,
+          padding: '10px 24px',
+          background: 'linear-gradient(135deg, #2e2a1a, #1a170d)',
+          border: '1px solid #FFD70066',
+          borderRadius: 8,
+          color: '#FFD700',
+          fontSize: 13,
+          fontWeight: 700,
+          letterSpacing: 1,
+          cursor: 'pointer',
+          transition: 'border-color 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#FFD700'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#FFD70066'; }}
+      >
+        Daily Rewards
+      </button>
+
+      {/* Achievements Button */}
+      <button
+        onClick={() => setShowAchievements(true)}
+        style={{
+          marginTop: 10,
+          padding: '10px 24px',
+          background: 'linear-gradient(135deg, #1a2e1a, #0d1a0d)',
+          border: '1px solid #4CAF5066',
+          borderRadius: 8,
+          color: '#4CAF50',
+          fontSize: 13,
+          fontWeight: 700,
+          letterSpacing: 1,
+          cursor: 'pointer',
+          transition: 'border-color 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#4CAF50'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#4CAF5066'; }}
+      >
+        Achievements ({achCount}/16)
+      </button>
+
       {/* Footer tag */}
       <p style={{
-        marginTop: 50,
+        marginTop: 30,
         fontSize: 10,
         color: '#333',
         letterSpacing: 2,
@@ -149,6 +222,20 @@ export default function Home() {
       }}>
         Choose your path, Summoner
       </p>
+
+      {/* Daily Rewards Modal */}
+      {showTutorial && (
+        <Tutorial onComplete={() => { setShowTutorial(false); if (!hasClaimedToday()) setShowDaily(true); }} />
+      )}
+      {showDaily && (
+        <DailyRewards
+          onClaim={handleClaimReward}
+          onClose={() => setShowDaily(false)}
+        />
+      )}
+      {showAchievements && (
+        <AchievementPanel onClose={() => { setShowAchievements(false); setAchCount(getUnlockedCount()); }} />
+      )}
     </div>
   );
 }

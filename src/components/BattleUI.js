@@ -25,9 +25,20 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
   const [turnOrder, setTurnOrder] = useState([]);
   const [winner, setWinner] = useState(null);
   const [turnCount, setTurnCount] = useState(0);
+  const [autoBattle, setAutoBattle] = useState(false);
+  const [battleSpeed, setBattleSpeed] = useState(1);
+  const [animations, setAnimations] = useState({});
 
   // Ref for mutable state in callbacks
   const stateRef = useRef({ teamA: [], teamB: [] });
+  const autoBattleRef = useRef(false);
+  const speedRef = useRef(1);
+  const animTimersRef = useRef({});
+
+  useEffect(() => { autoBattleRef.current = autoBattle; }, [autoBattle]);
+  useEffect(() => { speedRef.current = battleSpeed; }, [battleSpeed]);
+
+  const speedMultiplier = battleSpeed;
 
   const addLogs = useCallback((newLogs) => {
     setLogs(prev => [...prev, ...newLogs]);
@@ -38,6 +49,35 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
     setTeamB([...stateRef.current.teamB]);
     setTurnOrder(getTurnOrder([...stateRef.current.teamA, ...stateRef.current.teamB]));
   }, []);
+
+  const triggerAnimation = useCallback((unitId, animClass, duration = 500) => {
+    if (animTimersRef.current[unitId]) clearTimeout(animTimersRef.current[unitId]);
+    setAnimations(prev => ({ ...prev, [unitId]: animClass }));
+    animTimersRef.current[unitId] = setTimeout(() => {
+      setAnimations(prev => { const next = { ...prev }; delete next[unitId]; return next; });
+    }, duration);
+  }, []);
+
+  const processAnimations = useCallback((turnLogs, attackerId) => {
+    for (const log of turnLogs) {
+      if (log.type === 'damage' || log.type === 'multi_hit') {
+        if (attackerId) triggerAnimation(attackerId, log.isCrit ? 'anim-crit' : 'anim-attack', 400);
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-damage', 500);
+      } else if (log.type === 'heal') {
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-heal', 600);
+      } else if (log.type === 'buff_applied') {
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-buff', 500);
+      } else if (log.type === 'debuff_applied') {
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-debuff', 500);
+      } else if (log.type === 'death') {
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-death', 600);
+      } else if (log.type === 'revive') {
+        if (log.targetId) triggerAnimation(log.targetId, 'anim-revive', 700);
+      } else if (log.type === 'stunned') {
+        if (attackerId) triggerAnimation(attackerId, 'anim-stun', 600);
+      }
+    }
+  }, [triggerAnimation]);
 
   // --- Start Battle ---
   const startBattle = useCallback(() => {
@@ -71,7 +111,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
     setPhase(PHASE.READY);
 
     // Start first turn
-    setTimeout(() => nextTurn(a, b), BATTLE_START_DELAY);
+    setTimeout(() => nextTurn(a, b), BATTLE_START_DELAY / speedRef.current);
   }, [playerTeam, enemyTeam]);
 
   // --- Next Turn ---
@@ -109,8 +149,9 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
     if (isStunned(unit)) {
       const stunLogs = executeTurn(unit, unit.skills[0], [], a, b);
       addLogs(stunLogs);
+      processAnimations(stunLogs, unit.id);
       updateState();
-      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY);
+      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
       return;
     }
 
@@ -118,9 +159,13 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
     const isPlayer = a.some(u => u.id === unit.id);
     if (isPlayer) {
       setPhase(PHASE.PLAYER_TURN);
+      if (autoBattleRef.current) {
+        setTimeout(() => autoPlayTurn(unit, a, b), AI_THINK_DELAY / speedRef.current);
+        return;
+      }
     } else {
       setPhase(PHASE.AI_TURN);
-      setTimeout(() => executeAITurn(unit, a, b), AI_THINK_DELAY);
+      setTimeout(() => executeAITurn(unit, a, b), AI_THINK_DELAY / speedRef.current);
     }
   }, [addLogs, updateState]);
 
@@ -133,8 +178,25 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
 
     const turnLogs = executeTurn(unit, action.skill, action.targets, b, a);
     addLogs(turnLogs);
+    processAnimations(turnLogs, unit.id);
     updateState();
-    setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY);
+    setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
+  }, [addLogs, updateState, nextTurn]);
+
+  // --- Auto-Play Turn (for auto-battle mode) ---
+  const autoPlayTurn = useCallback((unit, tA, tB) => {
+    const a = tA || stateRef.current.teamA;
+    const b = tB || stateRef.current.teamB;
+    const action = decideAction(unit, a, b); // Player allies = teamA, enemies = teamB
+    if (!action) return;
+
+    const turnLogs = executeTurn(unit, action.skill, action.targets, a, b);
+    addLogs(turnLogs);
+    processAnimations(turnLogs, unit.id);
+    setSelectedSkill(null);
+    setPhase(PHASE.READY);
+    updateState();
+    setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
   }, [addLogs, updateState, nextTurn]);
 
   // --- Player Skill Selection ---
@@ -149,18 +211,20 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
       const targets = b.filter(u => u.alive);
       const turnLogs = executeTurn(activeUnit, skill, targets, a, b);
       addLogs(turnLogs);
+      processAnimations(turnLogs, activeUnit.id);
       setSelectedSkill(null);
       setPhase(PHASE.READY);
       updateState();
-      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY);
+      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
     } else if (skill.target === SkillTarget.ALL_ALLIES) {
       const targets = a.filter(u => u.alive);
       const turnLogs = executeTurn(activeUnit, skill, targets, a, b);
       addLogs(turnLogs);
+      processAnimations(turnLogs, activeUnit.id);
       setSelectedSkill(null);
       setPhase(PHASE.READY);
       updateState();
-      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY);
+      setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
     } else {
       // Need target selection
       setPhase(PHASE.PLAYER_TARGET);
@@ -176,11 +240,23 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
 
     const turnLogs = executeTurn(activeUnit, selectedSkill, [target], a, b);
     addLogs(turnLogs);
+    processAnimations(turnLogs, activeUnit.id);
     setSelectedSkill(null);
     setPhase(PHASE.READY);
     updateState();
-    setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY);
+    setTimeout(() => nextTurn(), TURN_TRANSITION_DELAY / speedRef.current);
   }, [selectedSkill, activeUnit, addLogs, updateState, nextTurn]);
+
+  // --- Auto-battle: if toggled on during a player turn, auto-play immediately ---
+  useEffect(() => {
+    if (autoBattle && activeUnit && (phase === PHASE.PLAYER_TURN || phase === PHASE.PLAYER_TARGET)) {
+      setSelectedSkill(null);
+      setPhase(PHASE.AI_TURN);
+      const a = stateRef.current.teamA;
+      const b = stateRef.current.teamB;
+      setTimeout(() => autoPlayTurn(activeUnit, a, b), AI_THINK_DELAY / speedRef.current);
+    }
+  }, [autoBattle]);
 
   // --- Render ---
   const isPlayerTurn = phase === PHASE.PLAYER_TURN || phase === PHASE.PLAYER_TARGET;
@@ -254,6 +330,26 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                 REMATCH
               </button>
             )}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8 }}>
+              <button onClick={() => setAutoBattle(prev => !prev)} style={{
+                padding: '4px 12px', fontSize: 11, fontWeight: 'bold',
+                backgroundColor: autoBattle ? '#4CAF50' : '#333',
+                color: autoBattle ? '#fff' : '#888',
+                border: `1px solid ${autoBattle ? '#4CAF50' : '#555'}`,
+                borderRadius: 4, cursor: 'pointer',
+              }}>
+                {autoBattle ? 'AUTO: ON' : 'AUTO: OFF'}
+              </button>
+              <button onClick={() => setBattleSpeed(prev => prev >= 3 ? 1 : prev + 1)} style={{
+                padding: '4px 12px', fontSize: 11, fontWeight: 'bold',
+                backgroundColor: battleSpeed > 1 ? '#FF9800' : '#333',
+                color: battleSpeed > 1 ? '#fff' : '#888',
+                border: `1px solid ${battleSpeed > 1 ? '#FF9800' : '#555'}`,
+                borderRadius: 4, cursor: 'pointer',
+              }}>
+                {battleSpeed === 1 ? 'x1' : battleSpeed === 2 ? 'x2' : 'x3'}
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -295,6 +391,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                   key={unit.id}
                   unit={unit}
                   isActive={activeUnit?.id === unit.id}
+                  animClass={activeUnit?.id === unit.id ? (animations[unit.id] || 'anim-active') : animations[unit.id]}
                 />
               ))}
             </div>
@@ -362,6 +459,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                     key={unit.id}
                     unit={unit}
                     isActive={activeUnit?.id === unit.id}
+                    animClass={activeUnit?.id === unit.id ? (animations[unit.id] || 'anim-active') : animations[unit.id]}
                     elementHint={elementHint}
                     onClick={
                       phase === PHASE.PLAYER_TARGET && unit.alive

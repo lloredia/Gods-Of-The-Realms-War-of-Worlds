@@ -17,7 +17,8 @@ export const SUMMON_RATES = Object.freeze({
  */
 export const SUMMON_POOL = {
   3: [
-    // Common heroes — not yet defined, placeholder for roster expansion
+    'hermes', 'hephaestus', 'tyr', 'heimdall', 'sobek',
+    'thoth', 'brigid', 'dianCecht', 'fujin', 'inari',
   ],
   4: [
     'zeus', 'poseidon', 'thor', 'freya', 'anubis', 'ra', 'morganLeFay', 'cuChulainn',

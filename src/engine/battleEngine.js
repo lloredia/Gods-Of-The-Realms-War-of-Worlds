@@ -193,7 +193,9 @@ function executeDamageSkill(attacker, skill, targets) {
     const damageLog = {
       type: LogType.DAMAGE,
       attacker: attacker.name,
+      attackerId: attacker.id,
       target: target.name,
+      targetId: target.id,
       skill: skill.name,
       damage: totalDamage,
       isCrit: lastCrit,
@@ -208,14 +210,14 @@ function executeDamageSkill(attacker, skill, targets) {
     if (target.currentHP <= 0) {
       target.alive = false;
       target.currentHP = 0;
-      logs.push({ type: LogType.DEATH, unit: target.name, message: `${target.name} has been defeated!` });
+      logs.push({ type: LogType.DEATH, unit: target.name, targetId: target.id, message: `${target.name} has been defeated!` });
 
       // Check for revive passive
       if (target.passive && target.passive.trigger === PassiveTrigger.ON_RECEIVE_FATAL && (target.passive.usesLeft === undefined || target.passive.usesLeft > 0)) {
         target.alive = true;
         target.currentHP = Math.floor(target.maxHP * REVIVE_HP_PERCENT);
         if (target.passive.usesLeft !== undefined) target.passive.usesLeft--;
-        logs.push({ type: LogType.REVIVE, unit: target.name, passive: target.passive.name, message: `${target.name}'s ${target.passive.name} triggers! Revived at ${target.currentHP} HP!` });
+        logs.push({ type: LogType.REVIVE, unit: target.name, targetId: target.id, passive: target.passive.name, message: `${target.name}'s ${target.passive.name} triggers! Revived at ${target.currentHP} HP!` });
       }
     }
 
@@ -225,6 +227,7 @@ function executeDamageSkill(attacker, skill, targets) {
         logs.push({
           type: LogType.DEBUFF_APPLIED,
           target: target.name,
+          targetId: target.id,
           effect: formatEffect(result.effectType),
           message: `${target.name} is now affected by ${formatEffect(result.effectType)}!`,
         });
@@ -232,6 +235,7 @@ function executeDamageSkill(attacker, skill, targets) {
         logs.push({
           type: LogType.RESISTED,
           target: target.name,
+          targetId: target.id,
           effect: formatEffect(result.effectType),
           message: `${target.name} resisted ${formatEffect(result.effectType)}!`,
         });
@@ -239,6 +243,7 @@ function executeDamageSkill(attacker, skill, targets) {
         logs.push({
           type: LogType.BLOCKED,
           target: target.name,
+          targetId: target.id,
           effect: formatEffect(result.effectType),
           message: `${target.name}'s Immunity blocked ${formatEffect(result.effectType)}!`,
         });
@@ -258,6 +263,7 @@ function executeHealSkill(caster, skill, allies) {
       logs.push({
         type: LogType.HEAL_BLOCKED,
         unit: ally.name,
+        targetId: ally.id,
         message: `${ally.name}'s healing is blocked!`,
       });
       continue;
@@ -272,6 +278,7 @@ function executeHealSkill(caster, skill, allies) {
       type: LogType.HEAL,
       caster: caster.name,
       target: ally.name,
+      targetId: ally.id,
       skill: skill.name,
       amount: actual,
       remainingHP: ally.currentHP,
@@ -291,6 +298,7 @@ function executeBuffSkill(caster, skill, allies) {
       type: LogType.BUFF_APPLIED,
       caster: caster.name,
       target: ally.name,
+      targetId: ally.id,
       skill: skill.name,
       effect: formatEffect(skill.effectType),
       message: `${ally.name} gains ${formatEffect(skill.effectType)}!`,
@@ -311,7 +319,9 @@ function executeDebuffSkill(attacker, skill, targets) {
       logs.push({
         type: LogType.DAMAGE,
         attacker: attacker.name,
+        attackerId: attacker.id,
         target: target.name,
+        targetId: target.id,
         skill: skill.name,
         damage,
         isCrit,
@@ -322,7 +332,7 @@ function executeDebuffSkill(attacker, skill, targets) {
       if (target.currentHP <= 0) {
         target.alive = false;
         target.currentHP = 0;
-        logs.push({ type: LogType.DEATH, unit: target.name });
+        logs.push({ type: LogType.DEATH, unit: target.name, targetId: target.id });
         continue;
       }
     }
@@ -332,6 +342,7 @@ function executeDebuffSkill(attacker, skill, targets) {
       logs.push({
         type: LogType.DEBUFF_APPLIED,
         target: target.name,
+        targetId: target.id,
         effect: formatEffect(result.effectType),
         message: `${target.name} is now affected by ${formatEffect(result.effectType)}!`,
       });
@@ -339,12 +350,14 @@ function executeDebuffSkill(attacker, skill, targets) {
       logs.push({
         type: LogType.RESISTED,
         target: target.name,
+        targetId: target.id,
         effect: formatEffect(result.effectType),
       });
     } else if (result.blocked) {
       logs.push({
         type: LogType.BLOCKED,
         target: target.name,
+        targetId: target.id,
         effect: formatEffect(result.effectType),
       });
     }

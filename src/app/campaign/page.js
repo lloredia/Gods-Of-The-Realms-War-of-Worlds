@@ -9,12 +9,12 @@ const STAGES = [
   { id: 2, name: 'Frost Giant\'s Pass', enemies: ['thor', 'freya'], difficulty: 'Easy', desc: 'Norse warriors block the path.' },
   { id: 3, name: 'Tomb of the Pharaoh', enemies: ['anubis', 'ra', 'bastet'], difficulty: 'Normal', desc: 'The sands stir with ancient power.' },
   { id: 4, name: 'The Mist Veil', enemies: ['morganLeFay', 'cuChulainn', 'freya'], difficulty: 'Normal', desc: 'Celtic spirits defend their realm.' },
-  { id: 5, name: 'Temple of the Sun', enemies: ['amaterasu', 'susanoo', 'ra'], difficulty: 'Normal', desc: 'The Rising Sun stands against you.' },
+  { id: 5, name: 'Temple of the Sun', enemies: ['amaterasu', 'susanoo', 'ra'], difficulty: 'Normal', desc: 'The Rising Sun stands against you.', boss: { name: 'Titan Helios', bonusHP: 1.3, bonusATK: 1.2 } },
   { id: 6, name: 'Allfather\'s Trial', enemies: ['thor', 'freya', 'loki', 'anubis'], difficulty: 'Hard', desc: 'A true test of strength.' },
   { id: 7, name: 'Shadow of Hades', enemies: ['hades', 'anubis', 'loki', 'bastet'], difficulty: 'Hard', desc: 'Darkness gathers from all realms.' },
-  { id: 8, name: 'Divine Convergence', enemies: ['zeus', 'amaterasu', 'thor', 'apollo'], difficulty: 'Very Hard', desc: 'The mightiest gods unite.' },
+  { id: 8, name: 'Divine Convergence', enemies: ['zeus', 'amaterasu', 'thor', 'apollo'], difficulty: 'Very Hard', desc: 'The mightiest gods unite.', boss: { name: 'Primordial Chaos', bonusHP: 1.5, bonusATK: 1.3 } },
   { id: 9, name: 'Ragnarok\'s Edge', enemies: ['thor', 'loki', 'hades', 'susanoo'], difficulty: 'Very Hard', desc: 'The end of worlds approaches.' },
-  { id: 10, name: 'War of Worlds', enemies: ['zeus', 'hades', 'apollo', 'poseidon'], difficulty: 'Legendary', desc: 'The final battle for supremacy.' },
+  { id: 10, name: 'War of Worlds', enemies: ['zeus', 'hades', 'apollo', 'poseidon'], difficulty: 'Legendary', desc: 'The final battle for supremacy.', boss: { name: 'Chronos, Father of Gods', bonusHP: 2.0, bonusATK: 1.5, bonusDEF: 1.3 } },
 ];
 
 const DIFFICULTY_COLORS = {
@@ -33,10 +33,20 @@ export default function CampaignPage() {
     const stage = STAGES.find(s => s.id === selectedStage);
     const enemyTemplates = stage.enemies.map(id => heroRoster[id]).filter(Boolean);
 
+    const finalEnemies = stage.boss
+      ? enemyTemplates.map(e => ({
+          ...e,
+          maxHP: Math.floor(e.maxHP * stage.boss.bonusHP),
+          currentHP: Math.floor(e.maxHP * stage.boss.bonusHP),
+          attack: Math.floor(e.attack * stage.boss.bonusATK),
+          defense: Math.floor(e.defense * (stage.boss.bonusDEF || 1)),
+        }))
+      : enemyTemplates;
+
     return (
       <BattleUI
         playerTeam={null}
-        enemyTeam={enemyTemplates}
+        enemyTeam={finalEnemies}
         onExit={(won) => {
           if (won && selectedStage > highestCleared) {
             setHighestCleared(selectedStage);
@@ -86,6 +96,7 @@ export default function CampaignPage() {
                   <span style={{ fontSize: 12, color: '#666' }}>Stage {stage.id}</span>
                   <span style={{ fontWeight: 'bold', fontSize: 14, color: '#eee' }}>{stage.name}</span>
                   {isCleared && <span style={{ fontSize: 10, color: '#4CAF50' }}>✓</span>}
+                  {stage.boss && <span style={{ fontSize: 10, color: '#F44336', border: '1px solid #F44336', borderRadius: 3, padding: '1px 6px', marginLeft: 6 }}>BOSS</span>}
                 </div>
                 <div style={{ fontSize: 11, color: '#777' }}>{stage.desc}</div>
                 <div style={{ fontSize: 10, color: '#555', marginTop: 2 }}>

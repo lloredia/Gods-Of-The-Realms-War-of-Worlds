@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { simulateSummon } from '../../data/summonPool';
 import { heroRoster } from '../../data/units';
 import { SFX, resumeAudio } from '../../utils/soundSystem';
+import { loadSave, updateSave, addHero } from '../../utils/saveSystem';
+import { checkSummonAchievements } from '../../utils/achievementTracker';
+import AchievementToast from '../../components/AchievementToast';
 
 const STAR_COLORS = { 3: '#9E9E9E', 4: '#FFD700', 5: '#FF4444' };
 const ELEMENT_COLORS = { Storm: '#6B5CE7', Ocean: '#2196F3', Underworld: '#8B0000', Sun: '#FF9800', Moon: '#9C27B0' };
@@ -12,8 +15,25 @@ export default function SummonPage() {
   const [results, setResults] = useState([]);
   const [latest, setLatest] = useState(null);
   const [animating, setAnimating] = useState(false);
+  const [save, setSave] = useState(null);
+  const [totalSummons, setTotalSummons] = useState(0);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const s = loadSave();
+    setSave(s);
+    setTotalSummons(s.stats?.totalSummons || 0);
+  }, []);
 
   const doSummon = (count) => {
+    const cost = count === 1 ? 1000 : 9000;
+    if (!save || save.resources.gold < cost) return;
+
+    // Deduct gold
+    const newGold = save.resources.gold - cost;
+    updateSave({ resources: { ...save.resources, gold: newGold } });
+    setSave(prev => ({ ...prev, resources: { ...prev.resources, gold: newGold } }));
+
     resumeAudio();
     setAnimating(true);
     SFX.summon();
@@ -27,6 +47,9 @@ export default function SummonPage() {
     }
 
     setTimeout(() => {
+      // Persist each pulled hero
+      pulls.forEach(p => addHero(p.heroId));
+
       setLatest(pulls);
       setResults(prev => [...pulls, ...prev].slice(0, 50));
       setAnimating(false);
@@ -36,6 +59,14 @@ export default function SummonPage() {
       } else {
         SFX.click();
       }
+
+      // Track summon stats and achievements
+      const newTotal = totalSummons + count;
+      setTotalSummons(newTotal);
+      const s = loadSave();
+      updateSave({ stats: { ...s.stats, totalSummons: newTotal } });
+      const unlocked = checkSummonAchievements(newTotal, hasFiveStar);
+      if (unlocked.length > 0) setToast(unlocked[0]);
     }, 800);
   };
 
@@ -46,18 +77,26 @@ export default function SummonPage() {
         <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>Call upon the gods to join your ranks</p>
       </div>
 
+      <div style={{ textAlign: 'center', fontSize: 12, color: '#FFD700', marginBottom: 8 }}>
+        Gold: {save?.resources?.gold?.toLocaleString() || 0}
+      </div>
+
       {/* Summon buttons */}
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 24 }}>
-        <button onClick={() => doSummon(1)} disabled={animating} style={{
+        <button onClick={() => doSummon(1)} disabled={animating || !save || save.resources.gold < 1000} style={{
           padding: '12px 32px', fontSize: 14, fontWeight: 'bold',
-          backgroundColor: animating ? '#333' : '#FFD700', color: animating ? '#666' : '#000',
-          border: 'none', borderRadius: 8, cursor: animating ? 'not-allowed' : 'pointer',
-        }}>Summon x1</button>
-        <button onClick={() => doSummon(10)} disabled={animating} style={{
+          backgroundColor: (animating || !save || save.resources.gold < 1000) ? '#333' : '#FFD700',
+          color: (animating || !save || save.resources.gold < 1000) ? '#666' : '#000',
+          border: 'none', borderRadius: 8,
+          cursor: (animating || !save || save.resources.gold < 1000) ? 'not-allowed' : 'pointer',
+        }}>Summon x1 (1,000g)</button>
+        <button onClick={() => doSummon(10)} disabled={animating || !save || save.resources.gold < 9000} style={{
           padding: '12px 32px', fontSize: 14, fontWeight: 'bold',
-          backgroundColor: animating ? '#333' : '#FF6B35', color: animating ? '#666' : '#fff',
-          border: 'none', borderRadius: 8, cursor: animating ? 'not-allowed' : 'pointer',
-        }}>Summon x10</button>
+          backgroundColor: (animating || !save || save.resources.gold < 9000) ? '#333' : '#FF6B35',
+          color: (animating || !save || save.resources.gold < 9000) ? '#666' : '#fff',
+          border: 'none', borderRadius: 8,
+          cursor: (animating || !save || save.resources.gold < 9000) ? 'not-allowed' : 'pointer',
+        }}>Summon x10 (9,000g)</button>
       </div>
 
       {/* Animating state */}
@@ -120,6 +159,8 @@ export default function SummonPage() {
           </div>
         </div>
       )}
+
+      {toast && <AchievementToast achievementId={toast} onDone={() => setToast(null)} />}
     </div>
   );
 }

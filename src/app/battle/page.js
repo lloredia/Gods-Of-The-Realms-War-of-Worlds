@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
+import TeamPresets from '../../components/TeamPresets';
 
 const ELEMENT_COLORS = {
   Storm: '#6B5CE7',
@@ -47,6 +48,8 @@ export default function BattlePage() {
         </p>
       </div>
 
+      <TeamPresets selectedIds={selectedIds} onLoadPreset={(ids) => setSelectedIds(ids)} />
+
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
@@ -66,11 +69,13 @@ export default function BattlePage() {
               style={{
                 padding: 12,
                 borderRadius: 8,
-                border: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                borderTop: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                borderRight: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                borderBottom: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                borderLeft: `3px solid ${roleColor}`,
                 backgroundColor: isSelected ? '#1a1a3e' : '#1a1a2e',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
-                borderLeft: `3px solid ${roleColor}`,
                 boxShadow: isSelected ? '0 0 10px rgba(255,215,0,0.3)' : 'none',
                 opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
               }}

@@ -488,6 +488,180 @@ const benzaiten = makeUnit({
   relicSet: 'tempest',
 });
 
+// ---------------------------------------------------------------------------
+// 3-Star Heroes — 10 new common-tier heroes
+// ---------------------------------------------------------------------------
+
+const hermes = makeUnit({
+  id: 'hermes',
+  name: 'Hermes',
+  faction: 'The Pantheon',
+  element: Element.STORM,
+  role: 'Attacker',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 700,
+  defense: 420,
+  speed: 100,
+  skills: [skills.quickStrike, skills.windDash],
+});
+
+const hephaestus = makeUnit({
+  id: 'hephaestus',
+  name: 'Hephaestus',
+  faction: 'The Pantheon',
+  element: Element.SUN,
+  role: 'Tank',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 650,
+  defense: 500,
+  speed: 90,
+  skills: [skills.forgeSlam, skills.ironWall],
+});
+
+const tyr = makeUnit({
+  id: 'tyr',
+  name: 'Tyr',
+  faction: "The Allfather's Hall",
+  element: Element.STORM,
+  role: 'Tank',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 670,
+  defense: 490,
+  speed: 92,
+  skills: [skills.justiceStrike, skills.braveryShield],
+});
+
+const heimdall = makeUnit({
+  id: 'heimdall',
+  name: 'Heimdall',
+  faction: "The Allfather's Hall",
+  element: Element.SUN,
+  role: 'Support',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 680,
+  defense: 450,
+  speed: 96,
+  skills: [skills.gjallarBlast, skills.watchmanAura],
+});
+
+const sobek = makeUnit({
+  id: 'sobek',
+  name: 'Sobek',
+  faction: 'The Eternal Sands',
+  element: Element.OCEAN,
+  role: 'Bruiser',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 750,
+  defense: 460,
+  speed: 93,
+  skills: [skills.jawCrush, skills.tidalSnap],
+});
+
+const thoth = makeUnit({
+  id: 'thoth',
+  name: 'Thoth',
+  faction: 'The Eternal Sands',
+  element: Element.MOON,
+  role: 'Support',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 660,
+  defense: 440,
+  speed: 95,
+  skills: [skills.wisdomBolt, skills.scrollOfHealing],
+});
+
+const brigid = makeUnit({
+  id: 'brigid',
+  name: 'Brigid',
+  faction: 'The Mist Realm',
+  element: Element.SUN,
+  role: 'Support',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 660,
+  defense: 430,
+  speed: 94,
+  skills: [skills.holyFlame, skills.springWaters],
+});
+
+const dianCecht = makeUnit({
+  id: 'dianCecht',
+  name: 'Dian Cecht',
+  faction: 'The Mist Realm',
+  element: Element.OCEAN,
+  role: 'Support',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 650,
+  defense: 440,
+  speed: 93,
+  skills: [skills.wellOfLife, skills.herbRemedy],
+});
+
+const fujin = makeUnit({
+  id: 'fujin',
+  name: 'Fujin',
+  faction: 'The Rising Sun',
+  element: Element.STORM,
+  role: 'Attacker',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 720,
+  defense: 410,
+  speed: 98,
+  skills: [skills.galeForce, skills.windBlade],
+});
+
+const inari = makeUnit({
+  id: 'inari',
+  name: 'Inari',
+  faction: 'The Rising Sun',
+  element: Element.MOON,
+  role: 'Support',
+  level: 1,
+  stars: 3,
+  awakened: false,
+  maxHP: 8000,
+  currentHP: 8000,
+  attack: 660,
+  defense: 430,
+  speed: 94,
+  skills: [skills.foxFire, skills.riceBlessing],
+});
+
 // --- TEAM A (Player) ---
 export const teamATemplates = [zeus, poseidon, morganLeFay, susanoo];
 
@@ -522,4 +696,14 @@ export const heroRoster = {
   raijin,
   izanami,
   benzaiten,
+  hermes,
+  hephaestus,
+  tyr,
+  heimdall,
+  sobek,
+  thoth,
+  brigid,
+  dianCecht,
+  fujin,
+  inari,
 };

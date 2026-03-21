@@ -3,6 +3,9 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
+import { loadSave, updateSave } from '../../utils/saveSystem';
+import { checkArenaAchievements, checkBattleAchievements } from '../../utils/achievementTracker';
+import AchievementToast from '../../components/AchievementToast';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -101,11 +104,18 @@ const DIFFICULTY_COLORS = {
 
 export default function ArenaPage() {
   const [arenaPoints, setArenaPoints] = useState(500);
+  const [toast, setToast] = useState(null);
   const [phase, setPhase] = useState('browse'); // 'browse' | 'select' | 'battle'
   const [opponents, setOpponents] = useState([]);
   const [chosenOpponent, setChosenOpponent] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
   const [lastResult, setLastResult] = useState(null);
+
+  // Load persisted arena points
+  useEffect(() => {
+    const save = loadSave();
+    if (save.arenaPoints !== undefined) setArenaPoints(save.arenaPoints);
+  }, []);
 
   // Generate opponents client-side only to avoid hydration mismatch
   useEffect(() => {
@@ -162,11 +172,32 @@ export default function ArenaPage() {
       setArenaPoints(prev => Math.max(0, prev - loss));
       setLastResult({ won: false, points: loss });
     }
+
+    // Persist
+    const newPoints = playerWon ? arenaPoints + (chosenOpponent?.reward || 20) : Math.max(0, arenaPoints - 10);
+    updateSave({ arenaPoints: newPoints });
+
+    // Track battle stats
+    const save = loadSave();
+    const newStats = { ...save.stats };
+    if (playerWon) {
+      newStats.battlesWon = (newStats.battlesWon || 0) + 1;
+    } else {
+      newStats.battlesLost = (newStats.battlesLost || 0) + 1;
+    }
+    updateSave({ stats: newStats });
+
+    // Check achievements
+    const battleUnlocked = checkBattleAchievements(playerWon, newStats);
+    const arenaUnlocked = checkArenaAchievements(playerWon, newPoints);
+    const allUnlocked = [...battleUnlocked, ...arenaUnlocked];
+    if (allUnlocked.length > 0) setToast(allUnlocked[0]);
+
     setChosenOpponent(null);
     setSelectedIds([]);
     setOpponents(generateOpponents());
     setPhase('browse');
-  }, [chosenOpponent]);
+  }, [chosenOpponent, arenaPoints]);
 
   // =========================================================================
   // RENDER — Battle Phase
@@ -257,11 +288,13 @@ export default function ArenaPage() {
                 style={{
                   padding: 12,
                   borderRadius: 8,
-                  border: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderTop: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderRight: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderBottom: isSelected ? '2px solid #FFD700' : '2px solid #333',
+                  borderLeft: `3px solid ${roleColor}`,
                   backgroundColor: isSelected ? '#1a1a3e' : '#1a1a2e',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
-                  borderLeft: `3px solid ${roleColor}`,
                   boxShadow: isSelected ? '0 0 10px rgba(255,215,0,0.3)' : 'none',
                   opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
                 }}
@@ -458,6 +491,7 @@ export default function ArenaPage() {
           ))}
         </div>
       </div>
+      {toast && <AchievementToast achievementId={toast} onDone={() => setToast(null)} />}
     </div>
   );
 }

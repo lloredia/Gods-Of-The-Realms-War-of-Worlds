@@ -1,8 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { Element } from '../constants/enums';
 import factions from '../data/factions';
 import { formatEffect } from '../engine/effectSystem';
+import HeroPortrait from './HeroPortrait';
+import HeroDetailModal from './HeroDetailModal';
+
+const FACTION_KEY_MAP = {
+  'The Pantheon': 'Pantheon',
+  "The Allfather's Hall": 'Norse',
+  'The Eternal Sands': 'Egyptian',
+  'The Mist Realm': 'Celtic',
+  'The Rising Sun': 'Japanese',
+};
 
 const ELEMENT_COLORS = {
   [Element.STORM]: '#6B5CE7',
@@ -20,17 +31,20 @@ const ROLE_COLORS = {
   Debuffer: '#9C27B0',
 };
 
-export default function UnitCard({ unit, isActive, onClick, elementHint }) {
+export default function UnitCard({ unit, isActive, onClick, elementHint, animClass }) {
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';
   const faction = unit.faction ? Object.values(factions).find(f => f.name === unit.faction) : null;
   const factionColor = faction ? faction.color : '#666';
   const roleColor = unit.role && ROLE_COLORS[unit.role] ? ROLE_COLORS[unit.role] : null;
+  const [showDetail, setShowDetail] = useState(false);
 
   return (
     <div
+      className={animClass || ''}
       onClick={onClick}
+      onDoubleClick={(e) => { e.stopPropagation(); setShowDetail(true); }}
       style={{
         border: isActive ? '2px solid #FFD700' : '2px solid #333',
         borderLeft: roleColor ? `3px solid ${roleColor}` : (isActive ? '2px solid #FFD700' : '2px solid #333'),
@@ -44,9 +58,16 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
         boxShadow: isActive ? '0 0 12px rgba(255,215,0,0.4)' : 'none',
       }}
     >
-      {/* Name + Faction + Role + Element */}
+      {/* Name + Portrait + Faction + Role + Element */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <HeroPortrait
+            unitId={unit.id}
+            element={unit.element}
+            faction={FACTION_KEY_MAP[unit.faction]}
+            size={36}
+            isActive={isActive}
+          />
           <span style={{ fontWeight: 'bold', color: '#eee', fontSize: 14 }}>{unit.name}</span>
           {unit._progressionInfo && (
             <span style={{ fontSize: 9, color: '#FFD740' }}>
@@ -206,6 +227,9 @@ export default function UnitCard({ unit, isActive, onClick, elementHint }) {
         }}>
           DEFEATED
         </div>
+      )}
+      {showDetail && (
+        <HeroDetailModal hero={unit} onClose={() => setShowDetail(false)} />
       )}
     </div>
   );

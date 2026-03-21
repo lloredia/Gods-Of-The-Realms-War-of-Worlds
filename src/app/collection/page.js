@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { heroRoster } from '../../data/units';
 import factions from '../../data/factions';
 import { formatEffect } from '../../engine/effectSystem';
 import relics from '../../data/relics';
 import { SFX, resumeAudio } from '../../utils/soundSystem';
+import LevelUpPanel from '../../components/LevelUpPanel';
+import { loadSave, updateSave } from '../../utils/saveSystem';
 
 const ELEMENT_COLORS = {
   Storm: '#6B5CE7', Ocean: '#2196F3', Underworld: '#8B0000', Sun: '#FF9800', Moon: '#9C27B0',
@@ -18,7 +20,60 @@ export default function CollectionPage() {
   const [filter, setFilter] = useState('All');
   const [relicPickerFor, setRelicPickerFor] = useState(null);
   const [heroRelics, setHeroRelics] = useState({});
+  const [selectedHeroId, setSelectedHeroId] = useState(null);
+  const [save, setSave] = useState(null);
   const allHeroes = Object.values(heroRoster);
+
+  useEffect(() => {
+    setSave(loadSave());
+  }, []);
+
+  // Merge save heroData overrides into hero object
+  function getHeroWithSaveData(hero) {
+    if (!save || !save.heroData || !save.heroData[hero.id]) return hero;
+    return { ...hero, ...save.heroData[hero.id] };
+  }
+
+  function handleLevelUp(heroId) {
+    if (!save) return;
+    const heroData = save.heroData || {};
+    const hd = heroData[heroId] || {};
+    const currentLevel = hd.level || heroRoster[heroId]?.level || 1;
+    const cost = 100 * currentLevel;
+    if ((save.resources?.gold || 0) < cost) return;
+
+    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: currentLevel + 1, stars: hd.stars || heroRoster[heroId]?.stars || 1, awakened: hd.awakened || heroRoster[heroId]?.awakened || false } };
+    const updatedResources = { ...save.resources, gold: save.resources.gold - cost };
+    const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
+    setSave(updated);
+  }
+
+  function handleStarUp(heroId) {
+    if (!save) return;
+    const heroData = save.heroData || {};
+    const hd = heroData[heroId] || {};
+    const currentStars = hd.stars || heroRoster[heroId]?.stars || 1;
+    const cost = 10 * currentStars;
+    if ((save.resources?.essences || 0) < cost) return;
+
+    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: 1, stars: currentStars + 1, awakened: hd.awakened || heroRoster[heroId]?.awakened || false } };
+    const updatedResources = { ...save.resources, essences: save.resources.essences - cost };
+    const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
+    setSave(updated);
+  }
+
+  function handleAwaken(heroId) {
+    if (!save) return;
+    const heroData = save.heroData || {};
+    const hd = heroData[heroId] || {};
+    const cost = 20;
+    if ((save.resources?.awakenStones || 0) < cost) return;
+
+    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: hd.level || heroRoster[heroId]?.level || 1, stars: hd.stars || heroRoster[heroId]?.stars || 1, awakened: true } };
+    const updatedResources = { ...save.resources, awakenStones: save.resources.awakenStones - cost };
+    const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
+    setSave(updated);
+  }
   const factionNames = ['All', ...Object.values(factions).map(f => f.name)];
 
   const filtered = filter === 'All' ? allHeroes : allHeroes.filter(h => h.faction === filter);
@@ -50,15 +105,18 @@ export default function CollectionPage() {
         display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
         gap: 12, maxWidth: 1000, margin: '0 auto',
       }}>
-        {filtered.map(hero => {
+        {filtered.map(baseHero => {
+          const hero = getHeroWithSaveData(baseHero);
           const elemColor = ELEMENT_COLORS[hero.element] || '#666';
           const roleColor = ROLE_COLORS[hero.role] || '#888';
           const currentRelicId = heroRelics[hero.id] || hero.relicSet || null;
           const currentRelicName = currentRelicId && relics[currentRelicId] ? relics[currentRelicId].name : 'None';
+          const isSelected = selectedHeroId === hero.id;
           return (
-            <div key={hero.id} style={{
+            <div key={hero.id} onClick={() => setSelectedHeroId(isSelected ? null : hero.id)} style={{
               padding: 14, borderRadius: 8, backgroundColor: '#1a1a2e',
-              border: '1px solid #333', borderLeft: `3px solid ${elemColor}`,
+              border: isSelected ? '1px solid #FFD700' : '1px solid #333', borderLeft: `3px solid ${elemColor}`,
+              cursor: 'pointer',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                 <span style={{ fontWeight: 'bold', fontSize: 14, color: '#eee' }}>{hero.name}</span>
@@ -103,6 +161,15 @@ export default function CollectionPage() {
                   </div>
                 )}
               </div>
+              {isSelected && save && (
+                <LevelUpPanel
+                  hero={hero}
+                  resources={save.resources}
+                  onLevelUp={handleLevelUp}
+                  onStarUp={handleStarUp}
+                  onAwaken={handleAwaken}
+                />
+              )}
             </div>
           );
         })}
