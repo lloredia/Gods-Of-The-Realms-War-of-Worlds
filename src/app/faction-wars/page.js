@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import factions from '../../data/factions';
 import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
+import { loadSave, updateSave } from '../../utils/saveSystem';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -173,8 +174,8 @@ export default function FactionWarsPage() {
     setWildcardHero(prev => {
       if (prev?.id === hero.id) return null; // deselect
       // Check if adding would exceed 4 total
-      const currentTotal = selectedHeroes.length + (prev ? 1 : 0);
-      if (!prev && selectedHeroes.length >= 4) return prev; // already full with faction heroes
+      const totalAfterAdd = selectedHeroes.length + 1;
+      if (totalAfterAdd > 4) return prev; // can't exceed 4 total
       return hero;
     });
   }, [selectedHeroes.length]);
@@ -532,6 +533,7 @@ export default function FactionWarsPage() {
         <div style={styles.rewardsGrid}>
           {REWARD_TIERS.map(tier => {
             const unlocked = state.playerPoints >= tier.points;
+            const claimed = (state.claimedTiers || []).includes(tier.points);
             return (
               <div key={tier.points} style={{
                 ...styles.rewardCard,
@@ -545,10 +547,28 @@ export default function FactionWarsPage() {
                 <div style={{ fontSize: 12, color: unlocked ? '#ccc' : '#555', marginTop: 4 }}>
                   {tier.reward}
                 </div>
-                {unlocked && (
-                  <div style={{ fontSize: 10, color: '#4CAF50', marginTop: 6, fontWeight: 'bold' }}>
-                    UNLOCKED
-                  </div>
+                {unlocked && claimed && (
+                  <div style={{ fontSize: 10, color: '#4CAF50', marginTop: 6, fontWeight: 'bold' }}>CLAIMED</div>
+                )}
+                {unlocked && !claimed && (
+                  <button onClick={() => {
+                    const rewardMap = { 100: { gold: 2000 }, 250: { essences: 15 }, 500: { awakenStones: 5 } };
+                    const reward = rewardMap[tier.points];
+                    if (reward) {
+                      const save = loadSave();
+                      const res = { ...save.resources };
+                      for (const [k, v] of Object.entries(reward)) res[k] = (res[k] || 0) + v;
+                      updateSave({ resources: res });
+                    }
+                    const newState = { ...state, claimedTiers: [...(state.claimedTiers || []), tier.points] };
+                    setState(newState);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+                  }} style={{
+                    marginTop: 6, padding: '4px 12px', fontSize: 10, fontWeight: 'bold',
+                    backgroundColor: '#FFD700', color: '#000', border: 'none', borderRadius: 4, cursor: 'pointer',
+                  }}>
+                    Claim
+                  </button>
                 )}
               </div>
             );

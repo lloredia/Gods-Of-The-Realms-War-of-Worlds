@@ -5,7 +5,7 @@ import { initUnits, advanceTurnMeters, executeTurn, isTeamDefeated, getTurnOrder
 import { isStunned } from '../engine/effectSystem';
 import { decideAction } from '../engine/aiSystem';
 import { teamATemplates, teamBTemplates, heroRoster } from '../data/units';
-import { BattlePhase, SkillTarget } from '../constants/enums';
+import { BattlePhase, SkillTarget, SkillType } from '../constants/enums';
 import { BATTLE_START_DELAY, TURN_TRANSITION_DELAY, AI_THINK_DELAY, TURN_ORDER_DISPLAY_COUNT } from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
 import { setSeed, clearSeed } from '../utils/random';
@@ -36,6 +36,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
   const [screenShake, setScreenShake] = useState(false);
   const [impactFlash, setImpactFlash] = useState(false);
   const [damageNumbers, setDamageNumbers] = useState({});
+  const [targetingAllies, setTargetingAllies] = useState(false);
 
   // Ref for mutable state in callbacks
   const stateRef = useRef({ teamA: [], teamB: [] });
@@ -80,24 +81,32 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
 
   const processAnimations = useCallback((turnLogs, attackerId) => {
     let effectTriggered = false;
+    let sfxPlayed = false;
+    let healSfxPlayed = false;
+    let buffSfxPlayed = false;
+    let debuffSfxPlayed = false;
+    const damageAccum = {};
+    const healAccum = {};
     for (const log of turnLogs) {
       if (log.type === 'damage' || log.type === 'multi_hit') {
         if (attackerId) triggerAnimation(attackerId, log.isCrit ? 'anim-crit' : 'anim-attack', 400);
         if (log.targetId) triggerAnimation(log.targetId, 'anim-damage', 500);
+        if (!sfxPlayed) {
+          if (log.isCrit) {
+            SFX.crit();
+          } else {
+            SFX.attack();
+          }
+          sfxPlayed = true;
+        }
         if (log.isCrit) {
-          SFX.crit();
           setScreenShake(true);
           setImpactFlash(true);
           setTimeout(() => setScreenShake(false), 300);
           setTimeout(() => setImpactFlash(false), 100);
-        } else {
-          SFX.attack();
         }
         if (log.targetId && log.damage) {
-          setTimeout(() => {
-            setDamageNumbers(prev => ({ ...prev, [log.targetId]: log.damage }));
-            setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
-          }, 100);
+          damageAccum[log.targetId] = (damageAccum[log.targetId] || 0) + log.damage;
         }
         if (!effectTriggered) {
           const attackerInA = stateRef.current.teamA.some(u => u.id === attackerId);
@@ -109,10 +118,9 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         }
       } else if (log.type === 'heal') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-heal', 600);
-        SFX.heal();
+        if (!healSfxPlayed) { SFX.heal(); healSfxPlayed = true; }
         if (log.targetId && log.amount) {
-          setDamageNumbers(prev => ({ ...prev, [log.targetId]: -log.amount }));
-          setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[log.targetId]; return n; }), 800);
+          healAccum[log.targetId] = (healAccum[log.targetId] || 0) + log.amount;
         }
         if (!effectTriggered) {
           const casterInA = stateRef.current.teamA.some(u => u.id === attackerId);
@@ -123,10 +131,10 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         }
       } else if (log.type === 'buff_applied') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-buff', 500);
-        SFX.buff();
+        if (!buffSfxPlayed) { SFX.buff(); buffSfxPlayed = true; }
       } else if (log.type === 'debuff_applied') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-debuff', 500);
-        SFX.debuff();
+        if (!debuffSfxPlayed) { SFX.debuff(); debuffSfxPlayed = true; }
       } else if (log.type === 'death') {
         if (log.targetId) triggerAnimation(log.targetId, 'anim-death', 600);
         SFX.death();
@@ -137,6 +145,19 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
         if (attackerId) triggerAnimation(attackerId, 'anim-stun', 600);
         SFX.stun();
       }
+    }
+    // Accumulated damage numbers (after loop)
+    for (const [tid, total] of Object.entries(damageAccum)) {
+      setTimeout(() => {
+        setDamageNumbers(prev => ({ ...prev, [tid]: total }));
+        setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[tid]; return n; }), 800);
+      }, 100);
+    }
+    for (const [tid, total] of Object.entries(healAccum)) {
+      setTimeout(() => {
+        setDamageNumbers(prev => ({ ...prev, [tid]: -total }));
+        setTimeout(() => setDamageNumbers(prev => { const n = {...prev}; delete n[tid]; return n; }), 800);
+      }, 100);
     }
   }, [triggerAnimation]);
 
@@ -292,6 +313,8 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
       turnTimerRef.current = setTimeout(() => { if (mountedRef.current) nextTurn(); }, TURN_TRANSITION_DELAY / speedRef.current);
     } else {
       // Need target selection
+      const isAllyTarget = skill.type === SkillType.HEAL || skill.type === SkillType.BUFF || skill.type === SkillType.CLEANSE;
+      setTargetingAllies(isAllyTarget);
       setPhase(PHASE.PLAYER_TARGET);
     }
   }, [activeUnit, addLogs, updateState, nextTurn, processAnimations]);
@@ -307,6 +330,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
     addLogs(turnLogs);
     processAnimations(turnLogs, activeUnit.id);
     setSelectedSkill(null);
+    setTargetingAllies(false);
     setPhase(PHASE.READY);
     updateState();
     turnTimerRef.current = setTimeout(() => { if (mountedRef.current) nextTurn(); }, TURN_TRANSITION_DELAY / speedRef.current);
@@ -355,6 +379,25 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
             cursor: 'pointer',
           }}>
             ← Back to Team Select
+          </button>
+        )}
+        {teamA.length > 0 && phase !== PHASE.BATTLE_OVER && phase !== PHASE.READY && (
+          <button onClick={() => {
+            setWinner('Team B');
+            setPhase(PHASE.BATTLE_OVER);
+            addLogs([{ type: 'battle_end', message: 'Player surrendered!' }]);
+            SFX.defeat();
+          }} style={{
+            marginTop: 8,
+            padding: '4px 16px',
+            fontSize: 11,
+            backgroundColor: '#2a1a1a',
+            color: '#F44336',
+            border: '1px solid #F4434644',
+            borderRadius: 4,
+            cursor: 'pointer',
+          }}>
+            Surrender
           </button>
         )}
         {phase === PHASE.READY && teamA.length === 0 && (
@@ -459,6 +502,11 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                   isActive={activeUnit?.id === unit.id}
                   animClass={activeUnit?.id === unit.id ? (animations[unit.id] || 'anim-active') : animations[unit.id]}
                   damageNumber={damageNumbers[unit.id]}
+                  onClick={
+                    phase === PHASE.PLAYER_TARGET && targetingAllies && unit.alive
+                      ? () => handleTargetSelect(unit)
+                      : undefined
+                  }
                 />
               ))}
             </div>
@@ -530,7 +578,7 @@ export default function BattleUI({ playerTeam, enemyTeam, onExit, stageInfo }) {
                     damageNumber={damageNumbers[unit.id]}
                     elementHint={elementHint}
                     onClick={
-                      phase === PHASE.PLAYER_TARGET && unit.alive
+                      phase === PHASE.PLAYER_TARGET && !targetingAllies && unit.alive
                         ? () => handleTargetSelect(unit)
                         : undefined
                     }

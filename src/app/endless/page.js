@@ -235,7 +235,12 @@ export default function EndlessPage() {
   // =========================================================================
 
   if (phase === 'battle') {
-    const playerTeam = getTeamWithSave(selectedIds);
+    const hpScale = Math.max(0.3, 1 - (wave - 1) * 0.05);
+    const playerTeam = getTeamWithSave(selectedIds).map(h => ({
+      ...h,
+      maxHP: Math.floor(h.maxHP * hpScale),
+      currentHP: Math.floor(h.maxHP * hpScale),
+    }));
     const glowColor = getWaveGlowColor(wave);
 
     return (
@@ -367,6 +372,19 @@ export default function EndlessPage() {
           Next wave enemies: HP x{(1 + (wave + 1) * 0.15).toFixed(2)} | ATK x{(1 + (wave + 1) * 0.10).toFixed(2)} | DEF x{(1 + (wave + 1) * 0.08).toFixed(2)}
         </div>
 
+        <div style={{
+          marginTop: 10,
+          padding: '6px 16px',
+          backgroundColor: '#2a1a1a',
+          borderRadius: 6,
+          border: '1px solid #553333',
+          fontSize: 12,
+          color: '#F44336',
+          textAlign: 'center',
+        }}>
+          Your team enters weakened (HP reduced by {Math.round(wave * 5)}%)
+        </div>
+
         <div style={{ display: 'flex', gap: 16, marginTop: 32 }}>
           <button
             onClick={handleContinue}
@@ -416,8 +434,6 @@ export default function EndlessPage() {
   if (phase === 'gameover') {
     const wavesCleared = goldEarned / 500;
     const isNewBest = wavesCleared >= bestWave && wavesCleared > 0;
-    const died = wave > 0 && goldEarned === (wave - 1) * 500 && wave - 1 !== wave;
-
     return (
       <div style={{
         minHeight: '100vh',

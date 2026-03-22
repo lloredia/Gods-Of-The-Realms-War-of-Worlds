@@ -3080,7 +3080,7 @@ export default function HeroPortrait({
   );
 
   const uid = useMemo(
-    () => `hp-${unitId}-${Math.random().toString(36).slice(2, 7)}`,
+    () => `hp-${unitId}-${unitId + '_' + (element || '').slice(0, 2)}`,
     [unitId],
   );
 

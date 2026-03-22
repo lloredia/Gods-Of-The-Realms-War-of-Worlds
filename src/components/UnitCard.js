@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Element } from '../constants/enums';
 import factions from '../data/factions';
 import { formatEffect } from '../engine/effectSystem';
@@ -42,21 +42,23 @@ const EFFECT_ICONS = {
   heal_block: { icon: '🚫', color: '#E91E63', label: 'No Heal' },
 };
 
-/* Inject keyframes for the active-card gold shimmer once */
+/* Inject keyframes for the active-card gold shimmer once (inside useEffect to avoid SSR hydration issues) */
 const SHIMMER_STYLE_ID = 'unit-card-shimmer-keyframes';
-if (typeof document !== 'undefined' && !document.getElementById(SHIMMER_STYLE_ID)) {
-  const style = document.createElement('style');
-  style.id = SHIMMER_STYLE_ID;
-  style.textContent = `
-    @keyframes unitCardGoldShimmer {
-      0%   { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-  `;
-  document.head.appendChild(style);
-}
 
 export default function UnitCard({ unit, isActive, onClick, elementHint, animClass, damageNumber }) {
+  useEffect(() => {
+    if (!document.getElementById(SHIMMER_STYLE_ID)) {
+      const style = document.createElement('style');
+      style.id = SHIMMER_STYLE_ID;
+      style.textContent = `
+        @keyframes unitCardGoldShimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
   const hpPercent = (unit.currentHP / unit.maxHP) * 100;
   const hpColor = hpPercent > 50 ? '#4CAF50' : hpPercent > 25 ? '#FF9800' : '#F44336';
   const elementColor = ELEMENT_COLORS[unit.element] || '#666';

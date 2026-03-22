@@ -214,7 +214,7 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
           disabled={!canStarUp}
           onClick={() => { if (canStarUp) { resumeAudio(); SFX.starUp(); onStarUp?.(hero.id); } }}
         >
-          Star Up<br />
+          Star Up (resets to Lv 1)<br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
             {stars >= MAX_STARS ? 'MAX' : !atLevelCap ? `Reach Lv ${levelCap}` : `${starUpCost} Essences`}
           </span>

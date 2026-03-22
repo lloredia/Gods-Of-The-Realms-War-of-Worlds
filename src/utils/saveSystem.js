@@ -10,6 +10,7 @@ const DEFAULT_SAVE = {
   resources: { gold: 50000, essences: 100, awakenStones: 20 },
   campaignProgress: { highestStage: 0 },
   stats: { battlesWon: 0, battlesLost: 0, totalDamage: 0 },
+  arenaPoints: 500,
 };
 
 export function loadSave() {
@@ -34,7 +35,14 @@ export function writeSave(data) {
 
 export function updateSave(partial) {
   const current = loadSave();
-  const updated = { ...current, ...partial };
+  const updated = { ...current };
+  for (const [key, value] of Object.entries(partial)) {
+    if (value && typeof value === 'object' && !Array.isArray(value) && current[key] && typeof current[key] === 'object') {
+      updated[key] = { ...current[key], ...value };
+    } else {
+      updated[key] = value;
+    }
+  }
   writeSave(updated);
   return updated;
 }

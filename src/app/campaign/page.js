@@ -52,7 +52,7 @@ export default function CampaignPage() {
   // Persist campaign progress
   useEffect(() => {
     const save = loadSave();
-    if (save.campaignStage !== undefined) setHighestCleared(save.campaignStage);
+    setHighestCleared(save.campaignProgress?.highestStage || 0);
   }, []);
 
   // =========================================================================
@@ -80,9 +80,19 @@ export default function CampaignPage() {
         playerTeam={playerTeam}
         enemyTeam={finalEnemies}
         onExit={(won) => {
-          if (won && selectedStage > highestCleared) {
-            setHighestCleared(selectedStage);
-            updateSave({ campaignStage: selectedStage });
+          if (won) {
+            const save = loadSave();
+            const stageGold = selectedStage * 500;
+            const newHighest = Math.max(save.campaignProgress?.highestStage || 0, selectedStage);
+            updateSave({
+              resources: { ...save.resources, gold: (save.resources.gold || 0) + stageGold },
+              campaignProgress: { highestStage: newHighest },
+              stats: { ...save.stats, battlesWon: (save.stats?.battlesWon || 0) + 1 },
+            });
+            setHighestCleared(newHighest);
+          } else {
+            const save = loadSave();
+            updateSave({ stats: { ...save.stats, battlesLost: (save.stats?.battlesLost || 0) + 1 } });
           }
           setSelectedStage(null);
           setSelectingTeam(false);

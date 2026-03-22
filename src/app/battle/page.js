@@ -5,6 +5,7 @@ import { heroRoster } from '../../data/units';
 import BattleUI from '../../components/BattleUI';
 import TeamPresets from '../../components/TeamPresets';
 import { getTeamWithSave } from '../../utils/heroUtils';
+import { loadSave, updateSave } from '../../utils/saveSystem';
 
 const ELEMENT_COLORS = {
   Storm: '#6B5CE7',
@@ -37,7 +38,19 @@ export default function BattlePage() {
 
   if (inBattle) {
     const selectedTemplates = getTeamWithSave(selectedIds);
-    return <BattleUI playerTeam={selectedTemplates} onExit={() => setInBattle(false)} />;
+    return <BattleUI playerTeam={selectedTemplates} onExit={(won) => {
+      const save = loadSave();
+      const newStats = { ...save.stats };
+      if (won) {
+        newStats.battlesWon = (newStats.battlesWon || 0) + 1;
+        const gold = 200;
+        updateSave({ resources: { ...save.resources, gold: (save.resources.gold || 0) + gold }, stats: newStats });
+      } else {
+        newStats.battlesLost = (newStats.battlesLost || 0) + 1;
+        updateSave({ stats: newStats });
+      }
+      setInBattle(false);
+    }} />;
   }
 
   return (
