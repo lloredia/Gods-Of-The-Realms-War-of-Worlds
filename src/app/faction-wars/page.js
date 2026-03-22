@@ -55,6 +55,7 @@ function getDefaultState() {
 }
 
 function loadState() {
+  if (typeof window === 'undefined') return getDefaultState();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultState();
@@ -71,7 +72,12 @@ function loadState() {
 }
 
 function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage unavailable
+  }
 }
 
 function getHeroesByFaction(factionName) {

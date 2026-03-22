@@ -61,7 +61,7 @@ export default function HeroDetailModal({ hero, onClose }) {
   let projectedStats = null;
   if (typeof previewStats === 'function') {
     try {
-      projectedStats = previewStats(hero);
+      projectedStats = previewStats(hero, level, stars, hero.awakened || false);
     } catch { /* not critical */ }
   }
 
