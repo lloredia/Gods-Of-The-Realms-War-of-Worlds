@@ -1,0 +1,92 @@
+%%{init: {'theme':'base', 'themeVariables': {
+  'primaryColor':'#0d1117',
+  'primaryTextColor':'#c9d1d9',
+  'primaryBorderColor':'#30363d',
+  'lineColor':'#FFD700',
+  'secondaryColor':'#161b22',
+  'tertiaryColor':'#8B0000',
+  'fontFamily':'JetBrains Mono, ui-monospace, monospace'
+}}}%%
+flowchart LR
+  subgraph App["Next.js 16 · App Router"]
+    HOME["/"]
+    BAT["/battle"]
+    COL["/collection"]
+    SUM["/summon"]
+    CAMP["/campaign"]
+    ARN["/arena"]
+    END["/endless"]
+    FW["/faction-wars"]
+    SET["/settings"]
+  end
+
+  subgraph Engine["src/engine/ — pure JS, no React"]
+    BE["battleEngine<br/>turn-meter loop"]
+    SIM["battleSimulator<br/>deterministic"]
+    AI["aiSystem"]
+    DMG["damageSystem"]
+    EFF["effectSystem"]
+    ELE["elementSystem"]
+    FB["factionBonusSystem"]
+    REL["relicSystem"]
+    PRG["progressionSystem"]
+  end
+
+  subgraph Data["src/data/"]
+    UN[("units · 36 heroes + 15 creatures")]
+    SKD[("skills · 115")]
+    FAC[("factions · 5")]
+    RLD[("relics · 6")]
+    EFD[("effects")]
+    SP[("summonPool")]
+    LR[("lore")]
+    ACH[("achievements · 16")]
+  end
+
+  subgraph Persist["src/utils/"]
+    SAVE[("localStorage<br/>gotr_save_data<br/>gotr_faction_wars")]
+    SND["soundSystem<br/>WebAudio"]
+    RNG["seeded RNG<br/>Mulberry32"]
+  end
+
+  subgraph Port["UNITY_PORT_PLAN.md"]
+    UNI["Unity 2022 LTS<br/>C# · ScriptableObjects"]
+  end
+
+  HOME --> BAT
+  HOME --> COL
+  HOME --> SUM
+  HOME --> CAMP
+  HOME --> ARN
+  HOME --> END
+  HOME --> FW
+  HOME --> SET
+  BAT --> BE
+  CAMP --> BE
+  ARN --> BE
+  END --> BE
+  FW --> BE
+  SIM --> BE
+  BE --> AI
+  BE --> DMG
+  BE --> EFF
+  BE --> ELE
+  BE --> FB
+  BE --> REL
+  BE --> PRG
+  BE --> UN
+  BE --> SKD
+  BE --> FAC
+  BE --> EFD
+  BE --> RNG
+  BE --> SND
+  COL --> ACH
+  COL --> LR
+  SUM --> SP
+  SUM -. "save" .- SAVE
+  COL -. "save" .- SAVE
+  CAMP -. "save" .- SAVE
+  FW -. "save" .- SAVE
+  SET -. "save" .- SAVE
+  Engine -. "1:1 port" .- UNI
+  Data -. "ScriptableObjects" .- UNI
