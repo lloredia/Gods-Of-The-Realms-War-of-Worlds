@@ -4,6 +4,15 @@ import NavBar from '../components/NavBar';
 export const metadata = {
   title: "GOTR — Gods Of The Realms: War of Worlds",
   description: "Gods Of The Realms — War of Worlds",
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
+  openGraph: {
+    title: "Gods Of The Realms — War of Worlds",
+    description: "Mobile-style gacha RPG · turn-meter combat · five pantheons collide",
+    images: ["/logo.jpg"],
+  },
 };
 
 export default function RootLayout({ children }) {

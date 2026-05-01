@@ -196,6 +196,18 @@ export default function Home() {
           pointerEvents: 'none',
           zIndex: -1,
         }} />
+        <img
+          src="/logo.jpg"
+          alt="Gods Of The Realms — War of Worlds"
+          style={{
+            display: 'block',
+            margin: '0 auto 10px',
+            width: 160,
+            height: 160,
+            borderRadius: 24,
+            boxShadow: '0 0 40px rgba(255, 215, 0, 0.35)',
+          }}
+        />
         <h1 style={{
           fontSize: 42,
           fontWeight: 900,

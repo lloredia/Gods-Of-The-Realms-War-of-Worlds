@@ -4,8 +4,12 @@
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a0f,40:3d0c0c,70:8B0000,100:FFD700&height=190&section=header&text=Gods%20Of%20The%20Realms&fontColor=ffffff&fontSize=44&fontAlignY=36&desc=War%20of%20Worlds%20%C2%B7%20mobile-style%20gacha%20RPG&descSize=14&descAlignY=58&descAlign=50" alt="Gods Of The Realms — War of Worlds" />
+  <img src="public/logo.jpg" alt="Gods Of The Realms — War of Worlds" width="320" />
 </p>
+
+<h1 align="center">Gods Of The Realms — War of Worlds</h1>
+
+<p align="center"><sub>mobile-style gacha RPG · turn-meter combat · five pantheons collide</sub></p>
 
 <p align="center">
   <img alt="Genre" src="https://img.shields.io/badge/genre-gacha%20RPG-FFD700" />
