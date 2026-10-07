@@ -76,15 +76,26 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0a0a1a',
-      color: '#ccc',
-      padding: '24px 16px',
-      maxWidth: 520,
-      margin: '0 auto',
-    }}>
-      <h1 style={{ color: '#FFD700', fontSize: 22, fontWeight: 'bold', marginBottom: 24, textAlign: 'center', letterSpacing: 2 }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#0a0a1a',
+        color: '#ccc',
+        padding: '24px 16px',
+        maxWidth: 520,
+        margin: '0 auto',
+      }}
+    >
+      <h1
+        style={{
+          color: '#FFD700',
+          fontSize: 22,
+          fontWeight: 'bold',
+          marginBottom: 24,
+          textAlign: 'center',
+          letterSpacing: 2,
+        }}
+      >
         SETTINGS
       </h1>
 
@@ -92,7 +103,14 @@ export default function SettingsPage() {
       <div style={sectionStyle}>
         <div style={headingStyle}>Sound</div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 14,
+          }}
+        >
           <span style={{ fontSize: 13 }}>Sound Effects</span>
           <button
             onClick={handleSoundToggle}
@@ -122,7 +140,12 @@ export default function SettingsPage() {
 
         <button
           onClick={handleTestSound}
-          style={{ ...btnStyle, backgroundColor: '#1a1a3a', color: '#FFD700', border: '1px solid #333' }}
+          style={{
+            ...btnStyle,
+            backgroundColor: '#1a1a3a',
+            color: '#FFD700',
+            border: '1px solid #333',
+          }}
         >
           Test Sound
         </button>
@@ -168,7 +191,12 @@ export default function SettingsPage() {
           {confirmReset && (
             <button
               onClick={() => setConfirmReset(false)}
-              style={{ ...btnStyle, backgroundColor: '#1a1a2a', color: '#888', border: '1px solid #333' }}
+              style={{
+                ...btnStyle,
+                backgroundColor: '#1a1a2a',
+                color: '#888',
+                border: '1px solid #333',
+              }}
             >
               Cancel
             </button>
@@ -176,7 +204,12 @@ export default function SettingsPage() {
 
           <button
             onClick={handleResetTutorial}
-            style={{ ...btnStyle, backgroundColor: '#1a1a3a', color: '#8888cc', border: '1px solid #2a2a44' }}
+            style={{
+              ...btnStyle,
+              backgroundColor: '#1a1a3a',
+              color: '#8888cc',
+              border: '1px solid #2a2a44',
+            }}
           >
             Reset Tutorial
           </button>
@@ -184,7 +217,15 @@ export default function SettingsPage() {
       </div>
 
       {/* Version */}
-      <div style={{ textAlign: 'center', marginTop: 24, fontSize: 11, color: '#444', letterSpacing: 1 }}>
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: 24,
+          fontSize: 11,
+          color: '#444',
+          letterSpacing: 1,
+        }}
+      >
         Gods Of The Realms v0.1.0
       </div>
     </div>
@@ -193,12 +234,14 @@ export default function SettingsPage() {
 
 function StatBox({ label, value, color = '#fff' }) {
   return (
-    <div style={{
-      backgroundColor: '#0d0d20',
-      borderRadius: 6,
-      padding: '10px 8px',
-      textAlign: 'center',
-    }}>
+    <div
+      style={{
+        backgroundColor: '#0d0d20',
+        borderRadius: 6,
+        padding: '10px 8px',
+        textAlign: 'center',
+      }}
+    >
       <div style={{ fontSize: 16, fontWeight: 'bold', color }}>{value.toLocaleString()}</div>
       <div style={{ fontSize: 10, color: '#666', marginTop: 4, letterSpacing: 0.5 }}>{label}</div>
     </div>

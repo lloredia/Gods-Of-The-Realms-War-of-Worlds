@@ -55,7 +55,14 @@ const poseidon = makeUnit({
   speed: 95,
   skills: [skills.tidalSlash, skills.healingWave, skills.abyssalCrush],
   relicSet: 'vitality',
-  passive: { id: 'tidalResilience', name: 'Tidal Resilience', trigger: 'on_turn_start', effect: 'self_heal', value: 0.05, description: 'Heals 5% max HP at the start of each turn.' },
+  passive: {
+    id: 'tidalResilience',
+    name: 'Tidal Resilience',
+    trigger: 'on_turn_start',
+    effect: 'self_heal',
+    value: 0.05,
+    description: 'Heals 5% max HP at the start of each turn.',
+  },
 });
 
 const morganLeFay = makeUnit({
@@ -72,7 +79,7 @@ const morganLeFay = makeUnit({
   attack: 720,
   defense: 550,
   speed: 108,
-  accuracy: 0.90,
+  accuracy: 0.9,
   skills: [skills.mistBolt, skills.avalonRenewal, skills.enchantress],
   relicSet: 'resolve',
 });
@@ -123,7 +130,7 @@ const anubis = makeUnit({
   attack: 830,
   defense: 550,
   speed: 100,
-  accuracy: 0.90,
+  accuracy: 0.9,
   skills: [skills.soulRend, skills.deathMark, skills.plagueSpreader],
   relicSet: 'resolve',
 });
@@ -143,7 +150,15 @@ const bastet = makeUnit({
   critDamage: 1.7,
   skills: [skills.lunarClaw, skills.predatorStrike, skills.catReflexes],
   relicSet: 'tempest',
-  passive: { id: 'nineLives', name: 'Nine Lives', trigger: 'on_receive_fatal', effect: 'revive', value: 0.20, usesLeft: 1, description: 'Revives once at 20% HP when receiving a fatal blow.' },
+  passive: {
+    id: 'nineLives',
+    name: 'Nine Lives',
+    trigger: 'on_receive_fatal',
+    effect: 'revive',
+    value: 0.2,
+    usesLeft: 1,
+    description: 'Revives once at 20% HP when receiving a fatal blow.',
+  },
 });
 
 const amaterasu = makeUnit({
@@ -176,10 +191,18 @@ const hades = makeUnit({
   attack: 850,
   defense: 450,
   speed: 105,
-  critRate: 0.20,
+  critRate: 0.2,
   accuracy: 0.95,
   skills: [skills.helmshadow, skills.riverStyx, skills.kingOfDead],
-  passive: { id: 'deathsEmbrace', name: "Death's Embrace", trigger: 'on_receive_fatal', effect: 'revive', value: 0.25, usesLeft: 1, description: 'Revives once at 25% HP when receiving a fatal blow.' },
+  passive: {
+    id: 'deathsEmbrace',
+    name: "Death's Embrace",
+    trigger: 'on_receive_fatal',
+    effect: 'revive',
+    value: 0.25,
+    usesLeft: 1,
+    description: 'Revives once at 25% HP when receiving a fatal blow.',
+  },
 });
 
 const apollo = makeUnit({
@@ -230,7 +253,13 @@ const freya = makeUnit({
   defense: 560,
   speed: 106,
   skills: [skills.frostTouch, skills.valkyrieBlessing, skills.purifyingLight],
-  passive: { id: 'valkyriGrace', name: "Valkyrie's Grace", trigger: 'on_turn_start', effect: 'cleanse_one', description: 'Cleanses 1 debuff at the start of each turn.' },
+  passive: {
+    id: 'valkyriGrace',
+    name: "Valkyrie's Grace",
+    trigger: 'on_turn_start',
+    effect: 'cleanse_one',
+    description: 'Cleanses 1 debuff at the start of each turn.',
+  },
 });
 
 const loki = makeUnit({
@@ -245,7 +274,7 @@ const loki = makeUnit({
   attack: 840,
   defense: 460,
   speed: 114,
-  critRate: 0.20,
+  critRate: 0.2,
   accuracy: 0.92,
   skills: [skills.shadowDagger, skills.trickstersCurse, skills.veilOfDeceit],
 });
@@ -264,7 +293,14 @@ const cuChulainn = makeUnit({
   critRate: 0.26,
   critDamage: 1.75,
   skills: [skills.gaeBolg, skills.warpSpasm, skills.finalReckoning],
-  passive: { id: 'warpFrenzy', name: 'Warp Frenzy', trigger: 'on_turn_start', effect: 'self_heal', value: 0.03, description: 'Battle rage heals 3% max HP each turn.' },
+  passive: {
+    id: 'warpFrenzy',
+    name: 'Warp Frenzy',
+    trigger: 'on_turn_start',
+    effect: 'self_heal',
+    value: 0.03,
+    description: 'Battle rage heals 3% max HP each turn.',
+  },
 });
 
 // ---------------------------------------------------------------------------
@@ -288,7 +324,14 @@ const athena = makeUnit({
   critRate: 0.15,
   skills: [skills.aegisStrike, skills.wisdomShield, skills.divineAegis],
   relicSet: 'fortress',
-  passive: { id: 'aegisProtection', name: 'Aegis Protection', trigger: 'on_turn_start', effect: 'self_heal', value: 0.04, description: 'Wisdom heals 4% HP each turn.' },
+  passive: {
+    id: 'aegisProtection',
+    name: 'Aegis Protection',
+    trigger: 'on_turn_start',
+    effect: 'self_heal',
+    value: 0.04,
+    description: 'Wisdom heals 4% HP each turn.',
+  },
 });
 
 const ares = makeUnit({
@@ -324,7 +367,13 @@ const odin = makeUnit({
   speed: 112,
   skills: [skills.runeBlast, skills.allsight, skills.gungnirThrow],
   relicSet: 'resolve',
-  passive: { id: 'allsightWisdom', name: 'Allsight Wisdom', trigger: 'on_turn_start', effect: 'cleanse_one', description: 'The Allfather sees through all deception.' },
+  passive: {
+    id: 'allsightWisdom',
+    name: 'Allsight Wisdom',
+    trigger: 'on_turn_start',
+    effect: 'cleanse_one',
+    description: 'The Allfather sees through all deception.',
+  },
 });
 
 const fenrir = makeUnit({
@@ -342,7 +391,15 @@ const fenrir = makeUnit({
   critDamage: 1.75,
   skills: [skills.devourBite, skills.ragingFangs, skills.worldEnder],
   relicSet: 'precision',
-  passive: { id: 'devouringHunger', name: 'Devouring Hunger', trigger: 'on_receive_fatal', effect: 'revive', value: 0.30, usesLeft: 1, description: 'Devours fate to revive at 30% HP.' },
+  passive: {
+    id: 'devouringHunger',
+    name: 'Devouring Hunger',
+    trigger: 'on_receive_fatal',
+    effect: 'revive',
+    value: 0.3,
+    usesLeft: 1,
+    description: 'Devours fate to revive at 30% HP.',
+  },
 });
 
 const isis = makeUnit({
@@ -412,7 +469,7 @@ const nimue = makeUnit({
   attack: 730,
   defense: 520,
   speed: 105,
-  accuracy: 0.90,
+  accuracy: 0.9,
   skills: [skills.lakeMist, skills.drowningGrasp, skills.tidalBinding],
   relicSet: 'tempest',
 });
@@ -467,7 +524,15 @@ const izanami = makeUnit({
   speed: 103,
   skills: [skills.deathTouch, skills.spiritDrain, skills.yomiGate],
   relicSet: 'vitality',
-  passive: { id: 'deathsGrace', name: "Death's Grace", trigger: 'on_receive_fatal', effect: 'revive', value: 0.20, usesLeft: 1, description: 'Death cannot claim its own mistress.' },
+  passive: {
+    id: 'deathsGrace',
+    name: "Death's Grace",
+    trigger: 'on_receive_fatal',
+    effect: 'revive',
+    value: 0.2,
+    usesLeft: 1,
+    description: 'Death cannot claim its own mistress.',
+  },
 });
 
 const benzaiten = makeUnit({
@@ -667,93 +732,258 @@ const inari = makeUnit({
 // ---------------------------------------------------------------------------
 
 const goblin = makeUnit({
-  id: 'goblin', name: 'Goblin', faction: null, element: Element.STORM, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 3500, currentHP: 3500,
-  attack: 350, defense: 150, speed: 80, skills: [skills.creatureBite],
+  id: 'goblin',
+  name: 'Goblin',
+  faction: null,
+  element: Element.STORM,
+  role: 'Attacker',
+  level: 1,
+  stars: 1,
+  awakened: false,
+  maxHP: 3500,
+  currentHP: 3500,
+  attack: 350,
+  defense: 150,
+  speed: 80,
+  skills: [skills.creatureBite],
 });
 
 const skeleton = makeUnit({
-  id: 'skeleton', name: 'Skeleton', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 3000, currentHP: 3000,
-  attack: 400, defense: 100, speed: 75, skills: [skills.creatureScratch],
+  id: 'skeleton',
+  name: 'Skeleton',
+  faction: null,
+  element: Element.UNDERWORLD,
+  role: 'Attacker',
+  level: 1,
+  stars: 1,
+  awakened: false,
+  maxHP: 3000,
+  currentHP: 3000,
+  attack: 400,
+  defense: 100,
+  speed: 75,
+  skills: [skills.creatureScratch],
 });
 
 const slime = makeUnit({
-  id: 'slime', name: 'Slime', faction: null, element: Element.OCEAN, role: 'Tank',
-  level: 1, stars: 1, awakened: false, maxHP: 4500, currentHP: 4500,
-  attack: 250, defense: 200, speed: 60, skills: [skills.creatureSlam],
+  id: 'slime',
+  name: 'Slime',
+  faction: null,
+  element: Element.OCEAN,
+  role: 'Tank',
+  level: 1,
+  stars: 1,
+  awakened: false,
+  maxHP: 4500,
+  currentHP: 4500,
+  attack: 250,
+  defense: 200,
+  speed: 60,
+  skills: [skills.creatureSlam],
 });
 
 const imp = makeUnit({
-  id: 'imp', name: 'Imp', faction: null, element: Element.MOON, role: 'Debuffer',
-  level: 1, stars: 1, awakened: false, maxHP: 2500, currentHP: 2500,
-  attack: 330, defense: 120, speed: 95, skills: [skills.creatureSpit],
+  id: 'imp',
+  name: 'Imp',
+  faction: null,
+  element: Element.MOON,
+  role: 'Debuffer',
+  level: 1,
+  stars: 1,
+  awakened: false,
+  maxHP: 2500,
+  currentHP: 2500,
+  attack: 330,
+  defense: 120,
+  speed: 95,
+  skills: [skills.creatureSpit],
 });
 
 const bat = makeUnit({
-  id: 'bat', name: 'Bat', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
-  level: 1, stars: 1, awakened: false, maxHP: 2300, currentHP: 2300,
-  attack: 370, defense: 80, speed: 100, skills: [skills.creatureBite],
+  id: 'bat',
+  name: 'Bat',
+  faction: null,
+  element: Element.UNDERWORLD,
+  role: 'Attacker',
+  level: 1,
+  stars: 1,
+  awakened: false,
+  maxHP: 2300,
+  currentHP: 2300,
+  attack: 370,
+  defense: 80,
+  speed: 100,
+  skills: [skills.creatureBite],
 });
 
 const wolf = makeUnit({
-  id: 'wolf', name: 'Wolf', faction: null, element: Element.STORM, role: 'Attacker',
-  level: 1, stars: 2, awakened: false, maxHP: 4000, currentHP: 4000,
-  attack: 450, defense: 200, speed: 90, skills: [skills.creatureBite, skills.creatureHowl],
+  id: 'wolf',
+  name: 'Wolf',
+  faction: null,
+  element: Element.STORM,
+  role: 'Attacker',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 4000,
+  currentHP: 4000,
+  attack: 450,
+  defense: 200,
+  speed: 90,
+  skills: [skills.creatureBite, skills.creatureHowl],
 });
 
 const serpent = makeUnit({
-  id: 'serpent', name: 'Serpent', faction: null, element: Element.OCEAN, role: 'Debuffer',
-  level: 1, stars: 2, awakened: false, maxHP: 3500, currentHP: 3500,
-  attack: 400, defense: 180, speed: 85, skills: [skills.creatureSpit],
+  id: 'serpent',
+  name: 'Serpent',
+  faction: null,
+  element: Element.OCEAN,
+  role: 'Debuffer',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 3500,
+  currentHP: 3500,
+  attack: 400,
+  defense: 180,
+  speed: 85,
+  skills: [skills.creatureSpit],
 });
 
 const wraith = makeUnit({
-  id: 'wraith', name: 'Wraith', faction: null, element: Element.UNDERWORLD, role: 'Attacker',
-  level: 1, stars: 2, awakened: false, maxHP: 3000, currentHP: 3000,
-  attack: 500, defense: 150, speed: 95, skills: [skills.creatureScratch],
+  id: 'wraith',
+  name: 'Wraith',
+  faction: null,
+  element: Element.UNDERWORLD,
+  role: 'Attacker',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 3000,
+  currentHP: 3000,
+  attack: 500,
+  defense: 150,
+  speed: 95,
+  skills: [skills.creatureScratch],
 });
 
 const harpy = makeUnit({
-  id: 'harpy', name: 'Harpy', faction: null, element: Element.STORM, role: 'Attacker',
-  level: 1, stars: 2, awakened: false, maxHP: 3200, currentHP: 3200,
-  attack: 480, defense: 160, speed: 105, skills: [skills.creatureScratch],
+  id: 'harpy',
+  name: 'Harpy',
+  faction: null,
+  element: Element.STORM,
+  role: 'Attacker',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 3200,
+  currentHP: 3200,
+  attack: 480,
+  defense: 160,
+  speed: 105,
+  skills: [skills.creatureScratch],
 });
 
 const golem = makeUnit({
-  id: 'golem', name: 'Golem', faction: null, element: Element.SUN, role: 'Tank',
-  level: 1, stars: 2, awakened: false, maxHP: 6000, currentHP: 6000,
-  attack: 300, defense: 400, speed: 50, skills: [skills.creatureSlam],
+  id: 'golem',
+  name: 'Golem',
+  faction: null,
+  element: Element.SUN,
+  role: 'Tank',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 6000,
+  currentHP: 6000,
+  attack: 300,
+  defense: 400,
+  speed: 50,
+  skills: [skills.creatureSlam],
 });
 
 const minotaur = makeUnit({
-  id: 'minotaur', name: 'Minotaur', faction: null, element: Element.STORM, role: 'Bruiser',
-  level: 1, stars: 2, awakened: false, maxHP: 5000, currentHP: 5000,
-  attack: 500, defense: 300, speed: 70, skills: [skills.creatureSlam, skills.creatureHowl],
+  id: 'minotaur',
+  name: 'Minotaur',
+  faction: null,
+  element: Element.STORM,
+  role: 'Bruiser',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 5000,
+  currentHP: 5000,
+  attack: 500,
+  defense: 300,
+  speed: 70,
+  skills: [skills.creatureSlam, skills.creatureHowl],
 });
 
 const chimera = makeUnit({
-  id: 'chimera', name: 'Chimera', faction: null, element: Element.SUN, role: 'Attacker',
-  level: 1, stars: 2, awakened: false, maxHP: 4500, currentHP: 4500,
-  attack: 520, defense: 220, speed: 85, skills: [skills.creatureBite, skills.creatureSpit],
+  id: 'chimera',
+  name: 'Chimera',
+  faction: null,
+  element: Element.SUN,
+  role: 'Attacker',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 4500,
+  currentHP: 4500,
+  attack: 520,
+  defense: 220,
+  speed: 85,
+  skills: [skills.creatureBite, skills.creatureSpit],
 });
 
 const hydra = makeUnit({
-  id: 'hydra', name: 'Hydra', faction: null, element: Element.OCEAN, role: 'Tank',
-  level: 1, stars: 2, awakened: false, maxHP: 5500, currentHP: 5500,
-  attack: 400, defense: 350, speed: 65, skills: [skills.creatureSpit],
+  id: 'hydra',
+  name: 'Hydra',
+  faction: null,
+  element: Element.OCEAN,
+  role: 'Tank',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 5500,
+  currentHP: 5500,
+  attack: 400,
+  defense: 350,
+  speed: 65,
+  skills: [skills.creatureSpit],
 });
 
 const phoenix_chick = makeUnit({
-  id: 'phoenix_chick', name: 'Phoenix Chick', faction: null, element: Element.SUN, role: 'Support',
-  level: 1, stars: 2, awakened: false, maxHP: 3500, currentHP: 3500,
-  attack: 350, defense: 200, speed: 90, skills: [skills.creatureScratch],
+  id: 'phoenix_chick',
+  name: 'Phoenix Chick',
+  faction: null,
+  element: Element.SUN,
+  role: 'Support',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 3500,
+  currentHP: 3500,
+  attack: 350,
+  defense: 200,
+  speed: 90,
+  skills: [skills.creatureScratch],
 });
 
 const shadow_sprite = makeUnit({
-  id: 'shadow_sprite', name: 'Shadow Sprite', faction: null, element: Element.MOON, role: 'Debuffer',
-  level: 1, stars: 2, awakened: false, maxHP: 2800, currentHP: 2800,
-  attack: 420, defense: 150, speed: 110, skills: [skills.creatureSpit],
+  id: 'shadow_sprite',
+  name: 'Shadow Sprite',
+  faction: null,
+  element: Element.MOON,
+  role: 'Debuffer',
+  level: 1,
+  stars: 2,
+  awakened: false,
+  maxHP: 2800,
+  currentHP: 2800,
+  attack: 420,
+  defense: 150,
+  speed: 110,
+  skills: [skills.creatureSpit],
 });
 
 // --- TEAM A (Player) ---
@@ -817,4 +1047,20 @@ export const heroRoster = {
   shadow_sprite,
 };
 
-export const creatureRoster = { goblin, skeleton, slime, imp, bat, wolf, serpent, wraith, harpy, golem, minotaur, chimera, hydra, phoenix_chick, shadow_sprite };
+export const creatureRoster = {
+  goblin,
+  skeleton,
+  slime,
+  imp,
+  bat,
+  wolf,
+  serpent,
+  wraith,
+  harpy,
+  golem,
+  minotaur,
+  chimera,
+  hydra,
+  phoenix_chick,
+  shadow_sprite,
+};

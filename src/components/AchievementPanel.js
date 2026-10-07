@@ -48,12 +48,13 @@ export default function AchievementPanel({ onClose }) {
 
   const completedCount = data.completed.length;
 
-  const filtered = activeCategory === 'All'
-    ? achievements
-    : achievements.filter(a => a.category === activeCategory);
+  const filtered =
+    activeCategory === 'All'
+      ? achievements
+      : achievements.filter((a) => a.category === activeCategory);
 
   const handleClaim = useCallback((id) => {
-    setData(prev => {
+    setData((prev) => {
       const next = {
         completed: [...prev.completed],
         claimedRewards: [...prev.claimedRewards, id],
@@ -65,25 +66,34 @@ export default function AchievementPanel({ onClose }) {
 
   return (
     <div style={styles.overlay} onClick={onClose}>
-      <div style={styles.modal} onClick={e => e.stopPropagation()}>
+      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div style={styles.header}>
           <div style={styles.headerLeft}>
             <span style={styles.trophyIcon}>&#127942;</span>
             <h2 style={styles.title}>Achievements</h2>
           </div>
-          <span style={styles.counter}>{completedCount}/{achievements.length} Achievements Unlocked</span>
-          <button style={styles.closeBtn} onClick={onClose}>&#10005;</button>
+          <span style={styles.counter}>
+            {completedCount}/{achievements.length} Achievements Unlocked
+          </span>
+          <button style={styles.closeBtn} onClick={onClose}>
+            &#10005;
+          </button>
         </div>
 
         {/* Progress bar */}
         <div style={styles.progressTrack}>
-          <div style={{ ...styles.progressFill, width: `${(completedCount / achievements.length) * 100}%` }} />
+          <div
+            style={{
+              ...styles.progressFill,
+              width: `${(completedCount / achievements.length) * 100}%`,
+            }}
+          />
         </div>
 
         {/* Category tabs */}
         <div style={styles.tabs}>
-          {CATEGORIES.map(cat => (
+          {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
@@ -96,7 +106,7 @@ export default function AchievementPanel({ onClose }) {
 
         {/* Achievement grid */}
         <div style={styles.grid}>
-          {filtered.map(ach => {
+          {filtered.map((ach) => {
             const isCompleted = data.completed.includes(ach.id);
             const isClaimed = data.claimedRewards.includes(ach.id);
             const canClaim = isCompleted && !isClaimed;
@@ -115,40 +125,45 @@ export default function AchievementPanel({ onClose }) {
                   {isCompleted && <span style={styles.checkmark}>&#10003;</span>}
                 </div>
 
-                <h3 style={{
-                  ...styles.cardName,
-                  color: isCompleted ? '#ffd700' : '#666',
-                }}>{ach.name}</h3>
+                <h3
+                  style={{
+                    ...styles.cardName,
+                    color: isCompleted ? '#ffd700' : '#666',
+                  }}
+                >
+                  {ach.name}
+                </h3>
 
-                <p style={{
-                  ...styles.cardDesc,
-                  color: isCompleted ? '#c0c0d0' : '#555',
-                }}>{ach.desc}</p>
+                <p
+                  style={{
+                    ...styles.cardDesc,
+                    color: isCompleted ? '#c0c0d0' : '#555',
+                  }}
+                >
+                  {ach.desc}
+                </p>
 
                 {/* Reward */}
                 <div style={styles.rewardRow}>
                   <span style={styles.rewardLabel}>Reward:</span>
-                  <span style={{
-                    ...styles.rewardValue,
-                    color: isCompleted ? '#ffd700' : '#555',
-                  }}>{formatReward(ach.reward)}</span>
+                  <span
+                    style={{
+                      ...styles.rewardValue,
+                      color: isCompleted ? '#ffd700' : '#555',
+                    }}
+                  >
+                    {formatReward(ach.reward)}
+                  </span>
                 </div>
 
                 {/* Claim button */}
                 {canClaim && (
-                  <button
-                    style={styles.claimBtn}
-                    onClick={() => handleClaim(ach.id)}
-                  >
+                  <button style={styles.claimBtn} onClick={() => handleClaim(ach.id)}>
                     Claim Reward
                   </button>
                 )}
-                {isClaimed && (
-                  <span style={styles.claimedTag}>Claimed</span>
-                )}
-                {!isCompleted && (
-                  <span style={styles.lockedTag}>Locked</span>
-                )}
+                {isClaimed && <span style={styles.claimedTag}>Claimed</span>}
+                {!isCompleted && <span style={styles.lockedTag}>Locked</span>}
               </div>
             );
           })}

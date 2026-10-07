@@ -56,6 +56,8 @@ export function applyRelicBonuses(unit) {
       case 'debuff_duration_reduce':
         unit.debuffDurationReduce = (unit.debuffDurationReduce || 0) + value;
         break;
+      default:
+        break;
     }
   }
 

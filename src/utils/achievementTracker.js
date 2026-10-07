@@ -45,9 +45,9 @@ export function checkCollectionAchievements(ownedCount, heroData) {
   if (ownedCount >= 25 && unlockAchievement('full_roster')) unlocked.push('full_roster');
   // Check for any awakened hero
   if (heroData) {
-    const hasAwakened = Object.values(heroData).some(h => h.awakened);
+    const hasAwakened = Object.values(heroData).some((h) => h.awakened);
     if (hasAwakened && unlockAchievement('awakener')) unlocked.push('awakener');
-    const hasMaxLevel = Object.values(heroData).some(h => h.level >= 40);
+    const hasMaxLevel = Object.values(heroData).some((h) => h.level >= 40);
     if (hasMaxLevel && unlockAchievement('max_level')) unlocked.push('max_level');
   }
   return unlocked;

@@ -13,7 +13,13 @@ import { loadSave, updateSave } from '../../utils/saveSystem';
 const STORAGE_KEY = 'gotr_faction_wars';
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
-const FACTION_KEYS = ['thePantheon', 'theAllfathersHall', 'theEternalSands', 'theMistRealm', 'theRisingSun'];
+const FACTION_KEYS = [
+  'thePantheon',
+  'theAllfathersHall',
+  'theEternalSands',
+  'theMistRealm',
+  'theRisingSun',
+];
 
 const REWARD_TIERS = [
   { points: 100, label: '100 pts', reward: '2,000 Gold', icon: '\u2694' },
@@ -31,7 +37,7 @@ const ROLE_COLORS = {
 
 // Map faction names (as stored on units) to faction keys
 const FACTION_NAME_TO_KEY = {};
-FACTION_KEYS.forEach(k => {
+FACTION_KEYS.forEach((k) => {
   FACTION_NAME_TO_KEY[factions[k].name] = k;
 });
 
@@ -81,7 +87,7 @@ function saveState(state) {
 }
 
 function getHeroesByFaction(factionName) {
-  return Object.values(heroRoster).filter(u => u.faction === factionName);
+  return Object.values(heroRoster).filter((u) => u.faction === factionName);
 }
 
 function shuffleArray(arr) {
@@ -94,15 +100,15 @@ function shuffleArray(arr) {
 }
 
 function generateRivalTeams(chosenFactionKey) {
-  const rivalKeys = FACTION_KEYS.filter(k => k !== chosenFactionKey);
+  const rivalKeys = FACTION_KEYS.filter((k) => k !== chosenFactionKey);
   const picked = shuffleArray(rivalKeys).slice(0, 3);
-  return picked.map(key => {
+  return picked.map((key) => {
     const f = factions[key];
     const heroes = getHeroesByFaction(f.name);
     const team = shuffleArray(heroes).slice(0, 4);
     // Pad with random heroes from same faction if not enough
     while (team.length < 4 && heroes.length > team.length) {
-      const remaining = heroes.filter(h => !team.some(t => t.id === h.id));
+      const remaining = heroes.filter((h) => !team.some((t) => t.id === h.id));
       if (remaining.length === 0) break;
       team.push(remaining[0]);
     }
@@ -141,7 +147,7 @@ export default function FactionWarsPage() {
   const otherHeroes = useMemo(() => {
     if (!state?.chosenFaction) return [];
     const fName = factions[state.chosenFaction].name;
-    return Object.values(heroRoster).filter(u => u.faction !== fName);
+    return Object.values(heroRoster).filter((u) => u.faction !== fName);
   }, [state?.chosenFaction]);
 
   // Generate rivals when entering team select
@@ -153,74 +159,89 @@ export default function FactionWarsPage() {
 
   // --- Handlers ---
 
-  const handleFactionSelect = useCallback((factionKey) => {
-    const newState = { ...state, chosenFaction: factionKey };
-    setState(newState);
-    saveState(newState);
-    setPhase('select_team');
-    setRivalTeams(generateRivalTeams(factionKey));
-  }, [state]);
+  const handleFactionSelect = useCallback(
+    (factionKey) => {
+      const newState = { ...state, chosenFaction: factionKey };
+      setState(newState);
+      saveState(newState);
+      setPhase('select_team');
+      setRivalTeams(generateRivalTeams(factionKey));
+    },
+    [state],
+  );
 
   // Total selected count across faction + other heroes
   const totalSelected = selectedHeroes.length + (wildcardHero ? 1 : 0);
   const factionCount = selectedHeroes.length;
 
-  const handleHeroToggle = useCallback((hero) => {
-    setSelectedHeroes(prev => {
-      const exists = prev.some(h => h.id === hero.id);
-      if (exists) return prev.filter(h => h.id !== hero.id);
-      // Allow up to 4 faction heroes, but total team (faction + wildcard) capped at 4
-      const currentTotal = prev.length + (wildcardHero ? 1 : 0);
-      if (currentTotal >= 4) return prev;
-      return [...prev, hero];
-    });
-  }, [wildcardHero]);
+  const handleHeroToggle = useCallback(
+    (hero) => {
+      setSelectedHeroes((prev) => {
+        const exists = prev.some((h) => h.id === hero.id);
+        if (exists) return prev.filter((h) => h.id !== hero.id);
+        // Allow up to 4 faction heroes, but total team (faction + wildcard) capped at 4
+        const currentTotal = prev.length + (wildcardHero ? 1 : 0);
+        if (currentTotal >= 4) return prev;
+        return [...prev, hero];
+      });
+    },
+    [wildcardHero],
+  );
 
-  const handleWildcardSelect = useCallback((hero) => {
-    setWildcardHero(prev => {
-      if (prev?.id === hero.id) return null; // deselect
-      // Check if adding would exceed 4 total
-      const totalAfterAdd = selectedHeroes.length + 1;
-      if (totalAfterAdd > 4) return prev; // can't exceed 4 total
-      return hero;
-    });
-  }, [selectedHeroes.length]);
+  const handleWildcardSelect = useCallback(
+    (hero) => {
+      setWildcardHero((prev) => {
+        if (prev?.id === hero.id) return null; // deselect
+        // Check if adding would exceed 4 total
+        const totalAfterAdd = selectedHeroes.length + 1;
+        if (totalAfterAdd > 4) return prev; // can't exceed 4 total
+        return hero;
+      });
+    },
+    [selectedHeroes.length],
+  );
 
-  const handleStartBattle = useCallback((rival) => {
-    const team = [...selectedHeroes];
-    if (wildcardHero) team.push(wildcardHero);
-    if (team.length !== 4) return;
-    // Validate at least 2 faction heroes
-    const fName = factions[state.chosenFaction].name;
-    const factionHeroCount = team.filter(h => h.faction === fName).length;
-    if (factionHeroCount < 2) return;
-    setPlayerTeam(team);
-    setSelectedRival(rival);
-    setPhase('battle');
-  }, [selectedHeroes, wildcardHero, state?.chosenFaction]);
+  const handleStartBattle = useCallback(
+    (rival) => {
+      const team = [...selectedHeroes];
+      if (wildcardHero) team.push(wildcardHero);
+      if (team.length !== 4) return;
+      // Validate at least 2 faction heroes
+      const fName = factions[state.chosenFaction].name;
+      const factionHeroCount = team.filter((h) => h.faction === fName).length;
+      if (factionHeroCount < 2) return;
+      setPlayerTeam(team);
+      setSelectedRival(rival);
+      setPhase('battle');
+    },
+    [selectedHeroes, wildcardHero, state?.chosenFaction],
+  );
 
-  const handleBattleExit = useCallback((playerWon) => {
-    if (!state) return;
-    const pointsEarned = playerWon ? 50 : 10;
-    const newState = {
-      ...state,
-      playerPoints: state.playerPoints + pointsEarned,
-      factionPoints: {
-        ...state.factionPoints,
-        [state.chosenFaction]: state.factionPoints[state.chosenFaction] + pointsEarned,
-      },
-    };
-    setState(newState);
-    saveState(newState);
-    setBattleResult(playerWon ? 'victory' : 'defeat');
-    setPhase('results');
-  }, [state]);
+  const handleBattleExit = useCallback(
+    (playerWon) => {
+      if (!state) return;
+      const pointsEarned = playerWon ? 50 : 10;
+      const newState = {
+        ...state,
+        playerPoints: state.playerPoints + pointsEarned,
+        factionPoints: {
+          ...state.factionPoints,
+          [state.chosenFaction]: state.factionPoints[state.chosenFaction] + pointsEarned,
+        },
+      };
+      setState(newState);
+      saveState(newState);
+      setBattleResult(playerWon ? 'victory' : 'defeat');
+      setPhase('results');
+    },
+    [state],
+  );
 
   const handleBackToTeamSelect = useCallback(() => {
     setPhase('select_team');
     setBattleResult(null);
     setSelectedRival(null);
-    setRivalTeams(prev => {
+    setRivalTeams((prev) => {
       if (state?.chosenFaction) return generateRivalTeams(state.chosenFaction);
       return prev;
     });
@@ -258,9 +279,11 @@ export default function FactionWarsPage() {
   }
 
   // --- Sorted leaderboard ---
-  const leaderboard = FACTION_KEYS
-    .map(k => ({ key: k, ...factions[k], points: state.factionPoints[k] }))
-    .sort((a, b) => b.points - a.points);
+  const leaderboard = FACTION_KEYS.map((k) => ({
+    key: k,
+    ...factions[k],
+    points: state.factionPoints[k],
+  })).sort((a, b) => b.points - a.points);
 
   const chosenFaction = state.chosenFaction ? factions[state.chosenFaction] : null;
 
@@ -271,32 +294,39 @@ export default function FactionWarsPage() {
         <h1 style={styles.title}>FACTION WARS</h1>
         <div style={styles.subtitle}>Champion your faction. Battle for supremacy.</div>
         <div style={styles.weekInfo}>
-          Weekly event resets {new Date(new Date(state.lastReset).getTime() + WEEK_MS).toLocaleDateString()}
+          Weekly event resets{' '}
+          {new Date(new Date(state.lastReset).getTime() + WEEK_MS).toLocaleDateString()}
         </div>
       </div>
 
       {/* Results Phase */}
       {phase === 'results' && (
         <div style={styles.resultsContainer}>
-          <div style={{
-            ...styles.resultBanner,
-            borderColor: battleResult === 'victory' ? '#FFD700' : '#F44336',
-          }}>
-            <div style={{
-              fontSize: 32,
-              fontWeight: 'bold',
-              color: battleResult === 'victory' ? '#FFD700' : '#F44336',
-              marginBottom: 8,
-            }}>
+          <div
+            style={{
+              ...styles.resultBanner,
+              borderColor: battleResult === 'victory' ? '#FFD700' : '#F44336',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 32,
+                fontWeight: 'bold',
+                color: battleResult === 'victory' ? '#FFD700' : '#F44336',
+                marginBottom: 8,
+              }}
+            >
               {battleResult === 'victory' ? 'VICTORY' : 'DEFEAT'}
             </div>
             <div style={{ color: '#ccc', fontSize: 14, marginBottom: 4 }}>
-              Points earned: <span style={{ color: '#FFD700', fontWeight: 'bold' }}>
+              Points earned:{' '}
+              <span style={{ color: '#FFD700', fontWeight: 'bold' }}>
                 {battleResult === 'victory' ? '+50' : '+10'}
               </span>
             </div>
             <div style={{ color: '#888', fontSize: 12 }}>
-              Your total: {state.playerPoints} pts | {chosenFaction?.name}: {state.factionPoints[state.chosenFaction]} pts
+              Your total: {state.playerPoints} pts | {chosenFaction?.name}:{' '}
+              {state.factionPoints[state.chosenFaction]} pts
             </div>
             <button onClick={handleBackToTeamSelect} style={styles.goldButton}>
               CONTINUE
@@ -310,7 +340,7 @@ export default function FactionWarsPage() {
         <div>
           <h2 style={styles.sectionTitle}>Choose Your Faction</h2>
           <div style={styles.factionGrid}>
-            {FACTION_KEYS.map(key => {
+            {FACTION_KEYS.map((key) => {
               const f = factions[key];
               const heroCount = getHeroesByFaction(f.name).length;
               return (
@@ -323,7 +353,9 @@ export default function FactionWarsPage() {
                     borderColor: `${f.color}66`,
                   }}
                 >
-                  <div style={{ fontSize: 22, fontWeight: 'bold', color: f.color, marginBottom: 4 }}>
+                  <div
+                    style={{ fontSize: 22, fontWeight: 'bold', color: f.color, marginBottom: 4 }}
+                  >
                     {f.name}
                   </div>
                   <div style={{ color: '#aaa', fontSize: 11, marginBottom: 8, letterSpacing: 1 }}>
@@ -346,20 +378,25 @@ export default function FactionWarsPage() {
       {phase === 'select_team' && chosenFaction && (
         <div>
           {/* Chosen faction header */}
-          <div style={{
-            textAlign: 'center',
-            marginBottom: 24,
-            padding: '16px 20px',
-            background: `linear-gradient(135deg, ${chosenFaction.color}18 0%, transparent 100%)`,
-            border: `1px solid ${chosenFaction.color}44`,
-            borderRadius: 8,
-          }}>
+          <div
+            style={{
+              textAlign: 'center',
+              marginBottom: 24,
+              padding: '16px 20px',
+              background: `linear-gradient(135deg, ${chosenFaction.color}18 0%, transparent 100%)`,
+              border: `1px solid ${chosenFaction.color}44`,
+              borderRadius: 8,
+            }}
+          >
             <div style={{ fontSize: 18, fontWeight: 'bold', color: chosenFaction.color }}>
               Championing: {chosenFaction.name}
             </div>
             <div style={{ color: '#888', fontSize: 12, marginTop: 4 }}>
-              Your points: <span style={{ color: '#FFD700' }}>{state.playerPoints}</span> |
-              Faction points: <span style={{ color: chosenFaction.color }}>{state.factionPoints[state.chosenFaction]}</span>
+              Your points: <span style={{ color: '#FFD700' }}>{state.playerPoints}</span> | Faction
+              points:{' '}
+              <span style={{ color: chosenFaction.color }}>
+                {state.factionPoints[state.chosenFaction]}
+              </span>
             </div>
             <button onClick={handleResetFaction} style={styles.smallButton}>
               Switch Faction
@@ -371,12 +408,19 @@ export default function FactionWarsPage() {
 
           {/* Faction heroes */}
           <div style={{ marginBottom: 20 }}>
-            <h3 style={{ color: chosenFaction.color, fontSize: 13, marginBottom: 8, letterSpacing: 1 }}>
+            <h3
+              style={{
+                color: chosenFaction.color,
+                fontSize: 13,
+                marginBottom: 8,
+                letterSpacing: 1,
+              }}
+            >
               {chosenFaction.name} HEROES ({selectedHeroes.length} selected)
             </h3>
             <div style={styles.heroGrid}>
-              {factionHeroes.map(hero => {
-                const selected = selectedHeroes.some(h => h.id === hero.id);
+              {factionHeroes.map((hero) => {
+                const selected = selectedHeroes.some((h) => h.id === hero.id);
                 return (
                   <button
                     key={hero.id}
@@ -387,17 +431,37 @@ export default function FactionWarsPage() {
                       backgroundColor: selected ? `${chosenFaction.color}18` : '#111',
                     }}
                   >
-                    <div style={{ fontSize: 14, fontWeight: 'bold', color: selected ? chosenFaction.color : '#ddd' }}>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        color: selected ? chosenFaction.color : '#ddd',
+                      }}
+                    >
                       {hero.name}
                     </div>
-                    <div style={{ fontSize: 10, color: ROLE_COLORS[hero.role] || '#888', marginTop: 2 }}>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        color: ROLE_COLORS[hero.role] || '#888',
+                        marginTop: 2,
+                      }}
+                    >
                       {hero.role}
                     </div>
                     <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>
                       Lv{hero.level} &middot; {hero.stars} stars
                     </div>
                     {selected && (
-                      <div style={{ position: 'absolute', top: 4, right: 6, color: chosenFaction.color, fontSize: 12 }}>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 6,
+                          color: chosenFaction.color,
+                          fontSize: 12,
+                        }}
+                      >
                         &#10003;
                       </div>
                     )}
@@ -413,7 +477,7 @@ export default function FactionWarsPage() {
               OTHER FACTIONS ({wildcardHero ? '1' : '0'} selected)
             </h3>
             <div style={styles.heroGrid}>
-              {otherHeroes.map(hero => {
+              {otherHeroes.map((hero) => {
                 const selected = wildcardHero?.id === hero.id;
                 const heroFactionKey = FACTION_NAME_TO_KEY[hero.faction];
                 const heroFaction = heroFactionKey ? factions[heroFactionKey] : null;
@@ -427,17 +491,39 @@ export default function FactionWarsPage() {
                       backgroundColor: selected ? '#FFD70018' : '#111',
                     }}
                   >
-                    <div style={{ fontSize: 14, fontWeight: 'bold', color: selected ? '#FFD700' : '#ddd' }}>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        color: selected ? '#FFD700' : '#ddd',
+                      }}
+                    >
                       {hero.name}
                     </div>
-                    <div style={{ fontSize: 10, color: ROLE_COLORS[hero.role] || '#888', marginTop: 2 }}>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        color: ROLE_COLORS[hero.role] || '#888',
+                        marginTop: 2,
+                      }}
+                    >
                       {hero.role}
                     </div>
-                    <div style={{ fontSize: 10, color: heroFaction?.color || '#666', marginTop: 2 }}>
+                    <div
+                      style={{ fontSize: 10, color: heroFaction?.color || '#666', marginTop: 2 }}
+                    >
                       {hero.faction}
                     </div>
                     {selected && (
-                      <div style={{ position: 'absolute', top: 4, right: 6, color: '#FFD700', fontSize: 12 }}>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 6,
+                          color: '#FFD700',
+                          fontSize: 12,
+                        }}
+                      >
                         &#10003;
                       </div>
                     )}
@@ -451,27 +537,40 @@ export default function FactionWarsPage() {
           <h2 style={styles.sectionTitle}>Choose Your Opponent</h2>
           <div style={styles.rivalGrid}>
             {rivalTeams.map((rival, i) => (
-              <div key={rival.factionKey} style={{
-                ...styles.rivalCard,
-                borderColor: `${rival.faction.color}66`,
-                background: `linear-gradient(135deg, ${rival.faction.color}10 0%, #0d0d1a 100%)`,
-              }}>
-                <div style={{ fontSize: 16, fontWeight: 'bold', color: rival.faction.color, marginBottom: 4 }}>
+              <div
+                key={rival.factionKey}
+                style={{
+                  ...styles.rivalCard,
+                  borderColor: `${rival.faction.color}66`,
+                  background: `linear-gradient(135deg, ${rival.faction.color}10 0%, #0d0d1a 100%)`,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: rival.faction.color,
+                    marginBottom: 4,
+                  }}
+                >
                   {rival.faction.name}
                 </div>
                 <div style={{ color: '#888', fontSize: 11, marginBottom: 10 }}>
                   {rival.faction.mythology} &middot; {rival.faction.playstyle}
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
-                  {rival.team.map(hero => (
-                    <span key={hero.id} style={{
-                      fontSize: 11,
-                      padding: '3px 8px',
-                      borderRadius: 4,
-                      backgroundColor: '#1a1a2e',
-                      color: rival.faction.color,
-                      border: `1px solid ${rival.faction.color}44`,
-                    }}>
+                  {rival.team.map((hero) => (
+                    <span
+                      key={hero.id}
+                      style={{
+                        fontSize: 11,
+                        padding: '3px 8px',
+                        borderRadius: 4,
+                        backgroundColor: '#1a1a2e',
+                        color: rival.faction.color,
+                        border: `1px solid ${rival.faction.color}44`,
+                      }}
+                    >
                       {hero.name}
                     </span>
                   ))}
@@ -481,8 +580,8 @@ export default function FactionWarsPage() {
                   disabled={totalSelected !== 4 || factionCount < 2}
                   style={{
                     ...styles.battleButton,
-                    opacity: (totalSelected !== 4 || factionCount < 2) ? 0.4 : 1,
-                    cursor: (totalSelected !== 4 || factionCount < 2) ? 'not-allowed' : 'pointer',
+                    opacity: totalSelected !== 4 || factionCount < 2 ? 0.4 : 1,
+                    cursor: totalSelected !== 4 || factionCount < 2 ? 'not-allowed' : 'pointer',
                   }}
                 >
                   {totalSelected !== 4
@@ -502,25 +601,34 @@ export default function FactionWarsPage() {
         <h2 style={styles.sectionTitle}>Faction Leaderboard</h2>
         <div style={styles.leaderboard}>
           {leaderboard.map((f, i) => (
-            <div key={f.key} style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              backgroundColor: f.key === state.chosenFaction ? `${f.color}12` : '#0d0d1a',
-              borderLeft: `3px solid ${f.color}`,
-              borderRadius: 4,
-              marginBottom: 4,
-            }}>
+            <div
+              key={f.key}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '10px 14px',
+                backgroundColor: f.key === state.chosenFaction ? `${f.color}12` : '#0d0d1a',
+                borderLeft: `3px solid ${f.color}`,
+                borderRadius: 4,
+                marginBottom: 4,
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ color: '#666', fontSize: 14, fontWeight: 'bold', width: 20 }}>
                   #{i + 1}
                 </span>
-                <span style={{ color: f.color, fontWeight: 'bold', fontSize: 14 }}>
-                  {f.name}
-                </span>
+                <span style={{ color: f.color, fontWeight: 'bold', fontSize: 14 }}>{f.name}</span>
                 {f.key === state.chosenFaction && (
-                  <span style={{ fontSize: 10, color: '#FFD700', border: '1px solid #FFD70044', padding: '1px 6px', borderRadius: 3 }}>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      color: '#FFD700',
+                      border: '1px solid #FFD70044',
+                      padding: '1px 6px',
+                      borderRadius: 3,
+                    }}
+                  >
                     YOU
                   </span>
                 )}
@@ -537,42 +645,66 @@ export default function FactionWarsPage() {
       <div style={styles.rewardsSection}>
         <h2 style={styles.sectionTitle}>Reward Tiers</h2>
         <div style={styles.rewardsGrid}>
-          {REWARD_TIERS.map(tier => {
+          {REWARD_TIERS.map((tier) => {
             const unlocked = state.playerPoints >= tier.points;
             const claimed = (state.claimedTiers || []).includes(tier.points);
             return (
-              <div key={tier.points} style={{
-                ...styles.rewardCard,
-                borderColor: unlocked ? '#FFD700' : '#333',
-                backgroundColor: unlocked ? '#FFD70010' : '#0d0d1a',
-              }}>
+              <div
+                key={tier.points}
+                style={{
+                  ...styles.rewardCard,
+                  borderColor: unlocked ? '#FFD700' : '#333',
+                  backgroundColor: unlocked ? '#FFD70010' : '#0d0d1a',
+                }}
+              >
                 <div style={{ fontSize: 24, marginBottom: 6 }}>{tier.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 'bold', color: unlocked ? '#FFD700' : '#666' }}>
+                <div
+                  style={{ fontSize: 13, fontWeight: 'bold', color: unlocked ? '#FFD700' : '#666' }}
+                >
                   {tier.label}
                 </div>
                 <div style={{ fontSize: 12, color: unlocked ? '#ccc' : '#555', marginTop: 4 }}>
                   {tier.reward}
                 </div>
                 {unlocked && claimed && (
-                  <div style={{ fontSize: 10, color: '#4CAF50', marginTop: 6, fontWeight: 'bold' }}>CLAIMED</div>
+                  <div style={{ fontSize: 10, color: '#4CAF50', marginTop: 6, fontWeight: 'bold' }}>
+                    CLAIMED
+                  </div>
                 )}
                 {unlocked && !claimed && (
-                  <button onClick={() => {
-                    const rewardMap = { 100: { gold: 2000 }, 250: { essences: 15 }, 500: { awakenStones: 5 } };
-                    const reward = rewardMap[tier.points];
-                    if (reward) {
-                      const save = loadSave();
-                      const res = { ...save.resources };
-                      for (const [k, v] of Object.entries(reward)) res[k] = (res[k] || 0) + v;
-                      updateSave({ resources: res });
-                    }
-                    const newState = { ...state, claimedTiers: [...(state.claimedTiers || []), tier.points] };
-                    setState(newState);
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-                  }} style={{
-                    marginTop: 6, padding: '4px 12px', fontSize: 10, fontWeight: 'bold',
-                    backgroundColor: '#FFD700', color: '#000', border: 'none', borderRadius: 4, cursor: 'pointer',
-                  }}>
+                  <button
+                    onClick={() => {
+                      const rewardMap = {
+                        100: { gold: 2000 },
+                        250: { essences: 15 },
+                        500: { awakenStones: 5 },
+                      };
+                      const reward = rewardMap[tier.points];
+                      if (reward) {
+                        const save = loadSave();
+                        const res = { ...save.resources };
+                        for (const [k, v] of Object.entries(reward)) res[k] = (res[k] || 0) + v;
+                        updateSave({ resources: res });
+                      }
+                      const newState = {
+                        ...state,
+                        claimedTiers: [...(state.claimedTiers || []), tier.points],
+                      };
+                      setState(newState);
+                      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+                    }}
+                    style={{
+                      marginTop: 6,
+                      padding: '4px 12px',
+                      fontSize: 10,
+                      fontWeight: 'bold',
+                      backgroundColor: '#FFD700',
+                      color: '#000',
+                      border: 'none',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                  >
                     Claim
                   </button>
                 )}

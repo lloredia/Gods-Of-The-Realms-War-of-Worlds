@@ -44,6 +44,12 @@ export function calculateDamage(attacker, target, skill) {
   const variance = DAMAGE_VARIANCE_MIN + random() * DAMAGE_VARIANCE_RANGE;
   damage *= variance;
 
+  // Relic 4-piece: Fortress damage reduction. Cap so a unit cannot become immune.
+  const reduction = Math.min(0.75, Math.max(0, target.damageReduction || 0));
+  if (reduction > 0) {
+    damage *= 1 - reduction;
+  }
+
   // Floor
   damage = Math.max(MIN_DAMAGE, Math.floor(damage));
 
@@ -66,7 +72,7 @@ export function calculateHeal(caster, skill) {
 
 function getEffectiveAttack(unit) {
   let atk = unit.attack;
-  if (unit.buffs.some(b => b.type === BuffType.ATTACK_UP)) {
+  if (unit.buffs.some((b) => b.type === BuffType.ATTACK_UP)) {
     atk *= getEffectMultiplier(BuffType.ATTACK_UP);
   }
   return atk;
@@ -74,10 +80,10 @@ function getEffectiveAttack(unit) {
 
 function getEffectiveDefense(unit) {
   let def = unit.defense;
-  if (unit.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK)) {
+  if (unit.debuffs.some((d) => d.type === DebuffType.DEFENSE_BREAK)) {
     def *= getEffectMultiplier(DebuffType.DEFENSE_BREAK);
   }
-  if (unit.buffs.some(b => b.type === BuffType.DEFENSE_UP)) {
+  if (unit.buffs.some((b) => b.type === BuffType.DEFENSE_UP)) {
     def *= getEffectMultiplier(BuffType.DEFENSE_UP);
   }
   return def;

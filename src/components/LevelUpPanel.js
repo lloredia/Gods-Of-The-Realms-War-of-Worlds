@@ -21,7 +21,12 @@ const STAR_MULTIPLIER = 0.12; // 12% per star
 const AWAKEN_BONUS = 0.15; // 15% flat bonus
 
 function calcStatMultiplier(level, stars, awakened) {
-  return 1 + (level - 1) * STAT_GROWTH_PER_LEVEL + (stars - 1) * STAR_MULTIPLIER + (awakened ? AWAKEN_BONUS : 0);
+  return (
+    1 +
+    (level - 1) * STAT_GROWTH_PER_LEVEL +
+    (stars - 1) * STAR_MULTIPLIER +
+    (awakened ? AWAKEN_BONUS : 0)
+  );
 }
 
 export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onAwaken }) {
@@ -56,19 +61,47 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
     // After level up
     const nextLevelMult = level < levelCap ? calcStatMultiplier(level + 1, stars, awakened) : null;
     // After star up
-    const nextStarMult = stars < MAX_STARS && atLevelCap ? calcStatMultiplier(1, stars + 1, awakened) : null;
+    const nextStarMult =
+      stars < MAX_STARS && atLevelCap ? calcStatMultiplier(1, stars + 1, awakened) : null;
     // After awaken
-    const awakenMult = !awakened && stars >= AWAKEN_MIN_STARS ? calcStatMultiplier(level, stars, true) : null;
+    const awakenMult =
+      !awakened && stars >= AWAKEN_MIN_STARS ? calcStatMultiplier(level, stars, true) : null;
 
     function applyMult(base, mult) {
       return Math.round(base * mult);
     }
 
     return {
-      current: { hp: applyMult(baseHP, currentMult), atk: applyMult(baseATK, currentMult), def: applyMult(baseDEF, currentMult), spd: applyMult(baseSPD, currentMult) },
-      afterLevel: nextLevelMult ? { hp: applyMult(baseHP, nextLevelMult), atk: applyMult(baseATK, nextLevelMult), def: applyMult(baseDEF, nextLevelMult), spd: applyMult(baseSPD, nextLevelMult) } : null,
-      afterStar: nextStarMult ? { hp: applyMult(baseHP, nextStarMult), atk: applyMult(baseATK, nextStarMult), def: applyMult(baseDEF, nextStarMult), spd: applyMult(baseSPD, nextStarMult) } : null,
-      afterAwaken: awakenMult ? { hp: applyMult(baseHP, awakenMult), atk: applyMult(baseATK, awakenMult), def: applyMult(baseDEF, awakenMult), spd: applyMult(baseSPD, awakenMult) } : null,
+      current: {
+        hp: applyMult(baseHP, currentMult),
+        atk: applyMult(baseATK, currentMult),
+        def: applyMult(baseDEF, currentMult),
+        spd: applyMult(baseSPD, currentMult),
+      },
+      afterLevel: nextLevelMult
+        ? {
+            hp: applyMult(baseHP, nextLevelMult),
+            atk: applyMult(baseATK, nextLevelMult),
+            def: applyMult(baseDEF, nextLevelMult),
+            spd: applyMult(baseSPD, nextLevelMult),
+          }
+        : null,
+      afterStar: nextStarMult
+        ? {
+            hp: applyMult(baseHP, nextStarMult),
+            atk: applyMult(baseATK, nextStarMult),
+            def: applyMult(baseDEF, nextStarMult),
+            spd: applyMult(baseSPD, nextStarMult),
+          }
+        : null,
+      afterAwaken: awakenMult
+        ? {
+            hp: applyMult(baseHP, awakenMult),
+            atk: applyMult(baseATK, awakenMult),
+            def: applyMult(baseDEF, awakenMult),
+            spd: applyMult(baseSPD, awakenMult),
+          }
+        : null,
     };
   }, [hero, level, stars, awakened, levelCap, atLevelCap]);
 
@@ -162,21 +195,30 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
     if (diff === 0) return null;
     return (
       <span style={{ color: diff > 0 ? '#4CAF50' : '#F44336', fontSize: 9, marginLeft: 4 }}>
-        {diff > 0 ? '+' : ''}{diff}
+        {diff > 0 ? '+' : ''}
+        {diff}
       </span>
     );
   }
 
   // Determine which preview to show (prioritize the most relevant action)
   const activePreview = canLevelUp ? 'level' : canStarUp ? 'star' : canAwaken ? 'awaken' : null;
-  const nextStats = activePreview === 'level' ? preview.afterLevel
-    : activePreview === 'star' ? preview.afterStar
-    : activePreview === 'awaken' ? preview.afterAwaken
-    : null;
-  const previewLabel = activePreview === 'level' ? 'After Level Up'
-    : activePreview === 'star' ? 'After Star Up'
-    : activePreview === 'awaken' ? 'After Awaken'
-    : null;
+  const nextStats =
+    activePreview === 'level'
+      ? preview.afterLevel
+      : activePreview === 'star'
+        ? preview.afterStar
+        : activePreview === 'awaken'
+          ? preview.afterAwaken
+          : null;
+  const previewLabel =
+    activePreview === 'level'
+      ? 'After Level Up'
+      : activePreview === 'star'
+        ? 'After Star Up'
+        : activePreview === 'awaken'
+          ? 'After Awaken'
+          : null;
 
   return (
     <div style={panelStyle}>
@@ -184,16 +226,27 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
 
       {/* Current status */}
       <div style={statusRowStyle}>
-        <span style={{ color: '#FFD740' }}>{'★'.repeat(stars)}{'☆'.repeat(MAX_STARS - stars)}</span>
-        <span>Lv <strong>{level}</strong> / {levelCap}</span>
+        <span style={{ color: '#FFD740' }}>
+          {'★'.repeat(stars)}
+          {'☆'.repeat(MAX_STARS - stars)}
+        </span>
+        <span>
+          Lv <strong>{level}</strong> / {levelCap}
+        </span>
         {awakened && <span style={{ color: '#E040FB', fontSize: 11 }}>AWAKENED</span>}
       </div>
 
       {/* Resources */}
       <div style={resourceBarStyle}>
-        <span>Gold: <strong style={{ color: '#FFD700' }}>{gold.toLocaleString()}</strong></span>
-        <span>Essences: <strong style={{ color: '#CE93D8' }}>{essences}</strong></span>
-        <span>Awaken Stones: <strong style={{ color: '#E040FB' }}>{awakenStones}</strong></span>
+        <span>
+          Gold: <strong style={{ color: '#FFD700' }}>{gold.toLocaleString()}</strong>
+        </span>
+        <span>
+          Essences: <strong style={{ color: '#CE93D8' }}>{essences}</strong>
+        </span>
+        <span>
+          Awaken Stones: <strong style={{ color: '#E040FB' }}>{awakenStones}</strong>
+        </span>
       </div>
 
       {/* Action buttons */}
@@ -201,33 +254,66 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
         <button
           style={actionBtnStyle(canLevelUp)}
           disabled={!canLevelUp}
-          onClick={() => { if (canLevelUp) { resumeAudio(); SFX.levelUp(); onLevelUp?.(hero.id); } }}
+          onClick={() => {
+            if (canLevelUp) {
+              resumeAudio();
+              SFX.levelUp();
+              onLevelUp?.(hero.id);
+            }
+          }}
         >
-          Level Up<br />
+          Level Up
+          <br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
-            {level >= levelCap ? (stars >= MAX_STARS ? 'MAX' : 'Star Up First') : `${levelUpCost.toLocaleString()} Gold`}
+            {level >= levelCap
+              ? stars >= MAX_STARS
+                ? 'MAX'
+                : 'Star Up First'
+              : `${levelUpCost.toLocaleString()} Gold`}
           </span>
         </button>
 
         <button
           style={actionBtnStyle(canStarUp)}
           disabled={!canStarUp}
-          onClick={() => { if (canStarUp) { resumeAudio(); SFX.starUp(); onStarUp?.(hero.id); } }}
+          onClick={() => {
+            if (canStarUp) {
+              resumeAudio();
+              SFX.starUp();
+              onStarUp?.(hero.id);
+            }
+          }}
         >
-          Star Up (resets to Lv 1)<br />
+          Star Up (resets to Lv 1)
+          <br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
-            {stars >= MAX_STARS ? 'MAX' : !atLevelCap ? `Reach Lv ${levelCap}` : `${starUpCost} Essences`}
+            {stars >= MAX_STARS
+              ? 'MAX'
+              : !atLevelCap
+                ? `Reach Lv ${levelCap}`
+                : `${starUpCost} Essences`}
           </span>
         </button>
 
         <button
           style={awakenBtnStyle(canAwaken)}
           disabled={!canAwaken}
-          onClick={() => { if (canAwaken) { resumeAudio(); SFX.awaken(); onAwaken?.(hero.id); } }}
+          onClick={() => {
+            if (canAwaken) {
+              resumeAudio();
+              SFX.awaken();
+              onAwaken?.(hero.id);
+            }
+          }}
         >
-          Awaken<br />
+          Awaken
+          <br />
           <span style={{ fontSize: 9, opacity: 0.8 }}>
-            {awakened ? 'DONE' : stars < AWAKEN_MIN_STARS ? `Need ${AWAKEN_MIN_STARS}★` : `${AWAKEN_COST} Stones`}
+            {awakened
+              ? 'DONE'
+              : stars < AWAKEN_MIN_STARS
+                ? `Need ${AWAKEN_MIN_STARS}★`
+                : `${AWAKEN_COST} Stones`}
           </span>
         </button>
       </div>
@@ -235,14 +321,34 @@ export default function LevelUpPanel({ hero, resources, onLevelUp, onStarUp, onA
       {/* Stat preview */}
       {nextStats && (
         <div>
-          <div style={{ fontSize: 10, color: '#888', textAlign: 'center', marginTop: 8, marginBottom: 2 }}>
+          <div
+            style={{
+              fontSize: 10,
+              color: '#888',
+              textAlign: 'center',
+              marginTop: 8,
+              marginBottom: 2,
+            }}
+          >
             {previewLabel}
           </div>
           <div style={statPreviewStyle}>
-            <span>HP {preview.current.hp}{renderDelta(preview.current.hp, nextStats.hp)}</span>
-            <span>ATK {preview.current.atk}{renderDelta(preview.current.atk, nextStats.atk)}</span>
-            <span>DEF {preview.current.def}{renderDelta(preview.current.def, nextStats.def)}</span>
-            <span>SPD {preview.current.spd}{renderDelta(preview.current.spd, nextStats.spd)}</span>
+            <span>
+              HP {preview.current.hp}
+              {renderDelta(preview.current.hp, nextStats.hp)}
+            </span>
+            <span>
+              ATK {preview.current.atk}
+              {renderDelta(preview.current.atk, nextStats.atk)}
+            </span>
+            <span>
+              DEF {preview.current.def}
+              {renderDelta(preview.current.def, nextStats.def)}
+            </span>
+            <span>
+              SPD {preview.current.spd}
+              {renderDelta(preview.current.spd, nextStats.spd)}
+            </span>
           </div>
         </div>
       )}

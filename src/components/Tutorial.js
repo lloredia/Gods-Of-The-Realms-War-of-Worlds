@@ -19,7 +19,7 @@ const STEPS = [
     icon: '\u2694\uFE0F',
     title: 'Enter Battle',
     description:
-      'Combat is turn-based and driven by a turn meter. When a hero\'s meter fills, they act. Use skills wisely — each has cooldowns and elemental affinities. Exploit elemental weaknesses to deal bonus damage and gain the upper hand.',
+      "Combat is turn-based and driven by a turn meter. When a hero's meter fills, they act. Use skills wisely — each has cooldowns and elemental affinities. Exploit elemental weaknesses to deal bonus damage and gain the upper hand.",
   },
   {
     icon: '\u2728',
@@ -37,7 +37,7 @@ const STEPS = [
     icon: '\uD83C\uDFC6',
     title: 'Rise in the Arena',
     description:
-      'Test your team against other players in the PvP Arena. Climb the rankings to earn weekly rewards and exclusive titles. Study your opponents\' lineups and craft counter-strategies to dominate the leaderboard.',
+      "Test your team against other players in the PvP Arena. Climb the rankings to earn weekly rewards and exclusive titles. Study your opponents' lineups and craft counter-strategies to dominate the leaderboard.",
   },
   {
     icon: '\uD83D\uDD25',

@@ -39,8 +39,8 @@ export default function SkillButtons({ unit, onSkillSelect, disabled }) {
             style={{
               padding: '10px 16px',
               borderRadius: 6,
-              border: `1px solid ${isDisabled ? '#555' : (tint ? tint.border : DEFAULT_TINT.border)}`,
-              backgroundColor: isDisabled ? '#222' : (tint ? tint.bg : DEFAULT_TINT.bg),
+              border: `1px solid ${isDisabled ? '#555' : tint ? tint.border : DEFAULT_TINT.border}`,
+              backgroundColor: isDisabled ? '#222' : tint ? tint.bg : DEFAULT_TINT.bg,
               color: isDisabled ? '#666' : '#eee',
               cursor: isDisabled ? 'not-allowed' : 'pointer',
               fontSize: 13,

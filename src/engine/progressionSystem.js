@@ -14,12 +14,12 @@ const MAX_LEVEL = 40;
  * Natural star rating determines base stat scaling.
  */
 const STAR_MULTIPLIERS = {
-  1: 0.60,
+  1: 0.6,
   2: 0.75,
-  3: 0.90,
-  4: 1.00,
+  3: 0.9,
+  4: 1.0,
   5: 1.15,
-  6: 1.30,
+  6: 1.3,
 };
 
 /**
@@ -40,7 +40,7 @@ export function applyProgression(unit) {
 
   const starMult = STAR_MULTIPLIERS[stars] || 1.0;
   const levelMult = 1 + (level - 1) * GROWTH_PER_LEVEL;
-  const awakenMult = awakened ? (1 + AWAKENING_BONUS) : 1.0;
+  const awakenMult = awakened ? 1 + AWAKENING_BONUS : 1.0;
 
   const totalMult = starMult * levelMult * awakenMult;
 

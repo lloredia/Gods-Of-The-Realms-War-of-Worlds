@@ -13,10 +13,26 @@ import { getTeamWithSave } from '../../utils/heroUtils';
 // ---------------------------------------------------------------------------
 
 const OPPONENT_NAMES = [
-  'Shadowlord', 'Divine Crusader', 'Storm Herald', 'Voidwalker', 'Sun Champion',
-  'Moonblade', 'Deathwhisper', 'Ironguard', 'Flamecaller', 'Frostweaver',
-  'Tidecaller', 'Duskbringer', 'Starforger', 'Earthshaker', 'Windrunner',
-  'Soulreaper', 'Lightbringer', 'Nightstalker', 'Thunderborn', 'Wraithking',
+  'Shadowlord',
+  'Divine Crusader',
+  'Storm Herald',
+  'Voidwalker',
+  'Sun Champion',
+  'Moonblade',
+  'Deathwhisper',
+  'Ironguard',
+  'Flamecaller',
+  'Frostweaver',
+  'Tidecaller',
+  'Duskbringer',
+  'Starforger',
+  'Earthshaker',
+  'Windrunner',
+  'Soulreaper',
+  'Lightbringer',
+  'Nightstalker',
+  'Thunderborn',
+  'Wraithking',
 ];
 
 const TIER_COLORS = {
@@ -86,7 +102,14 @@ function generateOpponent() {
     reward = 25;
   }
 
-  return { name, team, power: Math.round(power), difficulty, reward, id: Math.random().toString(36).slice(2) };
+  return {
+    name,
+    team,
+    power: Math.round(power),
+    difficulty,
+    reward,
+    id: Math.random().toString(36).slice(2),
+  };
 }
 
 function generateOpponents() {
@@ -142,8 +165,8 @@ export default function ArenaPage() {
   // --- Select phase handlers ---
 
   const toggleHero = useCallback((heroId) => {
-    setSelectedIds(prev => {
-      if (prev.includes(heroId)) return prev.filter(id => id !== heroId);
+    setSelectedIds((prev) => {
+      if (prev.includes(heroId)) return prev.filter((id) => id !== heroId);
       if (prev.length >= 4) return prev;
       return [...prev, heroId];
     });
@@ -163,45 +186,48 @@ export default function ArenaPage() {
 
   // --- Battle exit ---
 
-  const handleBattleExit = useCallback((playerWon) => {
-    const reward = chosenOpponent?.reward || 20;
-    const loss = 10;
+  const handleBattleExit = useCallback(
+    (playerWon) => {
+      const reward = chosenOpponent?.reward || 20;
+      const loss = 10;
 
-    const newPoints = playerWon
-      ? Math.min(arenaPoints + reward, 99999)
-      : Math.max(0, arenaPoints - loss);
-    setArenaPoints(newPoints);
+      const newPoints = playerWon
+        ? Math.min(arenaPoints + reward, 99999)
+        : Math.max(0, arenaPoints - loss);
+      setArenaPoints(newPoints);
 
-    if (playerWon) {
-      setLastResult({ won: true, points: reward });
-    } else {
-      setLastResult({ won: false, points: loss });
-    }
+      if (playerWon) {
+        setLastResult({ won: true, points: reward });
+      } else {
+        setLastResult({ won: false, points: loss });
+      }
 
-    // Persist
-    updateSave({ arenaPoints: newPoints });
+      // Persist
+      updateSave({ arenaPoints: newPoints });
 
-    // Track battle stats
-    const save = loadSave();
-    const newStats = { ...save.stats };
-    if (playerWon) {
-      newStats.battlesWon = (newStats.battlesWon || 0) + 1;
-    } else {
-      newStats.battlesLost = (newStats.battlesLost || 0) + 1;
-    }
-    updateSave({ stats: newStats });
+      // Track battle stats
+      const save = loadSave();
+      const newStats = { ...save.stats };
+      if (playerWon) {
+        newStats.battlesWon = (newStats.battlesWon || 0) + 1;
+      } else {
+        newStats.battlesLost = (newStats.battlesLost || 0) + 1;
+      }
+      updateSave({ stats: newStats });
 
-    // Check achievements
-    const battleUnlocked = checkBattleAchievements(playerWon, newStats);
-    const arenaUnlocked = checkArenaAchievements(playerWon, newPoints);
-    const allUnlocked = [...battleUnlocked, ...arenaUnlocked];
-    if (allUnlocked.length > 0) setToast(allUnlocked[0]);
+      // Check achievements
+      const battleUnlocked = checkBattleAchievements(playerWon, newStats);
+      const arenaUnlocked = checkArenaAchievements(playerWon, newPoints);
+      const allUnlocked = [...battleUnlocked, ...arenaUnlocked];
+      if (allUnlocked.length > 0) setToast(allUnlocked[0]);
 
-    setChosenOpponent(null);
-    setSelectedIds([]);
-    setOpponents(generateOpponents());
-    setPhase('browse');
-  }, [chosenOpponent, arenaPoints]);
+      setChosenOpponent(null);
+      setSelectedIds([]);
+      setOpponents(generateOpponents());
+      setPhase('browse');
+    },
+    [chosenOpponent, arenaPoints],
+  );
 
   // =========================================================================
   // RENDER — Battle Phase
@@ -224,7 +250,9 @@ export default function ArenaPage() {
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <h1 style={{ fontSize: 24, color: '#FFD700', margin: 0 }}>ARENA — SELECT YOUR TEAM</h1>
           <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>
-            Choose 4 heroes to face <span style={{ color: '#FF6B6B', fontWeight: 'bold' }}>{chosenOpponent.name}</span> ({selectedIds.length}/4)
+            Choose 4 heroes to face{' '}
+            <span style={{ color: '#FF6B6B', fontWeight: 'bold' }}>{chosenOpponent.name}</span> (
+            {selectedIds.length}/4)
           </p>
           <button
             onClick={handleBackToBrowse}
@@ -244,43 +272,57 @@ export default function ArenaPage() {
         </div>
 
         {/* Opponent Preview */}
-        <div style={{
-          maxWidth: 900,
-          margin: '0 auto 16px',
-          padding: 12,
-          backgroundColor: '#111',
-          borderRadius: 8,
-          border: '1px solid #333',
-        }}>
+        <div
+          style={{
+            maxWidth: 900,
+            margin: '0 auto 16px',
+            padding: 12,
+            backgroundColor: '#111',
+            borderRadius: 8,
+            border: '1px solid #333',
+          }}
+        >
           <div style={{ fontSize: 12, color: '#888', marginBottom: 6 }}>OPPONENT TEAM:</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {chosenOpponent.team.map(h => (
-              <span key={h.id} style={{
-                fontSize: 11,
-                padding: '3px 8px',
-                borderRadius: 4,
-                backgroundColor: '#1a1a2e',
-                color: ELEMENT_COLORS[h.element] || '#aaa',
-                border: `1px solid ${ELEMENT_COLORS[h.element] || '#333'}`,
-              }}>
+            {chosenOpponent.team.map((h) => (
+              <span
+                key={h.id}
+                style={{
+                  fontSize: 11,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  backgroundColor: '#1a1a2e',
+                  color: ELEMENT_COLORS[h.element] || '#aaa',
+                  border: `1px solid ${ELEMENT_COLORS[h.element] || '#333'}`,
+                }}
+              >
                 {h.name} ({h.role})
               </span>
             ))}
-            <span style={{ fontSize: 11, color: DIFFICULTY_COLORS[chosenOpponent.difficulty], marginLeft: 'auto', alignSelf: 'center' }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: DIFFICULTY_COLORS[chosenOpponent.difficulty],
+                marginLeft: 'auto',
+                alignSelf: 'center',
+              }}
+            >
               {chosenOpponent.difficulty} | +{chosenOpponent.reward} pts
             </span>
           </div>
         </div>
 
         {/* Hero Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-          gap: 10,
-          maxWidth: 900,
-          margin: '0 auto 20px',
-        }}>
-          {allHeroes.map(hero => {
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: 10,
+            maxWidth: 900,
+            margin: '0 auto 20px',
+          }}
+        >
+          {allHeroes.map((hero) => {
             const isSelected = selectedIds.includes(hero.id);
             const elementColor = ELEMENT_COLORS[hero.element] || '#666';
             const roleColor = ROLE_COLORS[hero.role] || '#888';
@@ -303,16 +345,35 @@ export default function ArenaPage() {
                   opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                  <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>{hero.name}</span>
-                  <span style={{ fontSize: 10, color: elementColor, border: `1px solid ${elementColor}`, borderRadius: 3, padding: '1px 4px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 4,
+                  }}
+                >
+                  <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>
+                    {hero.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      color: elementColor,
+                      border: `1px solid ${elementColor}`,
+                      borderRadius: 3,
+                      padding: '1px 4px',
+                    }}
+                  >
                     {hero.element}
                   </span>
                 </div>
                 <div style={{ fontSize: 9, color: '#FFD740', marginBottom: 3 }}>
                   {'★'.repeat(hero.stars || 4)} Lv{hero.level || 1}
                 </div>
-                <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}>
+                <div
+                  style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}
+                >
                   <span>{hero.faction}</span>
                 </div>
                 <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#777' }}>
@@ -321,7 +382,15 @@ export default function ArenaPage() {
                   <span>SPD {hero.speed}</span>
                 </div>
                 {isSelected && (
-                  <div style={{ fontSize: 10, color: '#FFD700', marginTop: 4, textAlign: 'center', fontWeight: 'bold' }}>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: '#FFD700',
+                      marginTop: 4,
+                      textAlign: 'center',
+                      fontWeight: 'bold',
+                    }}
+                  >
                     SELECTED
                   </div>
                 )}
@@ -361,31 +430,39 @@ export default function ArenaPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#0a0a1a', color: '#eee', padding: 20 }}>
       {/* Arena Header */}
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontSize: 28, color: '#FFD700', margin: 0, letterSpacing: 2 }}>
-          PVP ARENA
-        </h1>
-        <div style={{ color: '#999', fontSize: 14, marginTop: 4, letterSpacing: 4, textTransform: 'uppercase' }}>
+        <h1 style={{ fontSize: 28, color: '#FFD700', margin: 0, letterSpacing: 2 }}>PVP ARENA</h1>
+        <div
+          style={{
+            color: '#999',
+            fontSize: 14,
+            marginTop: 4,
+            letterSpacing: 4,
+            textTransform: 'uppercase',
+          }}
+        >
           Gods of the Realms — War of Worlds
         </div>
       </div>
 
       {/* Rank / Tier Display */}
-      <div style={{
-        maxWidth: 500,
-        margin: '0 auto 24px',
-        padding: 20,
-        backgroundColor: '#111',
-        borderRadius: 12,
-        border: `2px solid ${tierColor}`,
-        textAlign: 'center',
-      }}>
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 4, letterSpacing: 2 }}>YOUR RANK</div>
+      <div
+        style={{
+          maxWidth: 500,
+          margin: '0 auto 24px',
+          padding: 20,
+          backgroundColor: '#111',
+          borderRadius: 12,
+          border: `2px solid ${tierColor}`,
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 12, color: '#888', marginBottom: 4, letterSpacing: 2 }}>
+          YOUR RANK
+        </div>
         <div style={{ fontSize: 36, fontWeight: 'bold', color: tierColor, letterSpacing: 2 }}>
           {tier.toUpperCase()}
         </div>
-        <div style={{ fontSize: 16, color: '#ccc', marginTop: 4 }}>
-          {arenaPoints} Arena Points
-        </div>
+        <div style={{ fontSize: 16, color: '#ccc', marginTop: 4 }}>{arenaPoints} Arena Points</div>
         <div style={{ fontSize: 11, color: '#666', marginTop: 6 }}>
           Bronze 0 — Silver 1000 — Gold 2000 — Platinum 3000 — Legend 4000+
         </div>
@@ -393,28 +470,36 @@ export default function ArenaPage() {
 
       {/* Last Result Banner */}
       {lastResult && (
-        <div style={{
-          maxWidth: 500,
-          margin: '0 auto 16px',
-          padding: 10,
-          borderRadius: 8,
-          textAlign: 'center',
-          fontSize: 14,
-          fontWeight: 'bold',
-          backgroundColor: lastResult.won ? '#1a3a1a' : '#3a1a1a',
-          color: lastResult.won ? '#4CAF50' : '#F44336',
-          border: `1px solid ${lastResult.won ? '#4CAF50' : '#F44336'}`,
-        }}>
+        <div
+          style={{
+            maxWidth: 500,
+            margin: '0 auto 16px',
+            padding: 10,
+            borderRadius: 8,
+            textAlign: 'center',
+            fontSize: 14,
+            fontWeight: 'bold',
+            backgroundColor: lastResult.won ? '#1a3a1a' : '#3a1a1a',
+            color: lastResult.won ? '#4CAF50' : '#F44336',
+            border: `1px solid ${lastResult.won ? '#4CAF50' : '#F44336'}`,
+          }}
+        >
           {lastResult.won
             ? `VICTORY! +${lastResult.points} Arena Points`
-            : `DEFEAT! -${lastResult.points} Arena Points`
-          }
+            : `DEFEAT! -${lastResult.points} Arena Points`}
         </div>
       )}
 
       {/* Opponents List */}
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 12,
+          }}
+        >
           <h2 style={{ fontSize: 16, color: '#ddd', margin: 0 }}>CHOOSE AN OPPONENT</h2>
           <button
             onClick={handleRefresh}
@@ -447,21 +532,36 @@ export default function ArenaPage() {
                 cursor: 'pointer',
                 transition: 'all 0.15s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#FFD700'; e.currentTarget.style.backgroundColor = '#1a1a3e'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.backgroundColor = '#1a1a2e'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#FFD700';
+                e.currentTarget.style.backgroundColor = '#1a1a3e';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#333';
+                e.currentTarget.style.backgroundColor = '#1a1a2e';
+              }}
             >
               {/* Opponent Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
                 <span style={{ fontSize: 16, fontWeight: 'bold', color: '#eee' }}>{opp.name}</span>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <span style={{
-                    fontSize: 11,
-                    padding: '2px 8px',
-                    borderRadius: 4,
-                    color: DIFFICULTY_COLORS[opp.difficulty],
-                    border: `1px solid ${DIFFICULTY_COLORS[opp.difficulty]}`,
-                    fontWeight: 'bold',
-                  }}>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      padding: '2px 8px',
+                      borderRadius: 4,
+                      color: DIFFICULTY_COLORS[opp.difficulty],
+                      border: `1px solid ${DIFFICULTY_COLORS[opp.difficulty]}`,
+                      fontWeight: 'bold',
+                    }}
+                  >
                     {opp.difficulty}
                   </span>
                   <span style={{ fontSize: 13, color: '#FFD700', fontWeight: 'bold' }}>
@@ -472,15 +572,18 @@ export default function ArenaPage() {
 
               {/* Opponent Team */}
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
-                {opp.team.map(h => (
-                  <span key={h.id} style={{
-                    fontSize: 11,
-                    padding: '3px 8px',
-                    borderRadius: 4,
-                    backgroundColor: '#0d0d1a',
-                    color: ELEMENT_COLORS[h.element] || '#aaa',
-                    border: `1px solid ${ELEMENT_COLORS[h.element] || '#333'}`,
-                  }}>
+                {opp.team.map((h) => (
+                  <span
+                    key={h.id}
+                    style={{
+                      fontSize: 11,
+                      padding: '3px 8px',
+                      borderRadius: 4,
+                      backgroundColor: '#0d0d1a',
+                      color: ELEMENT_COLORS[h.element] || '#aaa',
+                      border: `1px solid ${ELEMENT_COLORS[h.element] || '#333'}`,
+                    }}
+                  >
                     {h.name}
                     <span style={{ color: '#666', marginLeft: 4 }}>{h.role}</span>
                   </span>
@@ -488,9 +591,7 @@ export default function ArenaPage() {
               </div>
 
               {/* Power */}
-              <div style={{ fontSize: 11, color: '#666' }}>
-                Team Power: {opp.power}
-              </div>
+              <div style={{ fontSize: 11, color: '#666' }}>Team Power: {opp.power}</div>
             </div>
           ))}
         </div>

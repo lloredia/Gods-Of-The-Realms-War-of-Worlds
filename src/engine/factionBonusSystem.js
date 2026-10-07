@@ -10,29 +10,29 @@
  */
 const FACTION_BONUSES = {
   'The Pantheon': {
-    2: { stat: 'attack', type: 'percent', value: 0.10, label: '+10% ATK' },
-    3: { stat: 'critRate', type: 'flat', value: 0.10, label: '+10% Crit Rate' },
-    4: { stat: 'critDamage', type: 'flat', value: 0.20, label: '+20% Crit Damage' },
+    2: { stat: 'attack', type: 'percent', value: 0.1, label: '+10% ATK' },
+    3: { stat: 'critRate', type: 'flat', value: 0.1, label: '+10% Crit Rate' },
+    4: { stat: 'critDamage', type: 'flat', value: 0.2, label: '+20% Crit Damage' },
   },
   "The Allfather's Hall": {
-    2: { stat: 'defense', type: 'percent', value: 0.10, label: '+10% DEF' },
+    2: { stat: 'defense', type: 'percent', value: 0.1, label: '+10% DEF' },
     3: { stat: 'maxHP', type: 'percent', value: 0.15, label: '+15% HP' },
-    4: { stat: 'resistance', type: 'flat', value: 0.20, label: '+20% Resistance' },
+    4: { stat: 'resistance', type: 'flat', value: 0.2, label: '+20% Resistance' },
   },
   'The Eternal Sands': {
-    2: { stat: 'accuracy', type: 'flat', value: 0.10, label: '+10% Accuracy' },
-    3: { stat: 'speed', type: 'percent', value: 0.10, label: '+10% Speed' },
+    2: { stat: 'accuracy', type: 'flat', value: 0.1, label: '+10% Accuracy' },
+    3: { stat: 'speed', type: 'percent', value: 0.1, label: '+10% Speed' },
     4: { stat: 'attack', type: 'percent', value: 0.15, label: '+15% ATK' },
   },
   'The Mist Realm': {
-    2: { stat: 'resistance', type: 'flat', value: 0.10, label: '+10% Resistance' },
+    2: { stat: 'resistance', type: 'flat', value: 0.1, label: '+10% Resistance' },
     3: { stat: 'defense', type: 'percent', value: 0.15, label: '+15% DEF' },
-    4: { stat: 'maxHP', type: 'percent', value: 0.20, label: '+20% HP' },
+    4: { stat: 'maxHP', type: 'percent', value: 0.2, label: '+20% HP' },
   },
   'The Rising Sun': {
     2: { stat: 'speed', type: 'percent', value: 0.08, label: '+8% Speed' },
     3: { stat: 'critRate', type: 'flat', value: 0.08, label: '+8% Crit Rate' },
-    4: { stat: 'attack', type: 'percent', value: 0.20, label: '+20% ATK' },
+    4: { stat: 'attack', type: 'percent', value: 0.2, label: '+20% ATK' },
   },
 };
 
@@ -76,7 +76,7 @@ export function applyFactionBonuses(units) {
   const bonuses = calculateFactionBonuses(units);
 
   for (const { faction, bonuses: bonusList } of bonuses) {
-    const factionUnits = units.filter(u => u.faction === faction);
+    const factionUnits = units.filter((u) => u.faction === faction);
 
     for (const bonus of bonusList) {
       for (const unit of factionUnits) {
@@ -93,7 +93,7 @@ export function applyFactionBonuses(units) {
   // Store active bonuses for display
   if (bonuses.length > 0) {
     for (const unit of units) {
-      unit._factionBonuses = bonuses.filter(b => b.faction === unit.faction);
+      unit._factionBonuses = bonuses.filter((b) => b.faction === unit.faction);
     }
   }
 

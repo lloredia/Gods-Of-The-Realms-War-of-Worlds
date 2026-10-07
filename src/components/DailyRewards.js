@@ -83,7 +83,7 @@ export default function DailyRewards({ onClaim, onClose }) {
     SFX.dailyClaim();
 
     const today = getToday();
-    const newStreak = (loginData.streak % 7) ; // current index in 7-day cycle
+    const newStreak = loginData.streak % 7; // current index in 7-day cycle
     const reward = DAY_REWARDS[newStreak];
 
     const newData = {
@@ -131,7 +131,7 @@ export default function DailyRewards({ onClaim, onClose }) {
         }}
       >
         <div
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           style={{
             background: 'linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%)',
             border: '1px solid #FFD70044',
@@ -161,36 +161,44 @@ export default function DailyRewards({ onClaim, onClose }) {
           </button>
 
           {/* Header */}
-          <h2 style={{
-            textAlign: 'center',
-            margin: '0 0 6px',
-            fontSize: 22,
-            fontWeight: 800,
-            background: 'linear-gradient(180deg, #FFD700, #B8860B)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: 2,
-          }}>
+          <h2
+            style={{
+              textAlign: 'center',
+              margin: '0 0 6px',
+              fontSize: 22,
+              fontWeight: 800,
+              background: 'linear-gradient(180deg, #FFD700, #B8860B)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: 2,
+            }}
+          >
             DAILY REWARDS
           </h2>
-          <p style={{
-            textAlign: 'center',
-            color: '#777',
-            fontSize: 12,
-            margin: '0 0 20px',
-          }}>
+          <p
+            style={{
+              textAlign: 'center',
+              color: '#777',
+              fontSize: 12,
+              margin: '0 0 20px',
+            }}
+          >
             Day {currentDayIndex + 1} of 7 &mdash; Streak: {loginData.streak}
           </p>
 
           {/* 7-day grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, 1fr)',
-            gap: 8,
-            marginBottom: 20,
-          }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(7, 1fr)',
+              gap: 8,
+              marginBottom: 20,
+            }}
+          >
             {DAY_REWARDS.map((reward, i) => {
-              const isClaimed = loginData.claimedDays.includes(i) && (i < currentDayIndex || (i === currentDayIndex && claimed));
+              const isClaimed =
+                loginData.claimedDays.includes(i) &&
+                (i < currentDayIndex || (i === currentDayIndex && claimed));
               const isCurrent = i === currentDayIndex && !claimed;
               const isFuture = i > currentDayIndex;
 
@@ -219,31 +227,33 @@ export default function DailyRewards({ onClaim, onClose }) {
                   <div style={{ fontSize: 10, color: '#888', marginBottom: 4, fontWeight: 600 }}>
                     DAY {i + 1}
                   </div>
-                  <div style={{ fontSize: 20, marginBottom: 4 }}>
-                    {reward.icon}
-                  </div>
-                  <div style={{
-                    fontSize: 9,
-                    color: isCurrent ? '#FFD700' : '#aaa',
-                    fontWeight: 600,
-                    lineHeight: 1.3,
-                  }}>
+                  <div style={{ fontSize: 20, marginBottom: 4 }}>{reward.icon}</div>
+                  <div
+                    style={{
+                      fontSize: 9,
+                      color: isCurrent ? '#FFD700' : '#aaa',
+                      fontWeight: 600,
+                      lineHeight: 1.3,
+                    }}
+                  >
                     {reward.label}
                   </div>
 
                   {/* Checkmark overlay */}
                   {isClaimed && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: 8,
-                      backgroundColor: 'rgba(0, 0, 0, 0.45)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 26,
-                      color: '#4ade80',
-                    }}>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: 8,
+                        backgroundColor: 'rgba(0, 0, 0, 0.45)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 26,
+                        color: '#4ade80',
+                      }}
+                    >
                       &#10003;
                     </div>
                   )}
