@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import DailyRewards, { hasClaimedToday } from '@/components/DailyRewards';
 import AchievementPanel from '@/components/AchievementPanel';
 import Tutorial from '@/components/Tutorial';
 import { loadSave, updateSave } from '@/utils/saveSystem';
 import { getUnlockedCount } from '@/utils/achievementTracker';
+import { publicPath } from '@/utils/publicPath';
 
 const MENU_ITEMS = [
   {
@@ -87,14 +89,16 @@ function Starfield() {
   }, []);
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 0,
-      pointerEvents: 'none',
-      overflow: 'hidden',
-    }}>
-      {stars.map(star => (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    >
+      {stars.map((star) => (
         <div
           key={star.id}
           style={{
@@ -149,16 +153,18 @@ export default function Home() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#080810',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '60px 20px 40px',
-      position: 'relative',
-      zIndex: 1,
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#080810',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '60px 20px 40px',
+        position: 'relative',
+        zIndex: 1,
+      }}
+    >
       <style>{`
         @keyframes gotr-twinkle {
           0%, 100% { opacity: 0.08; transform: scale(0.8); }
@@ -177,28 +183,35 @@ export default function Home() {
       <Starfield />
 
       {/* Hero Title Section */}
-      <div style={{
-        position: 'relative',
-        textAlign: 'center',
-        marginBottom: 12,
-        padding: '20px 0',
-      }}>
+      <div
+        style={{
+          position: 'relative',
+          textAlign: 'center',
+          marginBottom: 12,
+          padding: '20px 0',
+        }}
+      >
         {/* Animated glow behind title */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 420,
-          height: 120,
-          borderRadius: '50%',
-          animation: 'gotr-hero-glow 4s ease-in-out infinite',
-          pointerEvents: 'none',
-          zIndex: -1,
-        }} />
-        <img
-          src="/logo.jpg"
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 420,
+            height: 120,
+            borderRadius: '50%',
+            animation: 'gotr-hero-glow 4s ease-in-out infinite',
+            pointerEvents: 'none',
+            zIndex: -1,
+          }}
+        />
+        <Image
+          src={publicPath('/assets/logo.jpg')}
           alt="Gods Of The Realms — War of Worlds"
+          width={160}
+          height={160}
+          priority
           style={{
             display: 'block',
             margin: '0 auto 10px',
@@ -208,63 +221,74 @@ export default function Home() {
             boxShadow: '0 0 40px rgba(255, 215, 0, 0.35)',
           }}
         />
-        <h1 style={{
-          fontSize: 42,
-          fontWeight: 900,
-          background: 'linear-gradient(180deg, #FFD700, #B8860B)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          letterSpacing: 3,
-          margin: 0,
-          textTransform: 'uppercase',
-          filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.4))',
-        }}>
+        <h1
+          style={{
+            fontSize: 42,
+            fontWeight: 900,
+            background: 'linear-gradient(180deg, #FFD700, #B8860B)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: 3,
+            margin: 0,
+            textTransform: 'uppercase',
+            filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.4))',
+          }}
+        >
           Gods Of The Realms
         </h1>
-        <p style={{
-          fontSize: 14,
-          color: '#aaa',
-          letterSpacing: 6,
-          margin: '6px 0 0',
-          fontWeight: 300,
-          textTransform: 'uppercase',
-        }}>
+        <p
+          style={{
+            fontSize: 14,
+            color: '#aaa',
+            letterSpacing: 6,
+            margin: '6px 0 0',
+            fontWeight: 300,
+            textTransform: 'uppercase',
+          }}
+        >
           War of Worlds
         </p>
       </div>
 
       {/* Player Stats Mini-Bar */}
       {playerStats && (
-        <div style={{
-          display: 'flex',
-          gap: 24,
-          marginBottom: 8,
-          padding: '10px 28px',
-          background: 'linear-gradient(135deg, rgba(255,215,0,0.06) 0%, rgba(255,215,0,0.02) 100%)',
-          border: '1px solid rgba(255,215,0,0.15)',
-          borderRadius: 20,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 24,
+            marginBottom: 8,
+            padding: '10px 28px',
+            background:
+              'linear-gradient(135deg, rgba(255,215,0,0.06) 0%, rgba(255,215,0,0.02) 100%)',
+            border: '1px solid rgba(255,215,0,0.15)',
+            borderRadius: 20,
+          }}
+        >
           {[
             { label: 'LEVEL', value: playerStats.level, color: '#FFD700' },
             { label: 'HEROES', value: playerStats.heroesOwned, color: '#4CAF50' },
             { label: 'STAGE', value: `${playerStats.campaignStage}/10`, color: '#42A5F5' },
-          ].map(stat => (
+          ].map((stat) => (
             <div key={stat.label} style={{ textAlign: 'center', minWidth: 60 }}>
-              <div style={{
-                fontSize: 18,
-                fontWeight: 800,
-                color: stat.color,
-                lineHeight: 1.2,
-              }}>
+              <div
+                style={{
+                  fontSize: 18,
+                  fontWeight: 800,
+                  color: stat.color,
+                  lineHeight: 1.2,
+                }}
+              >
                 {stat.value}
               </div>
-              <div style={{
-                fontSize: 9,
-                color: '#666',
-                letterSpacing: 2,
-                fontWeight: 600,
-                marginTop: 2,
-              }}>
+              <div
+                style={{
+                  fontSize: 9,
+                  color: '#666',
+                  letterSpacing: 2,
+                  fontWeight: 600,
+                  marginTop: 2,
+                }}
+              >
                 {stat.label}
               </div>
             </div>
@@ -273,22 +297,26 @@ export default function Home() {
       )}
 
       {/* Decorative divider */}
-      <div style={{
-        width: 120,
-        height: 1,
-        background: 'linear-gradient(90deg, transparent, #FFD700, transparent)',
-        margin: '20px 0 40px',
-      }} />
+      <div
+        style={{
+          width: 120,
+          height: 1,
+          background: 'linear-gradient(90deg, transparent, #FFD700, transparent)',
+          margin: '20px 0 40px',
+        }}
+      />
 
       {/* Menu Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-        gap: 20,
-        maxWidth: 960,
-        width: '100%',
-      }}>
-        {MENU_ITEMS.map(item => (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 20,
+          maxWidth: 960,
+          width: '100%',
+        }}
+      >
+        {MENU_ITEMS.map((item) => (
           <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
             <div
               className="gotr-menu-card"
@@ -306,14 +334,14 @@ export default function Home() {
                 position: 'relative',
                 overflow: 'hidden',
               }}
-              onMouseEnter={e => {
+              onMouseEnter={(e) => {
                 e.currentTarget.style.border = `1px solid ${item.border}`;
                 e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)';
                 e.currentTarget.style.boxShadow = `0 8px 32px ${item.border}44, inset 0 1px 0 ${item.border}33`;
                 const sheen = e.currentTarget.querySelector('.gotr-sheen');
                 if (sheen) sheen.style.animation = 'gotr-card-sheen 0.6s ease forwards';
               }}
-              onMouseLeave={e => {
+              onMouseLeave={(e) => {
                 e.currentTarget.style.border = `1px solid ${item.border}44`;
                 e.currentTarget.style.transform = 'translateY(0) scale(1)';
                 e.currentTarget.style.boxShadow = 'none';
@@ -330,41 +358,57 @@ export default function Home() {
                   left: '-60%',
                   width: '40%',
                   height: '100%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)',
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)',
                   transform: 'skewX(-15deg)',
                   pointerEvents: 'none',
                   zIndex: 1,
                 }}
               />
               {/* Inner top highlight */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 1,
-                background: `linear-gradient(90deg, transparent, ${item.border}44, transparent)`,
-                pointerEvents: 'none',
-              }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, position: 'relative', zIndex: 2 }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 1,
+                  background: `linear-gradient(90deg, transparent, ${item.border}44, transparent)`,
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  marginBottom: 8,
+                  position: 'relative',
+                  zIndex: 2,
+                }}
+              >
                 <span style={{ fontSize: 32 }}>{item.icon}</span>
-                <span style={{
-                  fontSize: 18,
-                  fontWeight: 800,
-                  color: '#e0e0e0',
-                  letterSpacing: 2,
-                }}>
+                <span
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 800,
+                    color: '#e0e0e0',
+                    letterSpacing: 2,
+                  }}
+                >
                   {item.title}
                 </span>
               </div>
-              <p style={{
-                fontSize: 12,
-                color: '#888',
-                margin: 0,
-                lineHeight: 1.5,
-                position: 'relative',
-                zIndex: 2,
-              }}>
+              <p
+                style={{
+                  fontSize: 12,
+                  color: '#888',
+                  margin: 0,
+                  lineHeight: 1.5,
+                  position: 'relative',
+                  zIndex: 2,
+                }}
+              >
                 {item.desc}
               </p>
             </div>
@@ -373,13 +417,15 @@ export default function Home() {
       </div>
 
       {/* Daily Rewards & Achievements Row */}
-      <div style={{
-        display: 'flex',
-        gap: 14,
-        marginTop: 30,
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 14,
+          marginTop: 30,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+      >
         <button
           onClick={() => setShowDaily(true)}
           style={{
@@ -397,12 +443,13 @@ export default function Home() {
             position: 'relative',
             overflow: 'hidden',
           }}
-          onMouseEnter={e => {
+          onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = '#FFD700';
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,215,0,0.15), inset 0 1px 0 rgba(255,215,0,0.2)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 20px rgba(255,215,0,0.15), inset 0 1px 0 rgba(255,215,0,0.2)';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
-          onMouseLeave={e => {
+          onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#FFD70044';
             e.currentTarget.style.boxShadow = 'none';
             e.currentTarget.style.transform = 'translateY(0)';
@@ -429,12 +476,13 @@ export default function Home() {
             position: 'relative',
             overflow: 'hidden',
           }}
-          onMouseEnter={e => {
+          onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = '#4CAF50';
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(76,175,80,0.15), inset 0 1px 0 rgba(76,175,80,0.2)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 20px rgba(76,175,80,0.15), inset 0 1px 0 rgba(76,175,80,0.2)';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
-          onMouseLeave={e => {
+          onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#4CAF5044';
             e.currentTarget.style.boxShadow = 'none';
             e.currentTarget.style.transform = 'translateY(0)';
@@ -446,28 +494,37 @@ export default function Home() {
       </div>
 
       {/* Footer tag */}
-      <p style={{
-        marginTop: 30,
-        fontSize: 10,
-        color: '#444',
-        letterSpacing: 2,
-        textTransform: 'uppercase',
-      }}>
+      <p
+        style={{
+          marginTop: 30,
+          fontSize: 10,
+          color: '#444',
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+        }}
+      >
         Choose your path, {playerStats ? getSummonerTitle(playerStats.battlesWon) : 'Summoner'}
       </p>
 
       {/* Tutorial / Modals */}
       {showTutorial && (
-        <Tutorial onComplete={() => { setShowTutorial(false); if (!hasClaimedToday()) setShowDaily(true); }} />
-      )}
-      {showDaily && (
-        <DailyRewards
-          onClaim={handleClaimReward}
-          onClose={() => setShowDaily(false)}
+        <Tutorial
+          onComplete={() => {
+            setShowTutorial(false);
+            if (!hasClaimedToday()) setShowDaily(true);
+          }}
         />
       )}
+      {showDaily && (
+        <DailyRewards onClaim={handleClaimReward} onClose={() => setShowDaily(false)} />
+      )}
       {showAchievements && (
-        <AchievementPanel onClose={() => { setShowAchievements(false); setAchCount(getUnlockedCount()); }} />
+        <AchievementPanel
+          onClose={() => {
+            setShowAchievements(false);
+            setAchCount(getUnlockedCount());
+          }}
+        />
       )}
     </div>
   );

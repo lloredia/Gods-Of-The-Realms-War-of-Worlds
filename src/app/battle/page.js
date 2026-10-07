@@ -29,8 +29,8 @@ export default function BattlePage() {
   const allHeroes = Object.values(heroRoster);
 
   const toggleHero = (heroId) => {
-    setSelectedIds(prev => {
-      if (prev.includes(heroId)) return prev.filter(id => id !== heroId);
+    setSelectedIds((prev) => {
+      if (prev.includes(heroId)) return prev.filter((id) => id !== heroId);
       if (prev.length >= 4) return prev;
       return [...prev, heroId];
     });
@@ -38,19 +38,27 @@ export default function BattlePage() {
 
   if (inBattle) {
     const selectedTemplates = getTeamWithSave(selectedIds);
-    return <BattleUI playerTeam={selectedTemplates} onExit={(won) => {
-      const save = loadSave();
-      const newStats = { ...save.stats };
-      if (won) {
-        newStats.battlesWon = (newStats.battlesWon || 0) + 1;
-        const gold = 200;
-        updateSave({ resources: { ...save.resources, gold: (save.resources.gold || 0) + gold }, stats: newStats });
-      } else {
-        newStats.battlesLost = (newStats.battlesLost || 0) + 1;
-        updateSave({ stats: newStats });
-      }
-      setInBattle(false);
-    }} />;
+    return (
+      <BattleUI
+        playerTeam={selectedTemplates}
+        onExit={(won) => {
+          const save = loadSave();
+          const newStats = { ...save.stats };
+          if (won) {
+            newStats.battlesWon = (newStats.battlesWon || 0) + 1;
+            const gold = 200;
+            updateSave({
+              resources: { ...save.resources, gold: (save.resources.gold || 0) + gold },
+              stats: newStats,
+            });
+          } else {
+            newStats.battlesLost = (newStats.battlesLost || 0) + 1;
+            updateSave({ stats: newStats });
+          }
+          setInBattle(false);
+        }}
+      />
+    );
   }
 
   return (
@@ -64,14 +72,16 @@ export default function BattlePage() {
 
       <TeamPresets selectedIds={selectedIds} onLoadPreset={(ids) => setSelectedIds(ids)} />
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-        gap: 10,
-        maxWidth: 900,
-        margin: '0 auto 20px',
-      }}>
-        {allHeroes.map(hero => {
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gap: 10,
+          maxWidth: 900,
+          margin: '0 auto 20px',
+        }}
+      >
+        {allHeroes.map((hero) => {
           const isSelected = selectedIds.includes(hero.id);
           const elementColor = ELEMENT_COLORS[hero.element] || '#666';
           const roleColor = ROLE_COLORS[hero.role] || '#888';
@@ -94,16 +104,33 @@ export default function BattlePage() {
                 opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 4,
+                }}
+              >
                 <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>{hero.name}</span>
-                <span style={{ fontSize: 10, color: elementColor, border: `1px solid ${elementColor}`, borderRadius: 3, padding: '1px 4px' }}>
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: elementColor,
+                    border: `1px solid ${elementColor}`,
+                    borderRadius: 3,
+                    padding: '1px 4px',
+                  }}
+                >
                   {hero.element}
                 </span>
               </div>
               <div style={{ fontSize: 9, color: '#FFD740', marginBottom: 3 }}>
                 {'★'.repeat(hero.stars || 4)} Lv{hero.level || 1}
               </div>
-              <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}>
+              <div
+                style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}
+              >
                 <span>{hero.faction}</span>
               </div>
               <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#777' }}>
@@ -112,7 +139,15 @@ export default function BattlePage() {
                 <span>SPD {hero.speed}</span>
               </div>
               {isSelected && (
-                <div style={{ fontSize: 10, color: '#FFD700', marginTop: 4, textAlign: 'center', fontWeight: 'bold' }}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    color: '#FFD700',
+                    marginTop: 4,
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}
+                >
                   SELECTED
                 </div>
               )}

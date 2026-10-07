@@ -10,10 +10,18 @@ import LevelUpPanel from '../../components/LevelUpPanel';
 import { loadSave, updateSave } from '../../utils/saveSystem';
 
 const ELEMENT_COLORS = {
-  Storm: '#6B5CE7', Ocean: '#2196F3', Underworld: '#8B0000', Sun: '#FF9800', Moon: '#9C27B0',
+  Storm: '#6B5CE7',
+  Ocean: '#2196F3',
+  Underworld: '#8B0000',
+  Sun: '#FF9800',
+  Moon: '#9C27B0',
 };
 const ROLE_COLORS = {
-  Attacker: '#F44336', Tank: '#2196F3', Support: '#4CAF50', Bruiser: '#FF9800', Debuffer: '#9C27B0',
+  Attacker: '#F44336',
+  Tank: '#2196F3',
+  Support: '#4CAF50',
+  Bruiser: '#FF9800',
+  Debuffer: '#9C27B0',
 };
 
 export default function CollectionPage() {
@@ -51,7 +59,15 @@ export default function CollectionPage() {
     const cost = 100 * currentLevel;
     if ((save.resources?.gold || 0) < cost) return;
 
-    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: currentLevel + 1, stars: hd.stars || heroRoster[heroId]?.stars || 1, awakened: hd.awakened || heroRoster[heroId]?.awakened || false } };
+    const updatedHeroData = {
+      ...heroData,
+      [heroId]: {
+        ...hd,
+        level: currentLevel + 1,
+        stars: hd.stars || heroRoster[heroId]?.stars || 1,
+        awakened: hd.awakened || heroRoster[heroId]?.awakened || false,
+      },
+    };
     const updatedResources = { ...save.resources, gold: save.resources.gold - cost };
     const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
     setSave(updated);
@@ -65,7 +81,15 @@ export default function CollectionPage() {
     const cost = 10 * currentStars;
     if ((save.resources?.essences || 0) < cost) return;
 
-    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: 1, stars: currentStars + 1, awakened: hd.awakened || heroRoster[heroId]?.awakened || false } };
+    const updatedHeroData = {
+      ...heroData,
+      [heroId]: {
+        ...hd,
+        level: 1,
+        stars: currentStars + 1,
+        awakened: hd.awakened || heroRoster[heroId]?.awakened || false,
+      },
+    };
     const updatedResources = { ...save.resources, essences: save.resources.essences - cost };
     const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
     setSave(updated);
@@ -78,96 +102,214 @@ export default function CollectionPage() {
     const cost = 20;
     if ((save.resources?.awakenStones || 0) < cost) return;
 
-    const updatedHeroData = { ...heroData, [heroId]: { ...hd, level: hd.level || heroRoster[heroId]?.level || 1, stars: hd.stars || heroRoster[heroId]?.stars || 1, awakened: true } };
-    const updatedResources = { ...save.resources, awakenStones: save.resources.awakenStones - cost };
+    const updatedHeroData = {
+      ...heroData,
+      [heroId]: {
+        ...hd,
+        level: hd.level || heroRoster[heroId]?.level || 1,
+        stars: hd.stars || heroRoster[heroId]?.stars || 1,
+        awakened: true,
+      },
+    };
+    const updatedResources = {
+      ...save.resources,
+      awakenStones: save.resources.awakenStones - cost,
+    };
     const updated = updateSave({ heroData: updatedHeroData, resources: updatedResources });
     setSave(updated);
   }
-  const factionNames = ['All', ...Object.values(factions).map(f => f.name)];
+  const factionNames = ['All', ...Object.values(factions).map((f) => f.name)];
 
-  const filtered = filter === 'All' ? allHeroes : allHeroes.filter(h => h.faction === filter);
+  const filtered = filter === 'All' ? allHeroes : allHeroes.filter((h) => h.faction === filter);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#0a0a1a', color: '#eee', padding: 20 }}>
-      <h1 style={{ textAlign: 'center', fontSize: 24, color: '#FFD700', margin: '0 0 16px' }}>HERO COLLECTION</h1>
+      <h1 style={{ textAlign: 'center', fontSize: 24, color: '#FFD700', margin: '0 0 16px' }}>
+        HERO COLLECTION
+      </h1>
       <p style={{ textAlign: 'center', color: '#888', fontSize: 13, marginBottom: 16 }}>
         {allHeroes.length} Heroes Owned
       </p>
 
       {/* Faction filter */}
-      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
-        {factionNames.map(name => (
-          <button key={name} onClick={() => setFilter(name)} style={{
-            padding: '5px 12px', fontSize: 11, fontWeight: 'bold',
-            backgroundColor: filter === name ? '#2a2a4a' : '#111',
-            color: filter === name ? '#FFD700' : '#888',
-            border: `1px solid ${filter === name ? '#FFD700' : '#333'}`,
-            borderRadius: 4, cursor: 'pointer',
-          }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 6,
+          justifyContent: 'center',
+          marginBottom: 20,
+          flexWrap: 'wrap',
+        }}
+      >
+        {factionNames.map((name) => (
+          <button
+            key={name}
+            onClick={() => setFilter(name)}
+            style={{
+              padding: '5px 12px',
+              fontSize: 11,
+              fontWeight: 'bold',
+              backgroundColor: filter === name ? '#2a2a4a' : '#111',
+              color: filter === name ? '#FFD700' : '#888',
+              border: `1px solid ${filter === name ? '#FFD700' : '#333'}`,
+              borderRadius: 4,
+              cursor: 'pointer',
+            }}
+          >
             {name}
           </button>
         ))}
       </div>
 
       {/* Hero grid */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-        gap: 12, maxWidth: 1000, margin: '0 auto',
-      }}>
-        {filtered.map(baseHero => {
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: 12,
+          maxWidth: 1000,
+          margin: '0 auto',
+        }}
+      >
+        {filtered.map((baseHero) => {
           const hero = getHeroWithSaveData(baseHero);
           const elemColor = ELEMENT_COLORS[hero.element] || '#666';
           const roleColor = ROLE_COLORS[hero.role] || '#888';
           const currentRelicId = heroRelics[hero.id] || hero.relicSet || null;
-          const currentRelicName = currentRelicId && relics[currentRelicId] ? relics[currentRelicId].name : 'None';
+          const currentRelicName =
+            currentRelicId && relics[currentRelicId] ? relics[currentRelicId].name : 'None';
           const isSelected = selectedHeroId === hero.id;
           return (
-            <div key={hero.id} onClick={() => setSelectedHeroId(isSelected ? null : hero.id)} style={{
-              padding: 14, borderRadius: 8, backgroundColor: '#1a1a2e',
-              borderTop: isSelected ? '1px solid #FFD700' : '1px solid #333',
-              borderRight: isSelected ? '1px solid #FFD700' : '1px solid #333',
-              borderBottom: isSelected ? '1px solid #FFD700' : '1px solid #333',
-              borderLeft: `3px solid ${elemColor}`,
-              cursor: 'pointer',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <div
+              key={hero.id}
+              onClick={() => setSelectedHeroId(isSelected ? null : hero.id)}
+              style={{
+                padding: 14,
+                borderRadius: 8,
+                backgroundColor: '#1a1a2e',
+                borderTop: isSelected ? '1px solid #FFD700' : '1px solid #333',
+                borderRight: isSelected ? '1px solid #FFD700' : '1px solid #333',
+                borderBottom: isSelected ? '1px solid #FFD700' : '1px solid #333',
+                borderLeft: `3px solid ${elemColor}`,
+                cursor: 'pointer',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 4,
+                }}
+              >
                 <span style={{ fontWeight: 'bold', fontSize: 14, color: '#eee' }}>{hero.name}</span>
-                <span style={{ fontSize: 10, color: elemColor, border: `1px solid ${elemColor}`, borderRadius: 3, padding: '1px 4px' }}>{hero.element}</span>
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: elemColor,
+                    border: `1px solid ${elemColor}`,
+                    borderRadius: 3,
+                    padding: '1px 4px',
+                  }}
+                >
+                  {hero.element}
+                </span>
               </div>
               <div style={{ fontSize: 9, color: '#FFD740', marginBottom: 3 }}>
-                {'★'.repeat(hero.stars || 4)}{hero.awakened ? ' ✧' : ''} Lv{hero.level || 1}
+                {'★'.repeat(hero.stars || 4)}
+                {hero.awakened ? ' ✧' : ''} Lv{hero.level || 1}
               </div>
               <div style={{ fontSize: 10, color: '#999', marginBottom: 6 }}>
                 {hero.faction} • <span style={{ color: roleColor }}>{hero.role}</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, fontSize: 10, color: '#aaa', marginBottom: 6 }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 3,
+                  fontSize: 10,
+                  color: '#aaa',
+                  marginBottom: 6,
+                }}
+              >
                 <span>HP {hero.maxHP}</span>
                 <span>ATK {hero.attack}</span>
                 <span>DEF {hero.defense}</span>
                 <span>SPD {hero.speed}</span>
               </div>
               <div style={{ fontSize: 10, color: '#777', marginBottom: 4 }}>
-                {hero.skills.map(s => s.name).join(' • ')}
+                {hero.skills.map((s) => s.name).join(' • ')}
               </div>
               {hero.passive && (
-                <div style={{ fontSize: 9, color: '#80CBC4', fontStyle: 'italic' }}>✦ {hero.passive.name}</div>
+                <div style={{ fontSize: 9, color: '#80CBC4', fontStyle: 'italic' }}>
+                  ✦ {hero.passive.name}
+                </div>
               )}
               {/* Relic equip */}
               <div style={{ marginTop: 6, borderTop: '1px solid #222', paddingTop: 6 }}>
-                <button onClick={(e) => { e.stopPropagation(); resumeAudio(); setRelicPickerFor(relicPickerFor === hero.id ? null : hero.id); }}
-                  style={{ fontSize: 10, backgroundColor: '#222', color: '#aaa', border: '1px solid #333', borderRadius: 4, padding: '3px 8px', cursor: 'pointer', width: '100%' }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resumeAudio();
+                    setRelicPickerFor(relicPickerFor === hero.id ? null : hero.id);
+                  }}
+                  style={{
+                    fontSize: 10,
+                    backgroundColor: '#222',
+                    color: '#aaa',
+                    border: '1px solid #333',
+                    borderRadius: 4,
+                    padding: '3px 8px',
+                    cursor: 'pointer',
+                    width: '100%',
+                  }}
+                >
                   ◈ {currentRelicName} Set — Change
                 </button>
                 {relicPickerFor === hero.id && (
-                  <div style={{ marginTop: 4, backgroundColor: '#111', borderRadius: 4, padding: 6, border: '1px solid #333' }}>
-                    {Object.values(relics).map(relic => (
-                      <div key={relic.id} onClick={() => { SFX.click(); const newRelics = { ...heroRelics, [hero.id]: relic.id }; setHeroRelics(newRelics); setRelicPickerFor(null); const sv = loadSave(); const heroData = sv.heroData || {}; heroData[hero.id] = { ...(heroData[hero.id] || {}), relicSet: relic.id }; updateSave({ heroData }); }}
-                        style={{ padding: '4px 6px', cursor: 'pointer', borderRadius: 3, marginBottom: 2, fontSize: 10,
-                          backgroundColor: (heroRelics[hero.id] || hero.relicSet) === relic.id ? '#2a2a4a' : 'transparent',
-                          color: relic.color, borderLeft: `2px solid ${relic.color}` }}>
+                  <div
+                    style={{
+                      marginTop: 4,
+                      backgroundColor: '#111',
+                      borderRadius: 4,
+                      padding: 6,
+                      border: '1px solid #333',
+                    }}
+                  >
+                    {Object.values(relics).map((relic) => (
+                      <div
+                        key={relic.id}
+                        onClick={() => {
+                          SFX.click();
+                          const newRelics = { ...heroRelics, [hero.id]: relic.id };
+                          setHeroRelics(newRelics);
+                          setRelicPickerFor(null);
+                          const sv = loadSave();
+                          const heroData = sv.heroData || {};
+                          heroData[hero.id] = { ...(heroData[hero.id] || {}), relicSet: relic.id };
+                          updateSave({ heroData });
+                        }}
+                        style={{
+                          padding: '4px 6px',
+                          cursor: 'pointer',
+                          borderRadius: 3,
+                          marginBottom: 2,
+                          fontSize: 10,
+                          backgroundColor:
+                            (heroRelics[hero.id] || hero.relicSet) === relic.id
+                              ? '#2a2a4a'
+                              : 'transparent',
+                          color: relic.color,
+                          borderLeft: `2px solid ${relic.color}`,
+                        }}
+                      >
                         <div style={{ fontWeight: 'bold' }}>{relic.name}</div>
-                        <div style={{ color: '#777', fontSize: 9 }}>2pc: {relic.twoPiece.stat} +{Math.round(relic.twoPiece.value * 100)}%</div>
-                        <div style={{ color: '#777', fontSize: 9 }}>4pc: {relic.fourPiece.description}</div>
+                        <div style={{ color: '#777', fontSize: 9 }}>
+                          2pc: {relic.twoPiece.stat} +{Math.round(relic.twoPiece.value * 100)}%
+                        </div>
+                        <div style={{ color: '#777', fontSize: 9 }}>
+                          4pc: {relic.fourPiece.description}
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -91,7 +91,7 @@ const skills = {
     effectChance: 0,
     effectType: null,
     effectDuration: 0,
-    description: 'Tears at the target\'s soul.',
+    description: "Tears at the target's soul.",
   },
   deathMark: {
     id: 'deathMark',
@@ -235,7 +235,7 @@ const skills = {
     effectChance: 0,
     effectType: null,
     effectDuration: 0,
-    description: 'A cold strike infused with winter\'s chill.',
+    description: "A cold strike infused with winter's chill.",
   },
   valkyrieBlessing: {
     id: 'valkyrieBlessing',
@@ -277,7 +277,7 @@ const skills = {
   },
   trickstersCurse: {
     id: 'trickstersCurse',
-    name: 'Trickster\'s Curse',
+    name: "Trickster's Curse",
     type: SkillType.DEBUFF,
     target: SkillTarget.SINGLE,
     multiplier: 2.5,
@@ -285,7 +285,7 @@ const skills = {
     effectChance: 0.9,
     effectType: DebuffType.DEFENSE_BREAK,
     effectDuration: 2,
-    description: 'A cunning curse that shatters the target\'s armor.',
+    description: "A cunning curse that shatters the target's armor.",
   },
   chaosUnleashed: {
     id: 'chaosUnleashed',
@@ -549,7 +549,7 @@ const skills = {
     effectChance: 0,
     effectType: null,
     effectDuration: 0,
-    condition: { type: 'target_below_hp', threshold: 0.30, bonusMultiplier: 1.5 },
+    condition: { type: 'target_below_hp', threshold: 0.3, bonusMultiplier: 1.5 },
     description: 'A finishing blow. Deals 50% more damage if target is below 30% HP.',
   },
 
@@ -595,7 +595,7 @@ const skills = {
     effectChance: 1.0,
     effectType: BuffType.DEFENSE_UP,
     effectDuration: 2,
-    description: 'Athena shares her wisdom, raising all allies\' defense.',
+    description: "Athena shares her wisdom, raising all allies' defense.",
   },
   divineAegis: {
     id: 'divineAegis',
@@ -633,7 +633,7 @@ const skills = {
     effectChance: 0.7,
     effectType: DebuffType.DEFENSE_BREAK,
     effectDuration: 2,
-    description: 'An aggressive assault that can shatter the target\'s defense.',
+    description: "An aggressive assault that can shatter the target's defense.",
   },
   godOfWar: {
     id: 'godOfWar',
@@ -671,7 +671,7 @@ const skills = {
     effectChance: 1.0,
     effectType: BuffType.ATTACK_UP,
     effectDuration: 2,
-    description: 'Odin\'s all-seeing eye empowers all allies with strength.',
+    description: "Odin's all-seeing eye empowers all allies with strength.",
   },
   gungnirThrow: {
     id: 'gungnirThrow',
@@ -722,7 +722,7 @@ const skills = {
     effectChance: 0.5,
     effectType: DebuffType.HEAL_BLOCK,
     effectDuration: 2,
-    description: 'Fenrir howls to end the world, blocking all enemies\' healing.',
+    description: "Fenrir howls to end the world, blocking all enemies' healing.",
   },
 
   // === ISIS (The Eternal Sands, Ocean, Support) ===
@@ -799,7 +799,7 @@ const skills = {
     effectChance: 0.9,
     effectType: DebuffType.DEFENSE_BREAK,
     effectDuration: 2,
-    description: 'Set\'s curse shatters the target\'s armor completely.',
+    description: "Set's curse shatters the target's armor completely.",
   },
 
   // === MERLIN (The Mist Realm, Sun, Support) ===
@@ -864,7 +864,7 @@ const skills = {
     effectChance: 1.0,
     effectType: DebuffType.HEAL_BLOCK,
     effectDuration: 2,
-    description: 'The lake\'s grasp prevents the target from healing.',
+    description: "The lake's grasp prevents the target from healing.",
   },
   tidalBinding: {
     id: 'tidalBinding',
@@ -914,7 +914,7 @@ const skills = {
     effectChance: 0.5,
     effectType: DebuffType.SLOW,
     effectDuration: 2,
-    description: 'The moon\'s dominion engulfs all enemies, slowing them.',
+    description: "The moon's dominion engulfs all enemies, slowing them.",
   },
 
   // === RAIJIN (The Rising Sun, Storm, Attacker) ===
@@ -979,7 +979,7 @@ const skills = {
     effectChance: 0.8,
     effectType: DebuffType.HEAL_BLOCK,
     effectDuration: 2,
-    description: 'Drains the target\'s spirit, blocking healing.',
+    description: "Drains the target's spirit, blocking healing.",
   },
   yomiGate: {
     id: 'yomiGate',
@@ -1084,7 +1084,7 @@ const skills = {
     effectChance: 1.0,
     effectType: BuffType.DEFENSE_UP,
     effectDuration: 2,
-    description: 'Hephaestus raises a wall of divine iron, boosting all allies\' defense.',
+    description: "Hephaestus raises a wall of divine iron, boosting all allies' defense.",
   },
 
   // === TYR (The Allfather's Hall, Storm, Tank) ===
@@ -1110,7 +1110,7 @@ const skills = {
     effectChance: 1.0,
     effectType: BuffType.DEFENSE_UP,
     effectDuration: 2,
-    description: 'Tyr\'s unyielding bravery shields all allies.',
+    description: "Tyr's unyielding bravery shields all allies.",
   },
 
   // === HEIMDALL (The Allfather's Hall, Sun, Support) ===
@@ -1136,7 +1136,7 @@ const skills = {
     effectChance: 1.0,
     effectType: BuffType.SPEED_UP,
     effectDuration: 2,
-    description: 'Heimdall\'s vigilance quickens all allies.',
+    description: "Heimdall's vigilance quickens all allies.",
   },
 
   // === SOBEK (The Eternal Sands, Ocean, Bruiser) ===
@@ -1150,7 +1150,7 @@ const skills = {
     effectChance: 0,
     effectType: null,
     effectDuration: 0,
-    description: 'Sobek\'s massive jaws crush the target.',
+    description: "Sobek's massive jaws crush the target.",
   },
   tidalSnap: {
     id: 'tidalSnap',
@@ -1162,7 +1162,7 @@ const skills = {
     effectChance: 0.7,
     effectType: DebuffType.DEFENSE_BREAK,
     effectDuration: 2,
-    description: 'A snapping bite that shatters the target\'s armor.',
+    description: "A snapping bite that shatters the target's armor.",
   },
 
   // === THOTH (The Eternal Sands, Moon, Support) ===
@@ -1421,7 +1421,7 @@ const skills = {
     effectType: null,
     effectDuration: 0,
     cleanseCount: 2,
-    description: 'The horn\'s call purifies all.',
+    description: "The horn's call purifies all.",
   },
   deathRoll: {
     id: 'deathRoll',
@@ -1498,11 +1498,66 @@ const skills = {
   },
 
   // === CREATURE SKILLS ===
-  creatureBite: { id: 'creatureBite', name: 'Bite', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.0, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'A feral bite.' },
-  creatureScratch: { id: 'creatureScratch', name: 'Scratch', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.2, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'Sharp claws lash out.' },
-  creatureSlam: { id: 'creatureSlam', name: 'Slam', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.5, cooldown: 0, effectChance: 0, effectType: null, effectDuration: 0, description: 'A heavy slam.' },
-  creatureSpit: { id: 'creatureSpit', name: 'Venom Spit', type: SkillType.DAMAGE, target: SkillTarget.SINGLE, multiplier: 2.0, cooldown: 0, effectChance: 0.2, effectType: DebuffType.SLOW, effectDuration: 1, description: 'Spits venom that may slow.' },
-  creatureHowl: { id: 'creatureHowl', name: 'Howl', type: SkillType.BUFF, target: SkillTarget.ALL_ALLIES, multiplier: 0, cooldown: 4, effectChance: 1.0, effectType: BuffType.ATTACK_UP, effectDuration: 1, description: 'A rallying howl.' },
+  creatureBite: {
+    id: 'creatureBite',
+    name: 'Bite',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 2.0,
+    cooldown: 0,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    description: 'A feral bite.',
+  },
+  creatureScratch: {
+    id: 'creatureScratch',
+    name: 'Scratch',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 2.2,
+    cooldown: 0,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    description: 'Sharp claws lash out.',
+  },
+  creatureSlam: {
+    id: 'creatureSlam',
+    name: 'Slam',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 2.5,
+    cooldown: 0,
+    effectChance: 0,
+    effectType: null,
+    effectDuration: 0,
+    description: 'A heavy slam.',
+  },
+  creatureSpit: {
+    id: 'creatureSpit',
+    name: 'Venom Spit',
+    type: SkillType.DAMAGE,
+    target: SkillTarget.SINGLE,
+    multiplier: 2.0,
+    cooldown: 0,
+    effectChance: 0.2,
+    effectType: DebuffType.SLOW,
+    effectDuration: 1,
+    description: 'Spits venom that may slow.',
+  },
+  creatureHowl: {
+    id: 'creatureHowl',
+    name: 'Howl',
+    type: SkillType.BUFF,
+    target: SkillTarget.ALL_ALLIES,
+    multiplier: 0,
+    cooldown: 4,
+    effectChance: 1.0,
+    effectType: BuffType.ATTACK_UP,
+    effectDuration: 1,
+    description: 'A rallying howl.',
+  },
 };
 
 export default skills;

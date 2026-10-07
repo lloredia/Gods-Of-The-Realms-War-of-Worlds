@@ -9,9 +9,9 @@
 import { Element } from './enums';
 
 // Multiplier values — tune these to adjust element impact
-export const ELEMENT_ADVANTAGE = 1.15;      // 15% bonus damage
-export const ELEMENT_DISADVANTAGE = 0.85;   // 15% penalty
-export const ELEMENT_MUTUAL = 1.20;         // 20% bonus (Moon <-> Underworld)
+export const ELEMENT_ADVANTAGE = 1.15; // 15% bonus damage
+export const ELEMENT_DISADVANTAGE = 0.85; // 15% penalty
+export const ELEMENT_MUTUAL = 1.2; // 20% bonus (Moon <-> Underworld)
 export const ELEMENT_NEUTRAL = 1.0;
 
 // Advantage lookup: ADVANTAGE_MAP[attacker] = set of elements they beat

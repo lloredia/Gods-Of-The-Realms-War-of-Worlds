@@ -4,7 +4,34 @@
 const SAVE_KEY = 'gotr_save_data';
 
 const DEFAULT_SAVE = {
-  ownedHeroes: ['zeus', 'poseidon', 'morganLeFay', 'susanoo', 'hades', 'apollo', 'ra', 'freya', 'loki', 'cuChulainn', 'thor', 'anubis', 'bastet', 'amaterasu', 'athena', 'ares', 'odin', 'fenrir', 'isis', 'set', 'merlin', 'nimue', 'tsukuyomi', 'raijin', 'izanami', 'benzaiten'],
+  ownedHeroes: [
+    'zeus',
+    'poseidon',
+    'morganLeFay',
+    'susanoo',
+    'hades',
+    'apollo',
+    'ra',
+    'freya',
+    'loki',
+    'cuChulainn',
+    'thor',
+    'anubis',
+    'bastet',
+    'amaterasu',
+    'athena',
+    'ares',
+    'odin',
+    'fenrir',
+    'isis',
+    'set',
+    'merlin',
+    'nimue',
+    'tsukuyomi',
+    'raijin',
+    'izanami',
+    'benzaiten',
+  ],
   selectedTeam: ['zeus', 'poseidon', 'morganLeFay', 'susanoo'],
   heroData: {}, // overrides per hero: { zeus: { level: 35, stars: 5, awakened: true, relicSet: 'wrath' } }
   resources: { gold: 50000, essences: 100, awakenStones: 20 },
@@ -13,21 +40,62 @@ const DEFAULT_SAVE = {
   arenaPoints: 500,
 };
 
+function cloneSave(data) {
+  return JSON.parse(JSON.stringify(data));
+}
+
+function storage() {
+  if (typeof globalThis.localStorage === 'undefined') return null;
+  return globalThis.localStorage;
+}
+
+function mergeWithDefaults(saved) {
+  const base = cloneSave(DEFAULT_SAVE);
+  if (!saved || typeof saved !== 'object') return base;
+  const merged = { ...base, ...saved };
+  for (const key of Object.keys(base)) {
+    const baseValue = base[key];
+    const savedValue = saved[key];
+    if (
+      baseValue &&
+      savedValue &&
+      typeof baseValue === 'object' &&
+      typeof savedValue === 'object' &&
+      !Array.isArray(baseValue) &&
+      !Array.isArray(savedValue)
+    ) {
+      merged[key] = { ...baseValue, ...savedValue };
+    }
+  }
+  return merged;
+}
+
+function deepFreeze(value) {
+  if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
+  Object.freeze(value);
+  for (const child of Object.values(value)) deepFreeze(child);
+  return value;
+}
+
+deepFreeze(DEFAULT_SAVE);
+
 export function loadSave() {
-  if (typeof window === 'undefined') return { ...DEFAULT_SAVE };
+  const store = storage();
+  if (!store) return cloneSave(DEFAULT_SAVE);
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return { ...DEFAULT_SAVE };
-    return { ...DEFAULT_SAVE, ...JSON.parse(raw) };
+    const raw = store.getItem(SAVE_KEY);
+    if (!raw) return cloneSave(DEFAULT_SAVE);
+    return mergeWithDefaults(JSON.parse(raw));
   } catch {
-    return { ...DEFAULT_SAVE };
+    return cloneSave(DEFAULT_SAVE);
   }
 }
 
 export function writeSave(data) {
-  if (typeof window === 'undefined') return;
+  const store = storage();
+  if (!store) return;
   try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    store.setItem(SAVE_KEY, JSON.stringify(data));
   } catch {
     // Storage full or unavailable
   }
@@ -37,7 +105,13 @@ export function updateSave(partial) {
   const current = loadSave();
   const updated = { ...current };
   for (const [key, value] of Object.entries(partial)) {
-    if (value && typeof value === 'object' && !Array.isArray(value) && current[key] && typeof current[key] === 'object') {
+    if (
+      value &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      current[key] &&
+      typeof current[key] === 'object'
+    ) {
       updated[key] = { ...current[key], ...value };
     } else {
       updated[key] = value;
@@ -48,9 +122,9 @@ export function updateSave(partial) {
 }
 
 export function resetSave() {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(SAVE_KEY);
-  return { ...DEFAULT_SAVE };
+  const store = storage();
+  if (store) store.removeItem(SAVE_KEY);
+  return cloneSave(DEFAULT_SAVE);
 }
 
 export function addHero(heroId) {

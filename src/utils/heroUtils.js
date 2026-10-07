@@ -20,7 +20,7 @@ export function getHeroWithSave(heroId) {
  * Get a full team of heroes with save data merged in.
  */
 export function getTeamWithSave(heroIds) {
-  return heroIds.map(id => getHeroWithSave(id)).filter(Boolean);
+  return heroIds.map((id) => getHeroWithSave(id)).filter(Boolean);
 }
 
 /**
@@ -28,7 +28,7 @@ export function getTeamWithSave(heroIds) {
  */
 export function getAllHeroesWithSave() {
   const save = loadSave();
-  return Object.values(heroRoster).map(hero => {
+  return Object.values(heroRoster).map((hero) => {
     const overrides = save.heroData?.[hero.id];
     return overrides ? { ...hero, ...overrides } : { ...hero };
   });

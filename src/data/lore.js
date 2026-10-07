@@ -34,7 +34,7 @@ const lore = {
   // ── Norse — The Allfather's Hall ──────────────────────────────────
   thor: {
     title: 'The Thunderer',
-    lore: 'Thor wields Mjolnir, the hammer that cracks the spine of mountains and calls lightning from clear skies. He is Asgard\'s mightiest champion, the wall between the realms and the chaos that would consume them. The War of Worlds is just another storm for him to conquer.',
+    lore: "Thor wields Mjolnir, the hammer that cracks the spine of mountains and calls lightning from clear skies. He is Asgard's mightiest champion, the wall between the realms and the chaos that would consume them. The War of Worlds is just another storm for him to conquer.",
     quote: '"Let the thunder speak — I have nothing left to say."',
   },
   freya: {
@@ -54,14 +54,14 @@ const lore = {
   },
   fenrir: {
     title: 'The World-Devourer',
-    lore: 'Fenrir is the great wolf prophesied to swallow Odin at Ragnarok, bound by chains forged from impossible things — the sound of a cat\'s footstep, a woman\'s beard, the roots of a mountain. His chains have weakened, and the War of Worlds has set him loose at last.',
+    lore: "Fenrir is the great wolf prophesied to swallow Odin at Ragnarok, bound by chains forged from impossible things — the sound of a cat's footstep, a woman's beard, the roots of a mountain. His chains have weakened, and the War of Worlds has set him loose at last.",
     quote: '"The gods chained me because they saw the future. They were right to be afraid."',
   },
 
   // ── Egyptian — The Eternal Sands ──────────────────────────────────
   anubis: {
     title: 'Guardian of the Dead',
-    lore: 'Anubis guides souls through the Duat and weighs their hearts against the feather of Ma\'at. He decides who passes to the Field of Reeds and who is devoured by Ammit. In the War of Worlds, he carries his scales to the battlefield — and all are found wanting.',
+    lore: "Anubis guides souls through the Duat and weighs their hearts against the feather of Ma'at. He decides who passes to the Field of Reeds and who is devoured by Ammit. In the War of Worlds, he carries his scales to the battlefield — and all are found wanting.",
     quote: '"Your heart already knows its verdict. I merely confirm it."',
   },
   ra: {
@@ -88,7 +88,7 @@ const lore = {
   // ── Celtic — The Mist Realm ───────────────────────────────────────
   morganLeFay: {
     title: 'The Phantom Queen',
-    lore: 'Morgan le Fay is sorceress, shapeshifter, and keeper of Avalon\'s darkest secrets. She learned her craft from Merlin and surpassed him, weaving enchantments that bend fate itself. In the War of Worlds, her illusions are indistinguishable from reality — until it is too late.',
+    lore: "Morgan le Fay is sorceress, shapeshifter, and keeper of Avalon's darkest secrets. She learned her craft from Merlin and surpassed him, weaving enchantments that bend fate itself. In the War of Worlds, her illusions are indistinguishable from reality — until it is too late.",
     quote: '"Reality is merely a suggestion I choose to ignore."',
   },
   merlin: {
@@ -103,7 +103,7 @@ const lore = {
   },
   cuChulainn: {
     title: 'The Hound of Ulster',
-    lore: 'Cu Chulainn is Ireland\'s greatest warrior, cursed with the warp-spasm that transforms him into an unstoppable berserker of twisted flesh and blinding rage. He slew an army single-handedly at the age of seventeen and bound his own body to a standing stone so he could die on his feet. The War of Worlds has given him foes worthy of his fury.',
+    lore: "Cu Chulainn is Ireland's greatest warrior, cursed with the warp-spasm that transforms him into an unstoppable berserker of twisted flesh and blinding rage. He slew an army single-handedly at the age of seventeen and bound his own body to a standing stone so he could die on his feet. The War of Worlds has given him foes worthy of his fury.",
     quote: '"I asked the gods for a fair fight. They sent me an army. It was not enough."',
   },
 
@@ -125,7 +125,7 @@ const lore = {
   },
   tsukuyomi: {
     title: 'Lord of the Moon',
-    lore: 'Tsukuyomi rules the night sky in cold solitude, banished from Amaterasu\'s presence after slaying the food goddess Uke Mochi in a fit of disgust. His silver light illuminates truths that the sun\'s glare conceals. In the War of Worlds, he fights from the shadows his sister cannot reach.',
+    lore: "Tsukuyomi rules the night sky in cold solitude, banished from Amaterasu's presence after slaying the food goddess Uke Mochi in a fit of disgust. His silver light illuminates truths that the sun's glare conceals. In the War of Worlds, he fights from the shadows his sister cannot reach.",
     quote: '"The night reveals what the day is too kind to show."',
   },
   izanami: {
@@ -142,19 +142,19 @@ const lore = {
   // ── Greek 3-star ──────────────────────────────────────────────────
   hermes: {
     title: 'The Divine Messenger',
-    lore: 'Hermes stole Apollo\'s sacred cattle on the day he was born and talked his way out of punishment before sunset. He is the messenger of the gods, guide of souls, and patron of thieves and travelers. In the War of Worlds, he is everywhere at once — and gone before anyone can react.',
+    lore: "Hermes stole Apollo's sacred cattle on the day he was born and talked his way out of punishment before sunset. He is the messenger of the gods, guide of souls, and patron of thieves and travelers. In the War of Worlds, he is everywhere at once — and gone before anyone can react.",
     quote: '"You cannot strike what you cannot catch."',
   },
   hephaestus: {
     title: 'The Forge God',
-    lore: 'Hephaestus was cast from Olympus and built his legend in fire and iron, forging the weapons of gods and the chains that bind titans. His creations are unmatched — Achilles\' armor, Zeus\' thunderbolts, Pandora herself. In the War of Worlds, every battlefield is his anvil.',
+    lore: "Hephaestus was cast from Olympus and built his legend in fire and iron, forging the weapons of gods and the chains that bind titans. His creations are unmatched — Achilles' armor, Zeus' thunderbolts, Pandora herself. In the War of Worlds, every battlefield is his anvil.",
     quote: '"The gods wield my weapons and call themselves mighty. I know the truth."',
   },
 
   // ── Norse 3-star ──────────────────────────────────────────────────
   tyr: {
     title: 'God of Sacrificial Valor',
-    lore: 'Tyr placed his hand in Fenrir\'s maw as a pledge of trust, knowing the wolf would bite it off when the binding held true. He is the only god who chose sacrifice over strength, and his missing hand is proof that honor has a price. In the War of Worlds, he pays it willingly.',
+    lore: "Tyr placed his hand in Fenrir's maw as a pledge of trust, knowing the wolf would bite it off when the binding held true. He is the only god who chose sacrifice over strength, and his missing hand is proof that honor has a price. In the War of Worlds, he pays it willingly.",
     quote: '"I gave my sword hand for duty. What have you given?"',
   },
   heimdall: {
@@ -190,7 +190,7 @@ const lore = {
   // ── Japanese 3-star ───────────────────────────────────────────────
   fujin: {
     title: 'God of the Wind',
-    lore: 'Fujin carries a great bag of winds upon his shoulders, loosing gales and zephyrs at his whim. He is Raijin\'s brother and eternal rival, their storms colliding across the heavens in spectacles mortals call typhoons. In the War of Worlds, he unleashes every wind he has ever held.',
+    lore: "Fujin carries a great bag of winds upon his shoulders, loosing gales and zephyrs at his whim. He is Raijin's brother and eternal rival, their storms colliding across the heavens in spectacles mortals call typhoons. In the War of Worlds, he unleashes every wind he has ever held.",
     quote: '"You cannot build walls against the wind. You can only bend — or break."',
   },
   inari: {

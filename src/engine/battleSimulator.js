@@ -1,7 +1,14 @@
 // Headless battle simulation utility for Gods Of The Realms — War of Worlds
 // Used for automated testing, balance tuning, and replay verification.
 
-import { initUnits, advanceTurnMeters, executeTurn, isTeamDefeated, getTurnOrder, getTurnCounter } from './battleEngine';
+import {
+  initUnits,
+  advanceTurnMeters,
+  executeTurn,
+  isTeamDefeated,
+  getTurnOrder,
+  getTurnCounter,
+} from './battleEngine';
 import { isStunned } from './effectSystem';
 import { decideAction } from './aiSystem';
 import { setSeed, clearSeed, getSeed, getState } from '../utils/random';
@@ -11,7 +18,7 @@ import { setSeed, clearSeed, getSeed, getState } from '../utils/random';
  * Returns { winner, logs, turns, seed, duration, teamAFinal, teamBFinal }
  */
 export function simulateBattle(teamATemplates, teamBTemplates, options = {}) {
-  const seed = options.seed || Date.now();
+  const seed = options.seed ?? Date.now();
   const maxTurns = options.maxTurns || 200;
 
   setSeed(seed);
@@ -25,14 +32,20 @@ export function simulateBattle(teamATemplates, teamBTemplates, options = {}) {
   let turns = 0;
 
   while (turns < maxTurns) {
-    if (isTeamDefeated(teamA)) { winner = 'B'; break; }
-    if (isTeamDefeated(teamB)) { winner = 'A'; break; }
+    if (isTeamDefeated(teamA)) {
+      winner = 'B';
+      break;
+    }
+    if (isTeamDefeated(teamB)) {
+      winner = 'A';
+      break;
+    }
 
     const unit = advanceTurnMeters(all);
     if (!unit) break;
 
     turns++;
-    const isTeamAUnit = teamA.some(u => u.id === unit.id);
+    const isTeamAUnit = teamA.some((u) => u.id === unit.id);
     const allies = isTeamAUnit ? teamA : teamB;
     const enemies = isTeamAUnit ? teamB : teamA;
 
@@ -60,8 +73,20 @@ export function simulateBattle(teamATemplates, teamBTemplates, options = {}) {
     turns,
     seed,
     duration: Math.round(duration),
-    teamAFinal: teamA.map(u => ({ id: u.id, name: u.name, alive: u.alive, hp: u.currentHP, maxHP: u.maxHP })),
-    teamBFinal: teamB.map(u => ({ id: u.id, name: u.name, alive: u.alive, hp: u.currentHP, maxHP: u.maxHP })),
+    teamAFinal: teamA.map((u) => ({
+      id: u.id,
+      name: u.name,
+      alive: u.alive,
+      hp: u.currentHP,
+      maxHP: u.maxHP,
+    })),
+    teamBFinal: teamB.map((u) => ({
+      id: u.id,
+      name: u.name,
+      alive: u.alive,
+      hp: u.currentHP,
+      maxHP: u.maxHP,
+    })),
   };
 }
 

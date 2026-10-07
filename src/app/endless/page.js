@@ -64,10 +64,10 @@ function saveBestWave(wave) {
 
 function scaleEnemies(templates, wave) {
   const hpMult = 1 + wave * 0.15;
-  const atkMult = 1 + wave * 0.10;
+  const atkMult = 1 + wave * 0.1;
   const defMult = 1 + wave * 0.08;
 
-  return templates.map(unit => {
+  return templates.map((unit) => {
     const scaledMaxHP = Math.round((unit.maxHP || 10000) * hpMult);
     return {
       ...unit,
@@ -81,7 +81,7 @@ function scaleEnemies(templates, wave) {
 
 function generateWaveEnemies(wave, playerIds) {
   const allHeroes = Object.values(heroRoster);
-  const available = allHeroes.filter(u => !playerIds.has(u.id));
+  const available = allHeroes.filter((u) => !playerIds.has(u.id));
   const pool = available.length >= 4 ? available : allHeroes;
   const picked = shuffleArray(pool).slice(0, 4);
   return scaleEnemies(picked, wave);
@@ -130,8 +130,8 @@ export default function EndlessPage() {
   // --- Select phase ---
 
   const toggleHero = useCallback((heroId) => {
-    setSelectedIds(prev => {
-      if (prev.includes(heroId)) return prev.filter(id => id !== heroId);
+    setSelectedIds((prev) => {
+      if (prev.includes(heroId)) return prev.filter((id) => id !== heroId);
       if (prev.length >= 4) return prev;
       return [...prev, heroId];
     });
@@ -149,38 +149,41 @@ export default function EndlessPage() {
 
   // --- Battle exit ---
 
-  const handleBattleExit = useCallback((playerWon) => {
-    if (playerWon) {
-      // Wave cleared
-      setPhase('interstitial');
-    } else {
-      // Player lost — game over
-      const wavesCleared = wave - 1;
-      const gold = calculateGoldReward(wavesCleared);
-      setGoldEarned(gold);
+  const handleBattleExit = useCallback(
+    (playerWon) => {
+      if (playerWon) {
+        // Wave cleared
+        setPhase('interstitial');
+      } else {
+        // Player lost — game over
+        const wavesCleared = wave - 1;
+        const gold = calculateGoldReward(wavesCleared);
+        setGoldEarned(gold);
 
-      // Save best wave
-      saveBestWave(wavesCleared);
-      setBestWave(prev => Math.max(prev, wavesCleared));
+        // Save best wave
+        saveBestWave(wavesCleared);
+        setBestWave((prev) => Math.max(prev, wavesCleared));
 
-      // Award gold to save
-      if (gold > 0) {
-        try {
-          const save = loadSave();
-          updateSave({
-            resources: {
-              ...save.resources,
-              gold: (save.resources.gold || 0) + gold,
-            },
-          });
-        } catch {
-          // Save system unavailable
+        // Award gold to save
+        if (gold > 0) {
+          try {
+            const save = loadSave();
+            updateSave({
+              resources: {
+                ...save.resources,
+                gold: (save.resources.gold || 0) + gold,
+              },
+            });
+          } catch {
+            // Save system unavailable
+          }
         }
-      }
 
-      setPhase('gameover');
-    }
-  }, [wave]);
+        setPhase('gameover');
+      }
+    },
+    [wave],
+  );
 
   // --- Interstitial: continue or retreat ---
 
@@ -200,7 +203,7 @@ export default function EndlessPage() {
 
     // Save best wave
     saveBestWave(wavesCleared);
-    setBestWave(prev => Math.max(prev, wavesCleared));
+    setBestWave((prev) => Math.max(prev, wavesCleared));
 
     // Award gold to save
     if (gold > 0) {
@@ -236,7 +239,7 @@ export default function EndlessPage() {
 
   if (phase === 'battle') {
     const hpScale = Math.max(0.3, 1 - (wave - 1) * 0.05);
-    const playerTeam = getTeamWithSave(selectedIds).map(h => ({
+    const playerTeam = getTeamWithSave(selectedIds).map((h) => ({
       ...h,
       maxHP: Math.floor(h.maxHP * hpScale),
       currentHP: Math.floor(h.maxHP * hpScale),
@@ -246,37 +249,41 @@ export default function EndlessPage() {
     return (
       <div>
         {/* Wave overlay banner */}
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          textAlign: 'center',
-          padding: '8px 0',
-          background: `linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%)`,
-          pointerEvents: 'none',
-        }}>
-          <span style={{
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: glowColor,
-            textShadow: wave >= 10 ? `0 0 12px ${glowColor}, 0 0 24px ${glowColor}` : 'none',
-            letterSpacing: 3,
-          }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            textAlign: 'center',
+            padding: '8px 0',
+            background: `linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%)`,
+            pointerEvents: 'none',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 'bold',
+              color: glowColor,
+              textShadow: wave >= 10 ? `0 0 12px ${glowColor}, 0 0 24px ${glowColor}` : 'none',
+              letterSpacing: 3,
+            }}
+          >
             WAVE {wave}
           </span>
-          <span style={{ color: '#666', fontSize: 11, marginLeft: 12 }}>
-            Best: Wave {bestWave}
-          </span>
-          <span style={{
-            color: '#888',
-            fontSize: 10,
-            marginLeft: 12,
-            padding: '2px 8px',
-            borderRadius: 4,
-            backgroundColor: 'rgba(255,255,255,0.05)',
-          }}>
+          <span style={{ color: '#666', fontSize: 11, marginLeft: 12 }}>Best: Wave {bestWave}</span>
+          <span
+            style={{
+              color: '#888',
+              fontSize: 10,
+              marginLeft: 12,
+              padding: '2px 8px',
+              borderRadius: 4,
+              backgroundColor: 'rgba(255,255,255,0.05)',
+            }}
+          >
             {getWaveTitle(wave)}
           </span>
         </div>
@@ -300,45 +307,53 @@ export default function EndlessPage() {
     const goldSoFar = calculateGoldReward(wave);
 
     return (
-      <div style={{
-        minHeight: '100vh',
-        backgroundColor: '#0a0a1a',
-        color: '#eee',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: "'Segoe UI', system-ui, sans-serif",
-        padding: 20,
-      }}>
-        {/* Victory glow */}
-        <div style={{
-          width: 200,
-          height: 200,
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${glowColor}33 0%, transparent 70%)`,
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#0a0a1a',
+          color: '#eee',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: 24,
-        }}>
-          <div style={{
-            fontSize: 64,
-            fontWeight: 'bold',
-            color: glowColor,
-            textShadow: `0 0 20px ${glowColor}, 0 0 40px ${glowColor}`,
-          }}>
+          fontFamily: "'Segoe UI', system-ui, sans-serif",
+          padding: 20,
+        }}
+      >
+        {/* Victory glow */}
+        <div
+          style={{
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${glowColor}33 0%, transparent 70%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 64,
+              fontWeight: 'bold',
+              color: glowColor,
+              textShadow: `0 0 20px ${glowColor}, 0 0 40px ${glowColor}`,
+            }}
+          >
             {wave}
           </div>
         </div>
 
-        <h1 style={{
-          fontSize: 36,
-          color: '#FFD700',
-          margin: 0,
-          letterSpacing: 4,
-          textShadow: '0 0 10px rgba(255,215,0,0.5)',
-        }}>
+        <h1
+          style={{
+            fontSize: 36,
+            color: '#FFD700',
+            margin: 0,
+            letterSpacing: 4,
+            textShadow: '0 0 10px rgba(255,215,0,0.5)',
+          }}
+        >
           WAVE {wave} CLEARED!
         </h1>
 
@@ -346,42 +361,49 @@ export default function EndlessPage() {
           {getWaveTitle(wave + 1)} DIFFICULTY AHEAD
         </div>
 
-        <div style={{
-          marginTop: 24,
-          padding: '12px 24px',
-          backgroundColor: '#111',
-          borderRadius: 8,
-          border: '1px solid #333',
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            marginTop: 24,
+            padding: '12px 24px',
+            backgroundColor: '#111',
+            borderRadius: 8,
+            border: '1px solid #333',
+            textAlign: 'center',
+          }}
+        >
           <div style={{ fontSize: 12, color: '#888', marginBottom: 4 }}>GOLD EARNED SO FAR</div>
           <div style={{ fontSize: 24, color: '#FFD700', fontWeight: 'bold' }}>
             {goldSoFar.toLocaleString()} Gold
           </div>
         </div>
 
-        <div style={{
-          marginTop: 16,
-          padding: '8px 20px',
-          backgroundColor: '#1a1a2e',
-          borderRadius: 6,
-          border: '1px solid #333',
-          fontSize: 12,
-          color: '#aaa',
-        }}>
-          Next wave enemies: HP x{(1 + (wave + 1) * 0.15).toFixed(2)} | ATK x{(1 + (wave + 1) * 0.10).toFixed(2)} | DEF x{(1 + (wave + 1) * 0.08).toFixed(2)}
+        <div
+          style={{
+            marginTop: 16,
+            padding: '8px 20px',
+            backgroundColor: '#1a1a2e',
+            borderRadius: 6,
+            border: '1px solid #333',
+            fontSize: 12,
+            color: '#aaa',
+          }}
+        >
+          Next wave enemies: HP x{(1 + (wave + 1) * 0.15).toFixed(2)} | ATK x
+          {(1 + (wave + 1) * 0.1).toFixed(2)} | DEF x{(1 + (wave + 1) * 0.08).toFixed(2)}
         </div>
 
-        <div style={{
-          marginTop: 10,
-          padding: '6px 16px',
-          backgroundColor: '#2a1a1a',
-          borderRadius: 6,
-          border: '1px solid #553333',
-          fontSize: 12,
-          color: '#F44336',
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            marginTop: 10,
+            padding: '6px 16px',
+            backgroundColor: '#2a1a1a',
+            borderRadius: 6,
+            border: '1px solid #553333',
+            fontSize: 12,
+            color: '#F44336',
+            textAlign: 'center',
+          }}
+        >
           Your team enters weakened (HP reduced by {Math.round(wave * 5)}%)
         </div>
 
@@ -435,91 +457,107 @@ export default function EndlessPage() {
     const wavesCleared = goldEarned / 500;
     const isNewBest = wavesCleared >= bestWave && wavesCleared > 0;
     return (
-      <div style={{
-        minHeight: '100vh',
-        backgroundColor: '#0a0a1a',
-        color: '#eee',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: "'Segoe UI', system-ui, sans-serif",
-        padding: 20,
-      }}>
-        <h1 style={{
-          fontSize: 42,
-          color: '#F44336',
-          margin: 0,
-          letterSpacing: 4,
-          textShadow: '0 0 20px rgba(244,67,54,0.5)',
-        }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#0a0a1a',
+          color: '#eee',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: "'Segoe UI', system-ui, sans-serif",
+          padding: 20,
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 42,
+            color: '#F44336',
+            margin: 0,
+            letterSpacing: 4,
+            textShadow: '0 0 20px rgba(244,67,54,0.5)',
+          }}
+        >
           RUN COMPLETE
         </h1>
 
         {isNewBest && (
-          <div style={{
-            marginTop: 12,
-            padding: '6px 20px',
-            backgroundColor: '#1a3a1a',
-            border: '2px solid #FFD700',
-            borderRadius: 8,
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: '#FFD700',
-            textShadow: '0 0 8px rgba(255,215,0,0.5)',
-            letterSpacing: 2,
-          }}>
+          <div
+            style={{
+              marginTop: 12,
+              padding: '6px 20px',
+              backgroundColor: '#1a3a1a',
+              border: '2px solid #FFD700',
+              borderRadius: 8,
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: '#FFD700',
+              textShadow: '0 0 8px rgba(255,215,0,0.5)',
+              letterSpacing: 2,
+            }}
+          >
             NEW PERSONAL BEST!
           </div>
         )}
 
-        <div style={{
-          marginTop: 24,
-          display: 'flex',
-          gap: 24,
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-        }}>
+        <div
+          style={{
+            marginTop: 24,
+            display: 'flex',
+            gap: 24,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
           {/* Waves Cleared */}
-          <div style={{
-            padding: '16px 32px',
-            backgroundColor: '#111',
-            borderRadius: 10,
-            border: '1px solid #333',
-            textAlign: 'center',
-            minWidth: 140,
-          }}>
-            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>WAVES CLEARED</div>
-            <div style={{ fontSize: 48, fontWeight: 'bold', color: '#FFD700' }}>
-              {wavesCleared}
+          <div
+            style={{
+              padding: '16px 32px',
+              backgroundColor: '#111',
+              borderRadius: 10,
+              border: '1px solid #333',
+              textAlign: 'center',
+              minWidth: 140,
+            }}
+          >
+            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>
+              WAVES CLEARED
             </div>
+            <div style={{ fontSize: 48, fontWeight: 'bold', color: '#FFD700' }}>{wavesCleared}</div>
           </div>
 
           {/* Best Wave */}
-          <div style={{
-            padding: '16px 32px',
-            backgroundColor: '#111',
-            borderRadius: 10,
-            border: '1px solid #333',
-            textAlign: 'center',
-            minWidth: 140,
-          }}>
-            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>PERSONAL BEST</div>
-            <div style={{ fontSize: 48, fontWeight: 'bold', color: '#00BCD4' }}>
-              {bestWave}
+          <div
+            style={{
+              padding: '16px 32px',
+              backgroundColor: '#111',
+              borderRadius: 10,
+              border: '1px solid #333',
+              textAlign: 'center',
+              minWidth: 140,
+            }}
+          >
+            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>
+              PERSONAL BEST
             </div>
+            <div style={{ fontSize: 48, fontWeight: 'bold', color: '#00BCD4' }}>{bestWave}</div>
           </div>
 
           {/* Gold Earned */}
-          <div style={{
-            padding: '16px 32px',
-            backgroundColor: '#111',
-            borderRadius: 10,
-            border: '1px solid #333',
-            textAlign: 'center',
-            minWidth: 140,
-          }}>
-            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>GOLD EARNED</div>
+          <div
+            style={{
+              padding: '16px 32px',
+              backgroundColor: '#111',
+              borderRadius: 10,
+              border: '1px solid #333',
+              textAlign: 'center',
+              minWidth: 140,
+            }}
+          >
+            <div style={{ fontSize: 11, color: '#888', marginBottom: 6, letterSpacing: 2 }}>
+              GOLD EARNED
+            </div>
             <div style={{ fontSize: 48, fontWeight: 'bold', color: '#FFD700' }}>
               {goldEarned.toLocaleString()}
             </div>
@@ -552,68 +590,84 @@ export default function EndlessPage() {
   // =========================================================================
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0a0a1a',
-      color: '#eee',
-      fontFamily: "'Segoe UI', system-ui, sans-serif",
-      padding: 20,
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#0a0a1a',
+        color: '#eee',
+        fontFamily: "'Segoe UI', system-ui, sans-serif",
+        padding: 20,
+      }}
+    >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
-        <h1 style={{
-          fontSize: 32,
-          color: '#F44336',
-          margin: 0,
-          letterSpacing: 4,
-          textShadow: '0 0 15px rgba(244,67,54,0.4)',
-        }}>
+        <h1
+          style={{
+            fontSize: 32,
+            color: '#F44336',
+            margin: 0,
+            letterSpacing: 4,
+            textShadow: '0 0 15px rgba(244,67,54,0.4)',
+          }}
+        >
           ENDLESS SURVIVAL
         </h1>
-        <div style={{
-          color: '#999',
-          fontSize: 14,
-          marginTop: 4,
-          letterSpacing: 4,
-          textTransform: 'uppercase',
-        }}>
+        <div
+          style={{
+            color: '#999',
+            fontSize: 14,
+            marginTop: 4,
+            letterSpacing: 4,
+            textTransform: 'uppercase',
+          }}
+        >
           Gods of the Realms — War of Worlds
         </div>
       </div>
 
       {/* Best Wave / Rules */}
-      <div style={{
-        maxWidth: 600,
-        margin: '0 auto 24px',
-        padding: 20,
-        backgroundColor: '#111',
-        borderRadius: 12,
-        border: '2px solid #F44336',
-        textAlign: 'center',
-      }}>
+      <div
+        style={{
+          maxWidth: 600,
+          margin: '0 auto 24px',
+          padding: 20,
+          backgroundColor: '#111',
+          borderRadius: 12,
+          border: '2px solid #F44336',
+          textAlign: 'center',
+        }}
+      >
         <div style={{ fontSize: 12, color: '#888', marginBottom: 4, letterSpacing: 2 }}>
           HIGHEST WAVE REACHED
         </div>
-        <div style={{
-          fontSize: 48,
-          fontWeight: 'bold',
-          color: bestWave > 0 ? '#FFD700' : '#444',
-          textShadow: bestWave >= 10 ? '0 0 15px rgba(255,215,0,0.5)' : 'none',
-        }}>
+        <div
+          style={{
+            fontSize: 48,
+            fontWeight: 'bold',
+            color: bestWave > 0 ? '#FFD700' : '#444',
+            textShadow: bestWave >= 10 ? '0 0 15px rgba(255,215,0,0.5)' : 'none',
+          }}
+        >
           {bestWave > 0 ? bestWave : '---'}
         </div>
 
-        <div style={{
-          marginTop: 16,
-          padding: 12,
-          backgroundColor: '#0a0a1a',
-          borderRadius: 8,
-          fontSize: 12,
-          color: '#888',
-          lineHeight: 1.8,
-          textAlign: 'left',
-        }}>
-          <div style={{ color: '#FFD700', fontWeight: 'bold', marginBottom: 4, textAlign: 'center' }}>HOW IT WORKS</div>
+        <div
+          style={{
+            marginTop: 16,
+            padding: 12,
+            backgroundColor: '#0a0a1a',
+            borderRadius: 8,
+            fontSize: 12,
+            color: '#888',
+            lineHeight: 1.8,
+            textAlign: 'left',
+          }}
+        >
+          <div
+            style={{ color: '#FFD700', fontWeight: 'bold', marginBottom: 4, textAlign: 'center' }}
+          >
+            HOW IT WORKS
+          </div>
           <div>Select 4 heroes and face endless waves of enemies.</div>
           <div>Each wave, enemies grow stronger (HP, ATK, DEF scale up).</div>
           <div>Win a wave to continue or retreat with your gold.</div>
@@ -630,14 +684,16 @@ export default function EndlessPage() {
       </div>
 
       {/* Hero Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-        gap: 10,
-        maxWidth: 900,
-        margin: '0 auto 24px',
-      }}>
-        {allHeroes.map(hero => {
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gap: 10,
+          maxWidth: 900,
+          margin: '0 auto 24px',
+        }}
+      >
+        {allHeroes.map((hero) => {
           const isSelected = selectedIds.includes(hero.id);
           const elementColor = ELEMENT_COLORS[hero.element] || '#666';
           const roleColor = ROLE_COLORS[hero.role] || '#888';
@@ -658,29 +714,33 @@ export default function EndlessPage() {
                 opacity: !isSelected && selectedIds.length >= 4 ? 0.4 : 1,
               }}
             >
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 4,
-              }}>
-                <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>
-                  {hero.name}
-                </span>
-                <span style={{
-                  fontSize: 10,
-                  color: elementColor,
-                  border: `1px solid ${elementColor}`,
-                  borderRadius: 3,
-                  padding: '1px 4px',
-                }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 4,
+                }}
+              >
+                <span style={{ fontWeight: 'bold', fontSize: 13, color: '#eee' }}>{hero.name}</span>
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: elementColor,
+                    border: `1px solid ${elementColor}`,
+                    borderRadius: 3,
+                    padding: '1px 4px',
+                  }}
+                >
                   {hero.element}
                 </span>
               </div>
               <div style={{ fontSize: 9, color: '#FFD740', marginBottom: 3 }}>
                 {'★'.repeat(hero.stars || 4)} Lv{hero.level || 1}
               </div>
-              <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}>
+              <div
+                style={{ display: 'flex', gap: 6, fontSize: 10, color: '#999', marginBottom: 3 }}
+              >
                 <span>{hero.faction}</span>
               </div>
               <div style={{ display: 'flex', gap: 6, fontSize: 10, color: '#777' }}>
@@ -689,13 +749,15 @@ export default function EndlessPage() {
                 <span>SPD {hero.speed}</span>
               </div>
               {isSelected && (
-                <div style={{
-                  fontSize: 10,
-                  color: '#FFD700',
-                  marginTop: 4,
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                }}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    color: '#FFD700',
+                    marginTop: 4,
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}
+                >
                   SELECTED
                 </div>
               )}

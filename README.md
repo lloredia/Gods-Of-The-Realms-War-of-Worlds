@@ -4,7 +4,7 @@
 <!-- ──────────────────────────────────────────────────────────────────────── -->
 
 <p align="center">
-  <img src="public/logo.jpg" alt="Gods Of The Realms — War of Worlds" width="320" />
+  <img src="public/assets/logo.jpg" alt="Gods Of The Realms — War of Worlds" width="320" />
 </p>
 
 <h1 align="center">Gods Of The Realms — War of Worlds</h1>
@@ -59,7 +59,7 @@ $ gotr battle --p1=zeus,thor,amaterasu,athena --p2=hades,loki,susanoo,fenrir --s
 [t=220ms] sim.replay     same seed + same teams → identical 14-turn outcome  ✓
 ```
 
-<p align="center"><img src="public/screenshots/home.png" alt="home menu" width="820" /></p>
+<p align="center"><img src="public/assets/screenshots/home.png" alt="home menu" width="820" /></p>
 
 ---
 
@@ -156,7 +156,7 @@ flowchart LR
 | **Units** | 51 — 36 heroes + 15 creatures |
 | **Skills** | 115 (basic, AoE, multi-hit, buffs, debuffs, heals, cleanses, strips, executes) |
 | **Passives** | unique trigger system (`ON_TURN_START`, on-hit, on-kill, on-allied-death, …) |
-| **Effects** | burn · freeze · stun · heal-block · shield · taunt · mark · slow · def-break · attack-up · def-up · immunity · speed-up |
+| **Effects** | stun · slow · defense break · heal block · attack up · defense up · immunity · speed up |
 | **Elements** | 5 — Storm · Ocean · Sun · Moon · Underworld |
 | **Element matrix** | triangle (Storm > Ocean > Sun > Storm) + mutual pair (Moon ↔ Underworld) |
 | **Multipliers** | advantage `×1.15` · disadvantage `×0.85` · mutual `×1.20` |
@@ -199,20 +199,20 @@ Source: `src/data/factions.js` · faction bonus implementation: `src/engine/fact
 
 <table>
   <tr>
-    <td align="center"><img src="public/screenshots/battle-select.png" width="380" alt="battle team select" /><br/><sub>battle · team select</sub></td>
-    <td align="center"><img src="public/screenshots/campaign.png" width="380" alt="campaign" /><br/><sub>campaign · 10 stages</sub></td>
+    <td align="center"><img src="public/assets/screenshots/battle-select.png" width="380" alt="battle team select" /><br/><sub>battle · team select</sub></td>
+    <td align="center"><img src="public/assets/screenshots/campaign.png" width="380" alt="campaign" /><br/><sub>campaign · 10 stages</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="public/screenshots/arena.png" width="380" alt="arena" /><br/><sub>arena · ranked PvP</sub></td>
-    <td align="center"><img src="public/screenshots/endless.png" width="380" alt="endless" /><br/><sub>endless · wave survival</sub></td>
+    <td align="center"><img src="public/assets/screenshots/arena.png" width="380" alt="arena" /><br/><sub>arena · ranked PvP</sub></td>
+    <td align="center"><img src="public/assets/screenshots/endless.png" width="380" alt="endless" /><br/><sub>endless · wave survival</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="public/screenshots/faction-wars.png" width="380" alt="faction wars" /><br/><sub>faction wars · weekly</sub></td>
-    <td align="center"><img src="public/screenshots/summon.png" width="380" alt="summon" /><br/><sub>summon · gacha</sub></td>
+    <td align="center"><img src="public/assets/screenshots/faction-wars.png" width="380" alt="faction wars" /><br/><sub>faction wars · weekly</sub></td>
+    <td align="center"><img src="public/assets/screenshots/summon.png" width="380" alt="summon" /><br/><sub>summon · gacha</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="public/screenshots/collection.png" width="380" alt="collection" /><br/><sub>collection · roster</sub></td>
-    <td align="center"><img src="public/screenshots/settings.png" width="380" alt="settings" /><br/><sub>settings · sound + reset</sub></td>
+    <td align="center"><img src="public/assets/screenshots/collection.png" width="380" alt="collection" /><br/><sub>collection · roster</sub></td>
+    <td align="center"><img src="public/assets/screenshots/settings.png" width="380" alt="settings" /><br/><sub>settings · sound + reset</sub></td>
   </tr>
 </table>
 
@@ -271,6 +271,33 @@ Passive abilities fire on triggers like `on_turn_start`, `on_hit`, `on_kill`, `o
 
 ---
 
+## how to play
+
+Five pantheons are already at war. You start with a roster of gods and creatures, gold, essences, and awaken stones saved in this browser. There is no account and no server.
+
+1. Read the short tutorial on the home screen, then claim the daily reward if it is waiting.
+2. Open **Summon** and spend gold (1,000 for one pull, 9,000 for ten) at the divine gate. New heroes join your collection.
+3. Open **Collection** to level a hero, raise stars, awaken, and equip a relic set. Those choices change the next battle.
+4. Open **Campaign** and clear stage 1, **Gates of Olympus**. Stages unlock in order and end with three named bosses: Titan Helios, Primordial Chaos, and Chronos.
+5. Use **Battle** for a custom match, **Arena** to climb Bronze through Legend, **Endless** to chase a personal-best wave, and **Faction Wars** to champion one pantheon for the week.
+
+Element triangle: Storm beats Ocean, Ocean beats Sun, Sun beats Storm. Moon and Underworld hurt each other. Bring at least one healer or tank if the enemy team is faster than yours.
+
+## controls
+
+The game is point-and-click. There is no keyboard combat map.
+
+| Action | How |
+|---|---|
+| Move between modes | Top bar: Home, Battle, Collection, Summon, Campaign, Arena, Wars, Endless, Settings |
+| Build a team | Click up to four heroes, then start the mode |
+| Use a skill | On your turn, click a skill. Single-target skills then ask you to click a hero |
+| Target an enemy or ally | Click their card. The highlight shows element advantage when you are picking an enemy |
+| Auto battle | **AUTO: ON** lets the AI play your team |
+| Battle speed | **x1 / x2 / x3** shortens the delay between turns |
+| Leave a fight | **Surrender**, or **Back to Team Select** after the result |
+| Sound and save | **Settings** toggles sound, volume, and a full save reset |
+
 ## 🚀 quickstart
 
 requires **Node ≥ 20**.
@@ -284,13 +311,32 @@ npm run dev
 
 open [http://localhost:3000](http://localhost:3000) — start at the home menu, head to **Summon** for a starter pull, then **Campaign** for stage 1.
 
-production build:
+other commands:
 
 ```bash
+npm test          # vitest — combat math, saves, summon table, deterministic replays
+npm run lint      # eslint
+npm run format    # prettier
 npm run build && npm run start
 ```
 
-**deploy:** zero-config Vercel — point Vercel at the repo, no env vars required. The save state lives in the player's browser, not on the server.
+production build serves the same app with `next start`. Save data stays in the player's browser.
+
+### GitHub Pages
+
+A static export is ready for project Pages. It is not turned on in the repository settings from this codebase.
+
+```bash
+npm run build:pages   # writes ./out with the repo name as the base path
+```
+
+One-time setup, after this workflow is on `main`:
+
+1. Open **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Push to `main` (or run the **Deploy GitHub Pages** workflow by hand).
+
+The site is then `https://lloredia.github.io/Gods-Of-The-Realms-War-of-Worlds/`. The workflow reads `GITHUB_REPOSITORY`, so a fork publishes under its own repo name. No environment variables are required. Vercel still works if you point it at the repo and use the normal `npm run build` (do not set `GITHUB_PAGES` there).
 
 ---
 
@@ -334,7 +380,9 @@ Gods-Of-The-Realms-War-of-Worlds/
 │   │   └── achievements.js              16 achievements
 │   ├── constants/                   battleConstants · elementTable · enums
 │   └── utils/                       saveSystem · soundSystem · seeded random · heroUtils
-├── public/screenshots/              10 in-game captures (used in this README)
+├── public/assets/                   logo and in-game screenshots used above
+├── tests/                           Vitest: combat, saves, summon table, replays
+├── .github/workflows/               CI and GitHub Pages deploy
 ├── docs/architecture.{mmd,svg}      diagram source + mobile fallback
 └── UNITY_PORT_PLAN.md               1:1 layered port plan to Unity 2022 LTS
 ```
@@ -344,14 +392,15 @@ Gods-Of-The-Realms-War-of-Worlds/
 ## 🎮 roadmap
 
 ### now
-- **Polish sweep** — most recent commits (`8f75c0b`, `7511fbb`) closed 19+ bugs across economy, targeting, timing, UX and added SSR guards on Faction Wars; collecting playtest signal before the next content drop.
+- **Playable in CI** — lint, unit tests, production build, and a GitHub Pages export all run on pull requests.
+- **Relic 4-piece effects** — Fortress damage reduction, Vitality healing received, and Resolve debuff shortening now apply in combat. Revive passives use their own HP percent.
 - **Combat-log readability** — log is verbose; trimming ticks to player-meaningful events.
 
 ### next
 - **Real audio assets** — replace WebAudio oscillator stubs with mixed track + per-skill SFX
+- **Gameplay GIF** — drop a short capture at `public/assets/screenshots/gameplay.gif` and add it under the home screenshot
 - **Animated summon sequences** — card reveal exists; want full draw animation per rarity tier
 - **Daily / weekly login rewards** — `DailyRewards.js` exists; backing economy needs a tuning pass
-- **Public Vercel deploy** — push to a shareable URL; current README points to local dev only
 
 ### later
 - **Unity port** — `UNITY_PORT_PLAN.md` lays out layer-by-layer translation; pure-JS engine ports cleanly with no React entanglement
@@ -363,6 +412,19 @@ source: recent commits, `UNITY_PORT_PLAN.md`, in-source TODOs.
 
 ---
 
+## tech stack
+
+| | |
+|---|---|
+| **App** | Next.js 16 App Router, React 19, client-side pages |
+| **Combat** | Plain JavaScript in `src/engine/` — no React imports |
+| **Persistence** | `localStorage` keys `gotr_save_data` and `gotr_faction_wars` |
+| **Audio** | Web Audio oscillators (placeholder SFX) |
+| **Tests** | Vitest |
+| **Style** | ESLint (`eslint-config-next`) and Prettier |
+| **CI** | GitHub Actions — lint, test, `next build`, and Pages export |
+| **Node** | 20 or newer |
+
 ## 🤝 contributing
 
 - this is a solo prototype; PRs welcome but expect opinionated direction
@@ -370,7 +432,7 @@ source: recent commits, `UNITY_PORT_PLAN.md`, in-source TODOs.
 - no TypeScript yet — match the existing `.js` style (single quotes, 2-space indent)
 - adding a hero? edit `src/data/units.js` only; engine should not need changes
 - adding a skill? edit `src/data/skills.js`; if you need a new effect/trigger, add it to `effects.js` and `effectSystem.js` together
-- if you touch a screen, add a screenshot at the same path under `public/screenshots/` and update the README table
+- if you touch a screen, add a screenshot at the same path under `public/assets/screenshots/` and update the README table
 
 ---
 

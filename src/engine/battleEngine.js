@@ -14,13 +14,23 @@ import {
 } from '../constants/battleConstants';
 import { getState } from '../utils/random';
 import { calculateDamage, calculateHeal } from './damageSystem';
-import { tryApplyEffect, applyBuff, tickEffects, isStunned, hasHealBlock, getEffectiveSpeed, formatEffect } from './effectSystem';
+import {
+  tryApplyEffect,
+  applyBuff,
+  tickEffects,
+  isStunned,
+  hasHealBlock,
+  getEffectiveSpeed,
+  formatEffect,
+} from './effectSystem';
 import { applyTeamRelics } from './relicSystem';
 import { applyTeamProgression } from './progressionSystem';
 import { applyFactionBonuses } from './factionBonusSystem';
 
 let _turnCounter = 0;
-export function getTurnCounter() { return _turnCounter; }
+export function getTurnCounter() {
+  return _turnCounter;
+}
 
 /**
  * Deep clone units from templates so originals stay clean.
@@ -28,7 +38,7 @@ export function getTurnCounter() { return _turnCounter; }
  */
 export function initUnits(templates) {
   _turnCounter = 0;
-  const units = templates.map(t => JSON.parse(JSON.stringify(t)));
+  const units = templates.map((t) => JSON.parse(JSON.stringify(t)));
   applyTeamProgression(units);
   applyFactionBonuses(units);
   applyTeamRelics(units);
@@ -40,10 +50,10 @@ export function initUnits(templates) {
  * Includes safety guard against infinite loops.
  */
 export function advanceTurnMeters(allUnits) {
-  const alive = allUnits.filter(u => u.alive);
+  const alive = allUnits.filter((u) => u.alive);
   if (alive.length === 0) return null;
 
-  const maxSpeed = Math.max(...alive.map(u => getEffectiveSpeed(u)));
+  const maxSpeed = Math.max(...alive.map((u) => getEffectiveSpeed(u)));
   if (maxSpeed <= 0) return null; // Safety: no valid speed means no one can act
 
   let iterations = 0;
@@ -58,7 +68,7 @@ export function advanceTurnMeters(allUnits) {
 
     // Check who hit threshold
     const ready = alive
-      .filter(u => u.turnMeter >= TURN_METER_THRESHOLD)
+      .filter((u) => u.turnMeter >= TURN_METER_THRESHOLD)
       .sort((a, b) => {
         if (b.turnMeter !== a.turnMeter) return b.turnMeter - a.turnMeter;
         return getEffectiveSpeed(b) - getEffectiveSpeed(a);
@@ -70,7 +80,7 @@ export function advanceTurnMeters(allUnits) {
   }
 
   // Fallback: if we hit max iterations, pick the highest turn meter unit
-  return alive.reduce((best, u) => u.turnMeter > best.turnMeter ? u : best);
+  return alive.reduce((best, u) => (u.turnMeter > best.turnMeter ? u : best));
 }
 
 /**
@@ -86,16 +96,35 @@ function processPassives(unit, trigger, context) {
 
   if (trigger === PassiveTrigger.ON_TURN_START) {
     if (p.effect === 'self_heal') {
-      const healAmount = Math.floor(unit.maxHP * (p.value || PASSIVE_HEAL_PERCENT));
+      let healAmount = Math.floor(unit.maxHP * (p.value || PASSIVE_HEAL_PERCENT));
+      if (unit.healBonus) {
+        healAmount = Math.floor(healAmount * (1 + unit.healBonus));
+      }
       if (unit.currentHP < unit.maxHP) {
         unit.currentHP = Math.min(unit.maxHP, unit.currentHP + healAmount);
-        logs.push({ type: LogType.PASSIVE, turn: _turnCounter, actingUnitId: unit.id, unit: unit.name, passive: p.name, message: `${unit.name}'s ${p.name}: healed ${healAmount} HP`, rngState: getState() });
+        logs.push({
+          type: LogType.PASSIVE,
+          turn: _turnCounter,
+          actingUnitId: unit.id,
+          unit: unit.name,
+          passive: p.name,
+          message: `${unit.name}'s ${p.name}: healed ${healAmount} HP`,
+          rngState: getState(),
+        });
       }
     }
     if (p.effect === 'cleanse_one') {
       if (unit.debuffs.length > 0) {
         const removed = unit.debuffs.shift();
-        logs.push({ type: LogType.PASSIVE, turn: _turnCounter, actingUnitId: unit.id, unit: unit.name, passive: p.name, message: `${unit.name}'s ${p.name}: cleansed ${formatEffect(removed.type)}`, rngState: getState() });
+        logs.push({
+          type: LogType.PASSIVE,
+          turn: _turnCounter,
+          actingUnitId: unit.id,
+          unit: unit.name,
+          passive: p.name,
+          message: `${unit.name}'s ${p.name}: cleansed ${formatEffect(removed.type)}`,
+          rngState: getState(),
+        });
       }
     }
   }
@@ -138,7 +167,14 @@ export function executeTurn(unit, skill, targets, allAllies, allEnemies) {
   // Tick effects at start of turn
   const expired = tickEffects(unit);
   for (const eff of expired) {
-    logs.push({ type: LogType.EFFECT_EXPIRE, turn: _turnCounter, actingUnitId: unit.id, unit: unit.name, effect: formatEffect(eff), rngState: getState() });
+    logs.push({
+      type: LogType.EFFECT_EXPIRE,
+      turn: _turnCounter,
+      actingUnitId: unit.id,
+      unit: unit.name,
+      effect: formatEffect(eff),
+      rngState: getState(),
+    });
   }
 
   // Reduce cooldowns
@@ -154,7 +190,14 @@ export function executeTurn(unit, skill, targets, allAllies, allEnemies) {
 
   // Check stun
   if (isStunned(unit)) {
-    logs.push({ type: LogType.STUNNED, turn: _turnCounter, actingUnitId: unit.id, unit: unit.name, message: `${unit.name} is stunned and cannot act!`, rngState: getState() });
+    logs.push({
+      type: LogType.STUNNED,
+      turn: _turnCounter,
+      actingUnitId: unit.id,
+      unit: unit.name,
+      message: `${unit.name} is stunned and cannot act!`,
+      rngState: getState(),
+    });
     return logs;
   }
 
@@ -192,7 +235,7 @@ export function executeTurn(unit, skill, targets, allAllies, allEnemies) {
 
 function executeDamageSkill(attacker, skill, targets) {
   const logs = [];
-  const aliveTargets = (targets || []).filter(t => t.alive);
+  const aliveTargets = (targets || []).filter((t) => t.alive);
 
   for (const target of aliveTargets) {
     const hits = skill.hits || 1;
@@ -213,7 +256,9 @@ function executeDamageSkill(attacker, skill, targets) {
     // Apply conditional bonus (execute mechanic)
     if (skill.condition && skill.condition.type === ConditionType.TARGET_BELOW_HP) {
       if (target.currentHP / target.maxHP < (skill.condition.threshold || EXECUTE_THRESHOLD)) {
-        totalDamage = Math.floor(totalDamage * (skill.condition.bonusMultiplier || EXECUTE_BONUS_MULTIPLIER));
+        totalDamage = Math.floor(
+          totalDamage * (skill.condition.bonusMultiplier || EXECUTE_BONUS_MULTIPLIER),
+        );
       }
     }
 
@@ -241,17 +286,7 @@ function executeDamageSkill(attacker, skill, targets) {
     logs.push(damageLog);
 
     if (target.currentHP <= 0) {
-      target.alive = false;
-      target.currentHP = 0;
-      logs.push({ type: LogType.DEATH, turn: _turnCounter, actingUnitId: attacker.id, unit: target.name, targetId: target.id, message: `${target.name} has been defeated!`, rngState: getState() });
-
-      // Check for revive passive
-      if (target.passive && target.passive.trigger === PassiveTrigger.ON_RECEIVE_FATAL && (target.passive.usesLeft === undefined || target.passive.usesLeft > 0)) {
-        target.alive = true;
-        target.currentHP = Math.floor(target.maxHP * REVIVE_HP_PERCENT);
-        if (target.passive.usesLeft !== undefined) target.passive.usesLeft--;
-        logs.push({ type: LogType.REVIVE, turn: _turnCounter, actingUnitId: attacker.id, unit: target.name, targetId: target.id, passive: target.passive.name, message: `${target.name}'s ${target.passive.name} triggers! Revived at ${target.currentHP} HP!`, rngState: getState() });
-      }
+      resolveDefeat(attacker, target, logs);
     }
 
     if (target.alive && skill.effectType) {
@@ -293,6 +328,8 @@ function executeDamageSkill(attacker, skill, targets) {
           message: `${target.name}'s Immunity blocked ${formatEffect(result.effectType)}!`,
           rngState: getState(),
         });
+      } else if (result.negated) {
+        logs.push(negatedEffectLog(attacker, target, result));
       }
     }
   }
@@ -302,7 +339,7 @@ function executeDamageSkill(attacker, skill, targets) {
 
 function executeHealSkill(caster, skill, allies) {
   const logs = [];
-  const aliveAllies = (allies || []).filter(a => a.alive);
+  const aliveAllies = (allies || []).filter((a) => a.alive);
 
   for (const ally of aliveAllies) {
     if (hasHealBlock(ally)) {
@@ -318,7 +355,10 @@ function executeHealSkill(caster, skill, allies) {
       continue;
     }
 
-    const healAmount = calculateHeal(caster, skill);
+    let healAmount = calculateHeal(caster, skill);
+    if (ally.healBonus) {
+      healAmount = Math.floor(healAmount * (1 + ally.healBonus));
+    }
     const preHP = ally.currentHP;
     ally.currentHP = Math.min(ally.maxHP, ally.currentHP + healAmount);
     const actual = ally.currentHP - preHP;
@@ -343,7 +383,7 @@ function executeHealSkill(caster, skill, allies) {
 
 function executeBuffSkill(caster, skill, allies) {
   const logs = [];
-  const aliveAllies = (allies || []).filter(a => a.alive);
+  const aliveAllies = (allies || []).filter((a) => a.alive);
 
   for (const ally of aliveAllies) {
     applyBuff(skill.effectType, skill.effectDuration, caster, ally);
@@ -366,7 +406,7 @@ function executeBuffSkill(caster, skill, allies) {
 
 function executeDebuffSkill(attacker, skill, targets) {
   const logs = [];
-  const aliveTargets = (targets || []).filter(t => t.alive);
+  const aliveTargets = (targets || []).filter((t) => t.alive);
 
   for (const target of aliveTargets) {
     if (skill.multiplier > 0) {
@@ -391,11 +431,9 @@ function executeDebuffSkill(attacker, skill, targets) {
       });
 
       if (target.currentHP <= 0) {
-        target.alive = false;
-        target.currentHP = 0;
-        logs.push({ type: LogType.DEATH, turn: _turnCounter, actingUnitId: attacker.id, unit: target.name, targetId: target.id, rngState: getState() });
-        continue;
+        resolveDefeat(attacker, target, logs);
       }
+      if (!target.alive) continue;
     }
 
     const result = tryApplyEffect(skill, attacker, target);
@@ -434,22 +472,82 @@ function executeDebuffSkill(attacker, skill, targets) {
         effect: formatEffect(result.effectType),
         rngState: getState(),
       });
+    } else if (result.negated) {
+      logs.push(negatedEffectLog(attacker, target, result));
     }
   }
 
   return logs;
 }
 
+function resolveDefeat(attacker, target, logs) {
+  target.alive = false;
+  target.currentHP = 0;
+  logs.push({
+    type: LogType.DEATH,
+    turn: _turnCounter,
+    actingUnitId: attacker.id,
+    unit: target.name,
+    targetId: target.id,
+    message: `${target.name} has been defeated!`,
+    rngState: getState(),
+  });
+
+  if (
+    target.passive &&
+    target.passive.trigger === PassiveTrigger.ON_RECEIVE_FATAL &&
+    (target.passive.usesLeft === undefined || target.passive.usesLeft > 0)
+  ) {
+    const reviveRatio =
+      typeof target.passive.value === 'number' ? target.passive.value : REVIVE_HP_PERCENT;
+    target.alive = true;
+    target.currentHP = Math.floor(target.maxHP * reviveRatio);
+    if (target.passive.usesLeft !== undefined) target.passive.usesLeft--;
+    logs.push({
+      type: LogType.REVIVE,
+      turn: _turnCounter,
+      actingUnitId: attacker.id,
+      unit: target.name,
+      targetId: target.id,
+      passive: target.passive.name,
+      message: `${target.name}'s ${target.passive.name} triggers! Revived at ${target.currentHP} HP!`,
+      rngState: getState(),
+    });
+  }
+}
+
+function negatedEffectLog(attacker, target, result) {
+  return {
+    type: LogType.INFO,
+    turn: _turnCounter,
+    actingUnitId: attacker.id,
+    target: target.name,
+    targetId: target.id,
+    effect: formatEffect(result.effectType),
+    message: `${target.name} shrugs off ${formatEffect(result.effectType)}.`,
+    rngState: getState(),
+  };
+}
+
 function executeCleanseSkill(caster, skill, allies) {
   const logs = [];
-  const aliveAllies = (allies || []).filter(a => a.alive);
+  const aliveAllies = (allies || []).filter((a) => a.alive);
   const count = skill.cleanseCount || 1;
 
   for (const ally of aliveAllies) {
     let removed = 0;
     while (removed < count && ally.debuffs.length > 0) {
       const d = ally.debuffs.shift();
-      logs.push({ type: LogType.CLEANSE, turn: _turnCounter, actingUnitId: caster.id, caster: caster.name, target: ally.name, effect: formatEffect(d.type), message: `${caster.name} cleanses ${formatEffect(d.type)} from ${ally.name}!`, rngState: getState() });
+      logs.push({
+        type: LogType.CLEANSE,
+        turn: _turnCounter,
+        actingUnitId: caster.id,
+        caster: caster.name,
+        target: ally.name,
+        effect: formatEffect(d.type),
+        message: `${caster.name} cleanses ${formatEffect(d.type)} from ${ally.name}!`,
+        rngState: getState(),
+      });
       removed++;
     }
   }
@@ -458,14 +556,23 @@ function executeCleanseSkill(caster, skill, allies) {
 
 function executeStripSkill(caster, skill, targets) {
   const logs = [];
-  const aliveTargets = (targets || []).filter(t => t.alive);
+  const aliveTargets = (targets || []).filter((t) => t.alive);
   const count = skill.stripCount || 1;
 
   for (const target of aliveTargets) {
     let removed = 0;
     while (removed < count && target.buffs.length > 0) {
       const b = target.buffs.shift();
-      logs.push({ type: LogType.STRIP, turn: _turnCounter, actingUnitId: caster.id, caster: caster.name, target: target.name, effect: formatEffect(b.type), message: `${caster.name} strips ${formatEffect(b.type)} from ${target.name}!`, rngState: getState() });
+      logs.push({
+        type: LogType.STRIP,
+        turn: _turnCounter,
+        actingUnitId: caster.id,
+        caster: caster.name,
+        target: target.name,
+        effect: formatEffect(b.type),
+        message: `${caster.name} strips ${formatEffect(b.type)} from ${target.name}!`,
+        rngState: getState(),
+      });
       removed++;
     }
   }
@@ -476,7 +583,7 @@ function executeStripSkill(caster, skill, targets) {
  * Check if a team is defeated (all units dead).
  */
 export function isTeamDefeated(team) {
-  return team.every(u => !u.alive);
+  return team.every((u) => !u.alive);
 }
 
 /**
@@ -484,11 +591,16 @@ export function isTeamDefeated(team) {
  */
 export function getTurnOrder(allUnits) {
   return allUnits
-    .filter(u => u.alive)
+    .filter((u) => u.alive)
     .sort((a, b) => {
       const aTurns = (TURN_METER_THRESHOLD - a.turnMeter) / getEffectiveSpeed(a);
       const bTurns = (TURN_METER_THRESHOLD - b.turnMeter) / getEffectiveSpeed(b);
       return aTurns - bTurns;
     })
-    .map(u => ({ id: u.id, name: u.name, element: u.element, turnMeter: Math.floor(u.turnMeter) }));
+    .map((u) => ({
+      id: u.id,
+      name: u.name,
+      element: u.element,
+      turnMeter: Math.floor(u.turnMeter),
+    }));
 }

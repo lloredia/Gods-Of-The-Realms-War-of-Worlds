@@ -24,7 +24,7 @@ function savePresets(presets) {
 function nextAutoName(presets) {
   for (let i = 1; i <= MAX_PRESETS + 1; i++) {
     const name = `Team ${i}`;
-    if (!presets.some(p => p.name === name)) return name;
+    if (!presets.some((p) => p.name === name)) return name;
   }
   return `Team ${presets.length + 1}`;
 }
@@ -55,17 +55,34 @@ export default function TeamPresets({ selectedIds, onLoadPreset }) {
   const heroName = (id) => heroRoster[id]?.name ?? id;
 
   return (
-    <div style={{
-      maxWidth: 900,
-      margin: '0 auto 14px',
-      padding: '10px 14px',
-      backgroundColor: '#1a1a2e',
-      borderRadius: 8,
-      border: '1px solid #333',
-    }}>
+    <div
+      style={{
+        maxWidth: 900,
+        margin: '0 auto 14px',
+        padding: '10px 14px',
+        backgroundColor: '#1a1a2e',
+        borderRadius: 8,
+        border: '1px solid #333',
+      }}
+    >
       {/* Header row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 'bold', color: '#FFD700', letterSpacing: 1, textTransform: 'uppercase' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 8,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 'bold',
+            color: '#FFD700',
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+          }}
+        >
           Team Presets
         </span>
         <button
@@ -75,11 +92,13 @@ export default function TeamPresets({ selectedIds, onLoadPreset }) {
             padding: '4px 12px',
             fontSize: 11,
             fontWeight: 'bold',
-            backgroundColor: selectedIds.length === 4 && presets.length < MAX_PRESETS ? '#FFD700' : '#333',
+            backgroundColor:
+              selectedIds.length === 4 && presets.length < MAX_PRESETS ? '#FFD700' : '#333',
             color: selectedIds.length === 4 && presets.length < MAX_PRESETS ? '#000' : '#666',
             border: 'none',
             borderRadius: 4,
-            cursor: selectedIds.length === 4 && presets.length < MAX_PRESETS ? 'pointer' : 'not-allowed',
+            cursor:
+              selectedIds.length === 4 && presets.length < MAX_PRESETS ? 'pointer' : 'not-allowed',
           }}
         >
           Save Current
@@ -113,7 +132,11 @@ export default function TeamPresets({ selectedIds, onLoadPreset }) {
               </div>
               <div style={{ display: 'flex', gap: 4 }}>
                 <button
-                  onClick={() => { resumeAudio(); SFX.presetLoad(); onLoadPreset(preset.ids); }}
+                  onClick={() => {
+                    resumeAudio();
+                    SFX.presetLoad();
+                    onLoadPreset(preset.ids);
+                  }}
                   style={{
                     flex: 1,
                     padding: '3px 0',

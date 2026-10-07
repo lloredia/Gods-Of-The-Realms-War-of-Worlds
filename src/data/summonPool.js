@@ -6,11 +6,11 @@
  * Rates must sum to 1.0.
  */
 export const SUMMON_RATES = Object.freeze({
-  1: 0.30,   // 30% — 1-star creature
-  2: 0.25,   // 25% — 2-star creature
-  3: 0.25,   // 25% — 3-star hero
-  4: 0.15,   // 15% — 4-star hero
-  5: 0.05,   // 5% — 5-star legendary
+  1: 0.3, // 30% — 1-star creature
+  2: 0.25, // 25% — 2-star creature
+  3: 0.25, // 25% — 3-star hero
+  4: 0.15, // 15% — 4-star hero
+  5: 0.05, // 5% — 5-star legendary
 });
 
 /**
@@ -19,18 +19,59 @@ export const SUMMON_RATES = Object.freeze({
  */
 export const SUMMON_POOL = {
   1: ['goblin', 'skeleton', 'slime', 'imp', 'bat'],
-  2: ['wolf', 'serpent', 'wraith', 'harpy', 'golem', 'minotaur', 'chimera', 'hydra', 'phoenix_chick', 'shadow_sprite'],
+  2: [
+    'wolf',
+    'serpent',
+    'wraith',
+    'harpy',
+    'golem',
+    'minotaur',
+    'chimera',
+    'hydra',
+    'phoenix_chick',
+    'shadow_sprite',
+  ],
   3: [
-    'hermes', 'hephaestus', 'tyr', 'heimdall', 'sobek',
-    'thoth', 'brigid', 'dianCecht', 'fujin', 'inari',
+    'hermes',
+    'hephaestus',
+    'tyr',
+    'heimdall',
+    'sobek',
+    'thoth',
+    'brigid',
+    'dianCecht',
+    'fujin',
+    'inari',
   ],
   4: [
-    'zeus', 'poseidon', 'thor', 'freya', 'anubis', 'ra', 'morganLeFay', 'cuChulainn',
-    'athena', 'isis', 'nimue', 'raijin', 'benzaiten',
+    'zeus',
+    'poseidon',
+    'thor',
+    'freya',
+    'anubis',
+    'ra',
+    'morganLeFay',
+    'cuChulainn',
+    'athena',
+    'isis',
+    'nimue',
+    'raijin',
+    'benzaiten',
   ],
   5: [
-    'hades', 'apollo', 'loki', 'bastet', 'susanoo', 'amaterasu',
-    'ares', 'odin', 'fenrir', 'set', 'merlin', 'tsukuyomi', 'izanami',
+    'hades',
+    'apollo',
+    'loki',
+    'bastet',
+    'susanoo',
+    'amaterasu',
+    'ares',
+    'odin',
+    'fenrir',
+    'set',
+    'merlin',
+    'tsukuyomi',
+    'izanami',
   ],
 };
 
@@ -55,9 +96,10 @@ export const AWAKENING_COSTS = {
 
 /**
  * Simulate a single summon. Returns a hero id.
+ * `rng` defaults to Math.random and is injectable so pull tables can be tested.
  */
-export function simulateSummon() {
-  const roll = Math.random();
+export function simulateSummon(rng = Math.random) {
+  const roll = rng();
   let cumulative = 0;
 
   for (const [star, rate] of Object.entries(SUMMON_RATES)) {
@@ -66,8 +108,8 @@ export function simulateSummon() {
       const pool = SUMMON_POOL[star];
       if (!pool || pool.length === 0) continue;
       return {
-        heroId: pool[Math.floor(Math.random() * pool.length)],
-        stars: parseInt(star),
+        heroId: pool[Math.floor(rng() * pool.length)],
+        stars: parseInt(star, 10),
       };
     }
   }

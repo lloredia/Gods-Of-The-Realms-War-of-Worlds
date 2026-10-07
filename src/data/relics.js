@@ -21,7 +21,11 @@ const relics = {
     color: '#00BCD4',
     description: 'Charged with storm essence.',
     twoPiece: { stat: 'speed', type: 'percent', value: 0.25 },
-    fourPiece: { effect: 'turn_meter_boost', value: 20, description: '+20% Turn Meter at battle start' },
+    fourPiece: {
+      effect: 'turn_meter_boost',
+      value: 20,
+      description: '+20% Turn Meter at battle start',
+    },
   },
   precision: {
     id: 'precision',
@@ -37,15 +41,19 @@ const relics = {
     color: '#4CAF50',
     description: 'Pulsing with life force.',
     twoPiece: { stat: 'maxHP', type: 'percent', value: 0.25 },
-    fourPiece: { effect: 'heal_bonus', value: 0.20, description: '+20% healing received' },
+    fourPiece: { effect: 'heal_bonus', value: 0.2, description: '+20% healing received' },
   },
   resolve: {
     id: 'resolve',
     name: 'Resolve',
     color: '#9C27B0',
     description: 'Unwavering against corruption.',
-    twoPiece: { stat: 'resistance', type: 'flat', value: 0.20 },
-    fourPiece: { effect: 'debuff_duration_reduce', value: 1, description: 'Reduce debuff duration by 1 turn' },
+    twoPiece: { stat: 'resistance', type: 'flat', value: 0.2 },
+    fourPiece: {
+      effect: 'debuff_duration_reduce',
+      value: 1,
+      description: 'Reduce debuff duration by 1 turn',
+    },
   },
 };
 

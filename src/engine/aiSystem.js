@@ -3,7 +3,11 @@
 
 import { random } from '../utils/random';
 import { SkillType, SkillTarget, DebuffType } from '../constants/enums';
-import { AI_HEAL_THRESHOLD, AI_BUFF_CHANCE, AI_KILL_ESTIMATE_FACTOR } from '../constants/battleConstants';
+import {
+  AI_HEAL_THRESHOLD,
+  AI_BUFF_CHANCE,
+  AI_KILL_ESTIMATE_FACTOR,
+} from '../constants/battleConstants';
 import { getElementMultiplier } from '../constants/elementTable';
 
 /**
@@ -11,14 +15,14 @@ import { getElementMultiplier } from '../constants/elementTable';
  * Returns { skill, targets } where targets is an array of target units.
  */
 export function decideAction(unit, allies, enemies) {
-  const aliveEnemies = enemies.filter(e => e.alive);
-  const aliveAllies = allies.filter(a => a.alive);
+  const aliveEnemies = enemies.filter((e) => e.alive);
+  const aliveAllies = allies.filter((a) => a.alive);
 
   if (aliveEnemies.length === 0) return null;
   if (!unit.skills || unit.skills.length === 0) return null;
 
   // Get available skills (not on cooldown)
-  const available = unit.skills.filter(skill => {
+  const available = unit.skills.filter((skill) => {
     const cd = unit.cooldowns[skill.id] || 0;
     return cd <= 0;
   });
@@ -44,7 +48,7 @@ export function decideAction(unit, allies, enemies) {
 
   // Priority 4: Highest multiplier damage/debuff skill
   const bestDamageSkill = available
-    .filter(s => s.type === SkillType.DAMAGE || s.type === SkillType.DEBUFF)
+    .filter((s) => s.type === SkillType.DAMAGE || s.type === SkillType.DEBUFF)
     .sort((a, b) => b.multiplier - a.multiplier)[0];
 
   if (bestDamageSkill) {
@@ -86,7 +90,7 @@ function scoreTarget(target, attacker, skill) {
   }
 
   // Debuffed targets are juicier (defense break = more damage) — 15% weight
-  if (target.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK)) score += 0.15;
+  if (target.debuffs.some((d) => d.type === DebuffType.DEFENSE_BREAK)) score += 0.15;
 
   // Dangerous targets (high attack) — 15% weight
   const avgAttack = 800;
@@ -101,10 +105,17 @@ function scoreTarget(target, attacker, skill) {
 function findKillable(unit, enemies, skills) {
   for (const enemy of enemies) {
     for (const skill of skills) {
-      if (skill.target === SkillTarget.ALL_ENEMIES || skill.type === SkillType.HEAL || skill.type === SkillType.BUFF || skill.type === SkillType.CLEANSE || skill.type === SkillType.STRIP) continue;
+      if (
+        skill.target === SkillTarget.ALL_ENEMIES ||
+        skill.type === SkillType.HEAL ||
+        skill.type === SkillType.BUFF ||
+        skill.type === SkillType.CLEANSE ||
+        skill.type === SkillType.STRIP
+      )
+        continue;
       let estDamage = unit.attack * skill.multiplier * AI_KILL_ESTIMATE_FACTOR;
       // Account for defense break
-      if (enemy.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK)) {
+      if (enemy.debuffs.some((d) => d.type === DebuffType.DEFENSE_BREAK)) {
         estDamage *= 1.5;
       }
       // Account for multi-hit
@@ -121,15 +132,17 @@ function findKillable(unit, enemies, skills) {
 
 function considerCombo(unit, enemies, available) {
   // Check if we have a debuff skill (defense break) AND a nuke available
-  const debuffSkill = available.find(s =>
-    (s.type === SkillType.DEBUFF || (s.type === SkillType.DAMAGE && s.effectType === DebuffType.DEFENSE_BREAK))
-    && s.target !== SkillTarget.ALL_ENEMIES
+  const debuffSkill = available.find(
+    (s) =>
+      (s.type === SkillType.DEBUFF ||
+        (s.type === SkillType.DAMAGE && s.effectType === DebuffType.DEFENSE_BREAK)) &&
+      s.target !== SkillTarget.ALL_ENEMIES,
   );
 
   if (!debuffSkill) return null;
 
   // Find a target that doesn't already have defense break
-  const target = enemies.find(e => !e.debuffs.some(d => d.type === DebuffType.DEFENSE_BREAK));
+  const target = enemies.find((e) => !e.debuffs.some((d) => d.type === DebuffType.DEFENSE_BREAK));
   if (target) {
     return { skill: debuffSkill, targets: [target] };
   }
@@ -137,33 +150,39 @@ function considerCombo(unit, enemies, available) {
 }
 
 function considerSupportSkill(unit, allies, enemies, skills) {
-  const supportSkills = skills.filter(s => s.type === SkillType.BUFF || s.type === SkillType.HEAL || s.type === SkillType.CLEANSE || s.type === SkillType.STRIP);
+  const supportSkills = skills.filter(
+    (s) =>
+      s.type === SkillType.BUFF ||
+      s.type === SkillType.HEAL ||
+      s.type === SkillType.CLEANSE ||
+      s.type === SkillType.STRIP,
+  );
   if (supportSkills.length === 0) return null;
 
   // Use cleanse if any ally has debuffs
-  const cleanseSkill = supportSkills.find(s => s.type === SkillType.CLEANSE);
-  const anyDebuffed = allies.some(a => a.debuffs.length > 0);
+  const cleanseSkill = supportSkills.find((s) => s.type === SkillType.CLEANSE);
+  const anyDebuffed = allies.some((a) => a.debuffs.length > 0);
   if (cleanseSkill && anyDebuffed) {
     return { skill: cleanseSkill, targets: allies };
   }
 
   // Use strip if any enemy has buffs
-  const stripSkill = supportSkills.find(s => s.type === SkillType.STRIP);
-  const anyBuffed = enemies.some(e => e.buffs.length > 0);
+  const stripSkill = supportSkills.find((s) => s.type === SkillType.STRIP);
+  const anyBuffed = enemies.some((e) => e.buffs.length > 0);
   if (stripSkill && anyBuffed) {
     return { skill: stripSkill, targets: enemies };
   }
 
   // Use heal if any ally is below threshold
-  const healSkill = supportSkills.find(s => s.type === SkillType.HEAL);
-  const anyLowHP = allies.some(a => a.currentHP / a.maxHP < AI_HEAL_THRESHOLD);
+  const healSkill = supportSkills.find((s) => s.type === SkillType.HEAL);
+  const anyLowHP = allies.some((a) => a.currentHP / a.maxHP < AI_HEAL_THRESHOLD);
   if (healSkill && anyLowHP) {
     return { skill: healSkill, targets: allies };
   }
 
   // Chance to prioritize buff
   if (random() < AI_BUFF_CHANCE) {
-    const buffSkill = supportSkills.find(s => s.type === SkillType.BUFF);
+    const buffSkill = supportSkills.find((s) => s.type === SkillType.BUFF);
     if (buffSkill) {
       return { skill: buffSkill, targets: allies };
     }

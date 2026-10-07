@@ -25,30 +25,48 @@ export function tryApplyEffect(skill, caster, target) {
 
   const roll = random();
   if (roll > finalChance) {
-    return { applied: false, resisted: true, effectType: skill.effectType, roll, threshold: finalChance };
+    return {
+      applied: false,
+      resisted: true,
+      effectType: skill.effectType,
+      roll,
+      threshold: finalChance,
+    };
   }
 
   // Check immunity — only blocks debuffs
-  if (DEBUFF_TYPES.has(skill.effectType) && target.buffs.some(b => b.type === BuffType.IMMUNITY)) {
+  if (
+    DEBUFF_TYPES.has(skill.effectType) &&
+    target.buffs.some((b) => b.type === BuffType.IMMUNITY)
+  ) {
     return { applied: false, blocked: true, effectType: skill.effectType };
+  }
+
+  // Relic 4-piece: Resolve shortens incoming debuffs. A non-positive duration never lands.
+  let duration = skill.effectDuration;
+  if (DEBUFF_TYPES.has(skill.effectType) && target.debuffDurationReduce) {
+    duration -= target.debuffDurationReduce;
+    if (duration <= 0) {
+      return { applied: false, negated: true, effectType: skill.effectType };
+    }
   }
 
   const effect = {
     type: skill.effectType,
-    duration: skill.effectDuration,
+    duration,
     source: caster.id,
   };
 
   if (BUFF_TYPES.has(skill.effectType)) {
     // Refresh duration if already exists, otherwise add
-    const existing = target.buffs.findIndex(b => b.type === effect.type);
+    const existing = target.buffs.findIndex((b) => b.type === effect.type);
     if (existing >= 0) {
       target.buffs[existing].duration = effect.duration;
     } else {
       target.buffs.push(effect);
     }
   } else if (DEBUFF_TYPES.has(skill.effectType)) {
-    const existing = target.debuffs.findIndex(d => d.type === effect.type);
+    const existing = target.debuffs.findIndex((d) => d.type === effect.type);
     if (existing >= 0) {
       target.debuffs[existing].duration = effect.duration;
     } else {
@@ -64,7 +82,7 @@ export function tryApplyEffect(skill, caster, target) {
  */
 export function applyBuff(buffType, duration, caster, target) {
   const effect = { type: buffType, duration, source: caster.id };
-  const existing = target.buffs.findIndex(b => b.type === buffType);
+  const existing = target.buffs.findIndex((b) => b.type === buffType);
   if (existing >= 0) {
     target.buffs[existing].duration = duration;
   } else {
@@ -79,7 +97,7 @@ export function applyBuff(buffType, duration, caster, target) {
 export function tickEffects(unit) {
   const expired = [];
 
-  unit.buffs = unit.buffs.filter(b => {
+  unit.buffs = unit.buffs.filter((b) => {
     b.duration--;
     if (b.duration <= 0) {
       expired.push(b.type);
@@ -88,7 +106,7 @@ export function tickEffects(unit) {
     return true;
   });
 
-  unit.debuffs = unit.debuffs.filter(d => {
+  unit.debuffs = unit.debuffs.filter((d) => {
     d.duration--;
     if (d.duration <= 0) {
       expired.push(d.type);
@@ -104,14 +122,14 @@ export function tickEffects(unit) {
  * Check if a unit is stunned.
  */
 export function isStunned(unit) {
-  return unit.debuffs.some(d => d.type === DebuffType.STUN);
+  return unit.debuffs.some((d) => d.type === DebuffType.STUN);
 }
 
 /**
  * Check if a unit has heal block.
  */
 export function hasHealBlock(unit) {
-  return unit.debuffs.some(d => d.type === DebuffType.HEAL_BLOCK);
+  return unit.debuffs.some((d) => d.type === DebuffType.HEAL_BLOCK);
 }
 
 /**
@@ -120,10 +138,10 @@ export function hasHealBlock(unit) {
  */
 export function getEffectiveSpeed(unit) {
   let spd = unit.speed;
-  if (unit.buffs.some(b => b.type === BuffType.SPEED_UP)) {
+  if (unit.buffs.some((b) => b.type === BuffType.SPEED_UP)) {
     spd *= getEffectMultiplier(BuffType.SPEED_UP);
   }
-  if (unit.debuffs.some(d => d.type === DebuffType.SLOW)) {
+  if (unit.debuffs.some((d) => d.type === DebuffType.SLOW)) {
     spd *= getEffectMultiplier(DebuffType.SLOW);
   }
   return Math.floor(spd);
@@ -133,5 +151,5 @@ export function getEffectiveSpeed(unit) {
  * Format effect type string for display.
  */
 export function formatEffect(type) {
-  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }

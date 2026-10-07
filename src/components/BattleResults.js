@@ -35,8 +35,8 @@ function injectResultsStyles() {
 }
 
 function computeStats(logs, teamA, teamB) {
-  const teamAIds = new Set(teamA.map(u => u.id));
-  const teamBIds = new Set(teamB.map(u => u.id));
+  const teamAIds = new Set(teamA.map((u) => u.id));
+  const teamBIds = new Set(teamB.map((u) => u.id));
 
   let playerDamage = 0;
   let playerHeals = 0;
@@ -57,12 +57,12 @@ function computeStats(logs, teamA, teamB) {
       }
     }
     if (log.type === 'heal' && (teamAIds.has(log.attackerId) || teamAIds.has(log.actingUnitId))) {
-      playerHeals += (log.healAmount || log.amount || 0);
+      playerHeals += log.healAmount || log.amount || 0;
     }
   }
 
-  const surviving = teamA.filter(u => u.alive);
-  const lost = teamA.filter(u => !u.alive);
+  const surviving = teamA.filter((u) => u.alive);
+  const lost = teamA.filter((u) => !u.alive);
 
   return { playerDamage, playerHeals, playerCrits, enemyDamage, surviving, lost };
 }
@@ -72,7 +72,7 @@ function computeRewards(turnCount, isVictory) {
   const baseGold = 200;
   const baseXP = 150;
   // Bonus for quick battles — fewer turns = bigger bonus
-  const speedBonus = Math.max(1, 2 - (turnCount / 40));
+  const speedBonus = Math.max(1, 2 - turnCount / 40);
   return {
     gold: Math.round(baseGold * speedBonus),
     xp: Math.round(baseXP * speedBonus),
@@ -90,10 +90,13 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
   }, []);
 
   const isVictory = winner === 'Team A';
-  const stats = useMemo(() => computeStats(logs || [], teamA || [], teamB || []), [logs, teamA, teamB]);
+  const stats = useMemo(
+    () => computeStats(logs || [], teamA || [], teamB || []),
+    [logs, teamA, teamB],
+  );
   const rewards = useMemo(() => computeRewards(turnCount, isVictory), [turnCount, isVictory]);
 
-  const victors = isVictory ? stats.surviving : (teamB || []).filter(u => u.alive);
+  const victors = isVictory ? stats.surviving : (teamB || []).filter((u) => u.alive);
 
   const statLines = [
     { label: 'Turns Taken', value: turnCount },
@@ -132,7 +135,9 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
     fontWeight: 900,
     letterSpacing: 8,
     margin: 0,
-    animation: isVictory ? 'br-goldenGlow 2s ease-in-out infinite' : 'br-redGlow 2s ease-in-out infinite',
+    animation: isVictory
+      ? 'br-goldenGlow 2s ease-in-out infinite'
+      : 'br-redGlow 2s ease-in-out infinite',
     color: isVictory ? '#FFD700' : '#F44336',
     textTransform: 'uppercase',
     userSelect: 'none',
@@ -154,30 +159,32 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
   return (
     <div style={overlayStyle}>
       {/* Title */}
-      <h1 style={titleStyle}>
-        {isVictory ? 'VICTORY' : 'DEFEAT'}
-      </h1>
+      <h1 style={titleStyle}>{isVictory ? 'VICTORY' : 'DEFEAT'}</h1>
 
       {/* Subtitle */}
-      <div style={{
-        fontSize: 14,
-        color: isVictory ? '#FFA500' : '#D32F2F',
-        letterSpacing: 3,
-        marginTop: 8,
-        textTransform: 'uppercase',
-        opacity: 0.8,
-      }}>
+      <div
+        style={{
+          fontSize: 14,
+          color: isVictory ? '#FFA500' : '#D32F2F',
+          letterSpacing: 3,
+          marginTop: 8,
+          textTransform: 'uppercase',
+          opacity: 0.8,
+        }}
+      >
         {isVictory ? 'The gods smile upon you' : 'The enemy prevails'}
       </div>
 
       {/* Victors portraits */}
-      <div style={{
-        display: 'flex',
-        gap: 16,
-        marginTop: 28,
-        justifyContent: 'center',
-        flexWrap: 'wrap',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 16,
+          marginTop: 28,
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         {victors.map((unit) => (
           <div key={unit.id} style={{ textAlign: 'center' }}>
             <HeroPortrait
@@ -187,15 +194,17 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
               size={56}
               isActive={isVictory}
             />
-            <div style={{
-              fontSize: 11,
-              color: isVictory ? '#FFD700' : '#F44336',
-              marginTop: 6,
-              maxWidth: 64,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: isVictory ? '#FFD700' : '#F44336',
+                marginTop: 6,
+                maxWidth: 64,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {unit.name}
             </div>
           </div>
@@ -204,15 +213,17 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
 
       {/* Stats panel */}
       <div style={panelStyle}>
-        <div style={{
-          fontSize: 13,
-          fontWeight: 700,
-          color: isVictory ? '#FFD700' : '#F44336',
-          letterSpacing: 2,
-          textTransform: 'uppercase',
-          marginBottom: 16,
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color: isVictory ? '#FFD700' : '#F44336',
+            letterSpacing: 2,
+            textTransform: 'uppercase',
+            marginBottom: 16,
+            textAlign: 'center',
+          }}
+        >
           Battle Statistics
         </div>
 
@@ -229,12 +240,14 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
             }}
           >
             <span style={{ color: '#aaa', fontSize: 13 }}>{stat.label}</span>
-            <span style={{
-              color: isVictory ? '#FFD700' : '#F44336',
-              fontSize: 14,
-              fontWeight: 600,
-              fontVariantNumeric: 'tabular-nums',
-            }}>
+            <span
+              style={{
+                color: isVictory ? '#FFD700' : '#F44336',
+                fontSize: 14,
+                fontWeight: 600,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
               {stat.value}
             </span>
           </div>
@@ -242,28 +255,40 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
 
         {/* Rewards (victory only) */}
         {isVictory && (
-          <div style={{
-            marginTop: 20,
-            padding: '14px 0 0',
-            borderTop: '1px solid rgba(255,215,0,0.15)',
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 32,
-            animation: visible ? 'br-fadeIn 0.4s ease-out 1s both' : 'none',
-          }}>
+          <div
+            style={{
+              marginTop: 20,
+              padding: '14px 0 0',
+              borderTop: '1px solid rgba(255,215,0,0.15)',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 32,
+              animation: visible ? 'br-fadeIn 0.4s ease-out 1s both' : 'none',
+            }}
+          >
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#FFD700' }}>
-                {rewards.gold}
-              </div>
-              <div style={{ fontSize: 11, color: '#BFA24B', letterSpacing: 1, textTransform: 'uppercase' }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#FFD700' }}>{rewards.gold}</div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: '#BFA24B',
+                  letterSpacing: 1,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Gold
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#64B5F6' }}>
-                {rewards.xp}
-              </div>
-              <div style={{ fontSize: 11, color: '#5C99C9', letterSpacing: 1, textTransform: 'uppercase' }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: '#64B5F6' }}>{rewards.xp}</div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: '#5C99C9',
+                  letterSpacing: 1,
+                  textTransform: 'uppercase',
+                }}
+              >
                 XP
               </div>
             </div>
@@ -292,8 +317,12 @@ export default function BattleResults({ winner, teamA, teamB, logs, turnCount, o
             ? '0 0 20px rgba(255,215,0,0.3), 0 4px 12px rgba(0,0,0,0.3)'
             : '0 0 20px rgba(244,67,54,0.3), 0 4px 12px rgba(0,0,0,0.3)',
         }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+        }}
       >
         {isVictory ? 'Continue' : 'Try Again'}
       </button>

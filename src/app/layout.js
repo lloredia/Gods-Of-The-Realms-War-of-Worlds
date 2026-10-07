@@ -1,17 +1,26 @@
-import "./globals.css";
+import './globals.css';
 import NavBar from '../components/NavBar';
+import { publicPath } from '../utils/publicPath';
+
+const repository = process.env.GITHUB_REPOSITORY || 'lloredia/Gods-Of-The-Realms-War-of-Worlds';
+const owner = repository.split('/')[0];
+const metadataBase =
+  process.env.GITHUB_PAGES === 'true'
+    ? new URL(`https://${owner}.github.io`)
+    : new URL('http://localhost:3000');
 
 export const metadata = {
-  title: "GOTR — Gods Of The Realms: War of Worlds",
-  description: "Gods Of The Realms — War of Worlds",
+  metadataBase,
+  title: 'GOTR — Gods Of The Realms: War of Worlds',
+  description: 'Gods Of The Realms — War of Worlds',
   icons: {
-    icon: "/logo.jpg",
-    apple: "/logo.jpg",
+    icon: publicPath('/assets/logo.jpg'),
+    apple: publicPath('/assets/logo.jpg'),
   },
   openGraph: {
-    title: "Gods Of The Realms — War of Worlds",
-    description: "Mobile-style gacha RPG · turn-meter combat · five pantheons collide",
-    images: ["/logo.jpg"],
+    title: 'Gods Of The Realms — War of Worlds',
+    description: 'Mobile-style gacha RPG · turn-meter combat · five pantheons collide',
+    images: [publicPath('/assets/logo.jpg')],
   },
 };
 
